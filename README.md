@@ -1,1 +1,1 @@
-# SocialMediaMERN
+# SocialMedia
