@@ -5,9 +5,11 @@ import ProfileLogo from '../@profileLogo/page';
 import VideoCameraBackIcon from '@mui/icons-material/VideoCameraBack';
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
 import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
-import { PostInputCard, ProfileGridItem, PostInputGrid, PostInputTextField, PostInputGridItem, PostInputIconButton } from './style'
+import { PostInputCard, ProfileGridItem, PostInputGrid, PostInputGridItem, PostInputIconButton } from './style'
+import PostInputModalForm from './modal'
 
 const RootComp = () => {
+    
     return (
         <>
             <PostInputCard>
@@ -17,9 +19,7 @@ const RootComp = () => {
                             <ProfileLogo name="SK" imageUrl="/images/beautiful-bg-custom.jpg" />
                         </ProfileGridItem>
                         <Grid item md={11} sm={11} xs={12}>
-                            <PostInputTextField id="standard-basic" label="Write Something" variant="standard" placeholder='Whats On Your Mind?'>
-
-                            </PostInputTextField>
+                            <PostInputModalForm />
                         </Grid>
                     </Grid>
                     <PostInputGrid container spacing={2}>

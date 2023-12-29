@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model users {
+  id        Int    @id @default(autoincrement())
+  name      String @unique @db.VarChar(255)
+  email     String @unique @db.VarChar(255)
+  password  String @db.VarChar(255)
+  image     String @db.VarChar(255)
+  phone     String @db.VarChar(255)
+  is_active Int
+}
+
+model posts {
+  id              Int @id @default(autoincrement())
+  user_id         Int
+  group_id        Int
+  title           String @db.VarChar(255)
+  sub_title       String @db.VarChar(255)
+  description     String @db.VarChar(255)
+  type            Int
+  tags            String @db.VarChar(255)
+  is_share        Int
+  figure          String @db.VarChar(255)
+  thumbnail       String @db.VarChar(255)
+  video_post_url  String @db.VarChar(255)
+}
+
+model comments {
+  id            Int @id @default(autoincrement())
+  user_id       Int
+  post_id       Int
+  description   String @db.VarChar(255)
+  is_allow      Int
+}
