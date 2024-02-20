@@ -15,6 +15,7 @@ model users {
   image     String @db.VarChar(255)
   phone     String @db.VarChar(255)
   is_active Int
+  comments  comments[]
 }
 
 model posts {
@@ -30,6 +31,7 @@ model posts {
   figure          String @db.VarChar(255)
   thumbnail       String @db.VarChar(255)
   video_post_url  String @db.VarChar(255)
+  comments        comments[]
 }
 
 model comments {
@@ -38,4 +40,6 @@ model comments {
   post_id       Int
   description   String @db.VarChar(255)
   is_allow      Int
+  post          posts @relation(fields: [post_id], references: [id])
+  user          users @relation(fields: [user_id], references: [id])
 }

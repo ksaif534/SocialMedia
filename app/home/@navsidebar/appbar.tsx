@@ -11,7 +11,7 @@ import { menuId, msgMenuId, notifMenuId } from './menu'
 import { AppBar, Search, SearchIconWrapper, StyledInputBase } from './style'
 
 export const AppBarComp = (props: any) => {
-    const { anchorEl, setAnchorEl, msgAnchorEl, setMsgAnchorEl, notifAnchorEl, setNotifAnchorEl, open, setOpen, auth, setAuth } = props;
+    const { setAnchorEl, setMsgAnchorEl, setNotifAnchorEl, open, setOpen, auth } = props;
 
     const handleDrawerOpen = () => {
         setOpen(true);

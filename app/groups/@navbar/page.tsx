@@ -1,5 +1,5 @@
 'use client'
-import NavBar from "@/app/profiles/@navbar/page";
+import NavBar from "@/app/profile/@navbar/page";
 
 const GroupNav = () => {
     return (

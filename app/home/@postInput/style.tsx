@@ -1,4 +1,4 @@
-import { Box, Button, ButtonBase, Card, CardContent, CardHeader, FormControlLabel, Grid, IconButton, InputLabel, RadioGroup, Select, TextField, Typography, styled } from "@mui/material";
+import { ButtonBase, Card, CardContent, Grid, IconButton, RadioGroup, Select, TextField, Typography, styled } from "@mui/material";
 
 export const PostInputCard = styled(Card)(({theme}) => ({
     width: 'auto',
@@ -108,4 +108,10 @@ export const PostInputIconButton = styled(IconButton)(({theme}) => ({
         backgroundColor: '#808080'
     },
     color: '#000000'
+}))
+
+export const PostSubmissionStyle = styled('div')(() => ({
+    justifyContent: 'center',
+    alignItems: 'center',
+    display: 'flex'
 }))

@@ -1,9 +1,11 @@
 'use client'
 import { useState } from 'react'
-import { IconButton, Menu, MenuItem, Badge } from '@mui/material'
+import { IconButton, Menu, MenuItem, Badge, Avatar } from '@mui/material'
 import { AccountCircle } from '@mui/icons-material'
 import MailIcon from '@mui/icons-material/Mail'
 import NotificationsIcon from '@mui/icons-material/Notifications'
+import LogoutIcon from '@mui/icons-material/Logout';
+import { useRouter } from 'next/navigation';
 
 export const menuId = 'primary-search-account-menu';
 export const mobileMenuId = 'primary-search-account-menu-mobile';
@@ -13,6 +15,8 @@ export const notifMenuId = "notification-dropdown-menu";
 export const RenderMenu = (props: any) => {
     const { anchorEl, setAnchorEl } = props;
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
+
+    const router = useRouter();
 
     const isMenuOpen = Boolean(anchorEl);
 
@@ -24,6 +28,12 @@ export const RenderMenu = (props: any) => {
     const handleMobileMenuClose = () => {
         setMobileMoreAnchorEl(null);
     };
+
+    const handleLogout = () => {
+        sessionStorage.setItem("sessionToken","");
+        sessionStorage.setItem("authUser","");
+        router.push(`/auth/login`);
+    }
 
     return (
         <Menu
@@ -41,8 +51,21 @@ export const RenderMenu = (props: any) => {
         open={isMenuOpen}
         onClose={handleMenuClose}
         >
-            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-            <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+            <MenuItem onClick={handleMenuClose}>
+                My Profile
+            </MenuItem>
+            <MenuItem onClick={handleLogout}>
+                <IconButton
+                size="small"
+                aria-label="logout from current user"
+                aria-controls="logout-menu"
+                aria-haspopup="true"
+                color="inherit"
+                >
+                    <LogoutIcon />
+                    Logout
+                </IconButton>
+            </MenuItem> 
         </Menu>
     )
 }
@@ -105,7 +128,7 @@ export const RenderMobileMenu = () => {
                 aria-haspopup="true"
                 color="inherit"
                 >
-                <AccountCircle />
+                    <AccountCircle />
                 </IconButton>
                 <p>Profile</p>
             </MenuItem>
@@ -168,4 +191,14 @@ export const getMsgAnchorState: any = (initValue: any) => {
 export const getNotifAnchorState: any = (initValue: any) => {
     const [notifAnchorEl,setNotifAnchorEl] = useState<null | HTMLElement>(initValue);
     return [notifAnchorEl,setNotifAnchorEl];
+}
+
+export const getUsersState: any = (initValue: any) => {
+    const [users,setUsers] = useState(initValue);
+    return [users,setUsers];
+}
+
+export const getAuthUserState: any = (initValue: any) => {
+    const [authUser,setAuthUser] = useState(initValue);
+    return [authUser,setAuthUser];
 }
