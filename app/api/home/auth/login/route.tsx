@@ -17,7 +17,7 @@ export const POST = async (req: NextRequest) => {
                 sessionToken = sign({ userId: user.id }, process.env.JWT_SECRET ?? '10491', {
                     expiresIn: '24h'
                 });
-                return new Response(JSON.stringify({ isUserLoggedIn: isUserLoggedIn, sessionToken: sessionToken, authenticatedUser: user.email }));
+                return new Response(JSON.stringify({ isUserLoggedIn: isUserLoggedIn, sessionToken: sessionToken, authenticatedUser: user.email, authUserId: user.id }));
             }
         }
     }

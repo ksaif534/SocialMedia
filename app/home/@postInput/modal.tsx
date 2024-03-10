@@ -3,6 +3,7 @@ import { useState } from "react";
 import { PostInputModalButtonBase, PostInputStyle, PostInputModalFormCard, PostInputModalFormCardContent, PostInputFieldsGrid , PostInputModalFormTextField, FormHeaderTG, PostInputModalFormSelect, PostInputModalFormsRadioGroup, VisuallyHiddenInput, PostSubmissionStyle } from "./style";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import createPost from "./createPost";
+import Swal from "sweetalert2";
 
 const PostInputModalForm = () => {
     const [open,setOpen] = useState(false);
@@ -35,7 +36,7 @@ const PostInputModalForm = () => {
         }));
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         //Append File
         if(fileData){
             const figureInput = document.getElementById('figure');
@@ -56,7 +57,13 @@ const PostInputModalForm = () => {
         }
         //Append Text/Other Inputs
         fData.append('text',JSON.stringify(formData));
-        createPost(fData);
+        fData.append('sessionData',JSON.stringify(sessionStorage.getItem("authUserId")));
+        const newPostBool = await createPost(fData);
+        if (Boolean(newPostBool)) {
+            Swal.fire(`Post Created Successfully`);
+        }else{
+            Swal.fire(`Post not created`);
+        }
     }
 
     const handleOpen = () => setOpen(true);
@@ -131,11 +138,11 @@ const PostInputModalForm = () => {
                                 </PostInputFieldsGrid>
                                 <PostInputFieldsGrid container spacing={2}>
                                     <Grid item md={3} sm={3} xs={12}>
-                                        <Typography variant="h6"><strong>Figure:</strong></Typography>
+                                        <Typography variant="h6"><strong>Figure/Video:</strong></Typography>
                                     </Grid>
                                     <Grid item md={9} sm={9} xs={12}>
                                         <Button component="label" variant="contained" startIcon={<CloudUploadIcon />} sx={{ width: '100%' }} onChange={handleFileInputChange}>
-                                            Upload Figure
+                                            Upload Figure/Video
                                             <VisuallyHiddenInput type="file" name="figure" id="figure" />
                                         </Button>
                                     </Grid>

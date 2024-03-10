@@ -30,7 +30,6 @@ const ProfileLayout = ({
                     </div>
                     <div style={{ marginTop: '20px', marginBottom: '20px', justifyContent: 'center' }}>
                         {profileCoverHeading}
-                        {profileBody}
                     </div>
                 </Grid>
             </Grid>

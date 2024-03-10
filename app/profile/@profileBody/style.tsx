@@ -1,5 +1,5 @@
 'use client'
-import { Avatar, Box, Card, Grid, IconButton, IconButtonProps, TextField, Typography } from '@mui/material';
+import { Box, ButtonBase, Card, CardContent, Grid, IconButton, IconButtonProps, TextField, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 interface ExpandMoreProps extends IconButtonProps {
@@ -8,7 +8,7 @@ interface ExpandMoreProps extends IconButtonProps {
 
 export const IntroBox = styled(Box)(({theme}) => ({
     marginTop: theme.spacing(2),
-    height: theme.spacing(50),
+    height: 'auto',
     [theme.breakpoints.down('md')]: {
         marginBottom: theme.spacing(3)
     },
@@ -30,64 +30,6 @@ export const IntroTG = styled(Typography)(({theme}) => ({
 export const IntroGrid = styled(Grid)(({theme}) => ({
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2)
-}))
-
-export const RoundedAvatar = styled(Avatar)(({theme}) => ({
-    width: theme.spacing(6),
-    height: theme.spacing(6),
-    borderRadius: '50%',
-    [theme.breakpoints.down('md')]: {
-        width: theme.spacing(6),
-        height: theme.spacing(6)
-    },
-    [theme.breakpoints.down('sm')]: {
-        width: theme.spacing(6),
-        height: theme.spacing(6)
-    }
-}))
-
-export const ProfilePostInputCard = styled(Card)(({theme}) => ({
-    marginTop: theme.spacing(2),
-    borderRadius: theme.spacing(1)
-}))
-
-export const ProfilePostInputGrid = styled(Grid)(({theme}) => ({
-    
-}))
-
-export const ProfilePostInputGridItem = styled(Grid)(({theme}) => ({
-    justifyContent: 'center',
-    alignItems: 'center',
-    display: 'flex',
-}))
-
-export const ProfilePostInputTextField = styled(TextField)(({theme}) => ({
-    width: '100%'
-}))
-
-export const ProfilePostDivider = styled('div')(({theme}) => ({
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(2),
-    [theme.breakpoints.down('sm')]:{
-        marginTop: theme.spacing(6)
-    }
-}))
-
-export const ProfilePostIconGridItem = styled(Grid)(({theme}) => ({
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1)
-}))
-
-export const ProfilePostIconButton = styled(IconButton)(({theme}) => ({
-    borderRadius: theme.spacing(2),
-    backgroundColor: '#d3d3d3',
-    color: '#000000',
-    '&:hover': {
-        backgroundColor: '#808080'
-    }
 }))
 
 export const ExpandMore = styled((props: ExpandMoreProps) => {
@@ -156,7 +98,7 @@ export const ProfilePhotosCard = styled(Card)(({theme}) => ({
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
     [theme.breakpoints.down('md')]: {
-        marginTop: theme.spacing(12)
+        marginTop: theme.spacing(9)
     },
     [theme.breakpoints.down('sm')]: {
         marginTop: theme.spacing(12)
@@ -171,13 +113,13 @@ export const SeeAllPhotos = styled('div')(({theme}) => ({
 }))
 
 export const FriendListCard = styled(Card)(({theme}) => ({
-    marginTop: theme.spacing(5),
+    marginTop: theme.spacing(2),
     borderRadius: theme.spacing(1),
     [theme.breakpoints.down('md')]: {
-        marginTop: theme.spacing(10)
+        marginTop: theme.spacing(9)
     },
     [theme.breakpoints.down('sm')]: {
-        marginTop: theme.spacing(10)
+        marginTop: theme.spacing(12)
     }
 }))
 

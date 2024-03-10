@@ -20,8 +20,8 @@ export const ExpandMore = styled((props: ExpandMoreProps) => {
   
 export const PostCard = styled(Card)(({theme}) => ({
     maxWidth: 'auto',
-    marginLeft: theme.spacing(6),
-    borderRadius: theme.spacing(1)
+    borderRadius: theme.spacing(1),
+    marginTop: theme.spacing(2)
 }))
   
 export const CommentTextField = styled(TextField)(({theme}) => ({

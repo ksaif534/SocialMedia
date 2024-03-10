@@ -8,14 +8,17 @@ datasource db {
 }
 
 model users {
-  id        Int    @id @default(autoincrement())
-  name      String @unique @db.VarChar(255)
-  email     String @unique @db.VarChar(255)
-  password  String @db.VarChar(255)
-  image     String @db.VarChar(255)
-  phone     String @db.VarChar(255)
-  is_active Int
-  comments  comments[]
+  id                Int    @id @default(autoincrement())
+  name              String @unique @db.VarChar(255)
+  email             String @unique @db.VarChar(255)
+  password          String @db.VarChar(255)
+  image             String @db.VarChar(255)
+  phone             String @db.VarChar(255)
+  is_active         Int
+  comments          comments[]
+  posts             posts[]
+  profile           profiles?
+  networks          networks[]
 }
 
 model posts {
@@ -32,6 +35,7 @@ model posts {
   thumbnail       String @db.VarChar(255)
   video_post_url  String @db.VarChar(255)
   comments        comments[]
+  user            users @relation(fields: [user_id], references: [id])
 }
 
 model comments {
@@ -42,4 +46,29 @@ model comments {
   is_allow      Int
   post          posts @relation(fields: [post_id], references: [id])
   user          users @relation(fields: [user_id], references: [id])
+}
+
+model profiles {
+  id              Int @id @default(autoincrement())
+  user_id         Int @unique
+  firstname       String @db.VarChar(255)
+  lastname        String @db.VarChar(255)
+  marital_status  Int
+  gender          Int
+  birthdate       DateTime
+  education_level Int
+  occupation      Int
+  country         Int
+  city            Int
+  address         String @db.VarChar(255)
+  profile_photo   String @db.VarChar(255)
+  user            users @relation(fields: [user_id], references: [id])
+}
+
+model networks {
+  id              Int @id @default(autoincrement())
+  user_id_from    Int
+  user_id_to      Int
+  status          Int
+  users           users[]
 }

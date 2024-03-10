@@ -1,12 +1,22 @@
 'use client'
-import { Badge, IconButton, Menu, MenuItem } from "@mui/material";
+import { Avatar, Badge, IconButton, Menu, MenuItem } from "@mui/material";
 import { AccountCircle } from '@mui/icons-material';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import { useRouter } from "next/navigation";
+import LogoutIcon from '@mui/icons-material/Logout';
+import { useState, useEffect } from "react";
+import fetchUser from "../@profileCoverHeading/fetchUser";
 
 export const menuId = 'primary-search-account-menu';
 export const RenderMenu = (props: any) => {
+    const router = useRouter();
     const { anchorEl, setAnchorEl, setMobileMoreAnchorEl , isMenuOpen } = props;
+    const [currentUser,setCurrentUser] = useState({ id: 0, email: '', password: '', image: null, is_active: 0, name: '', phone: 0 })
+
+    useEffect(() => {
+        fetchUser(sessionStorage.getItem("authUserId")).then((currentUser: any) => setCurrentUser(currentUser));
+    },[])
 
     const handleMenuClose = () => {
         setAnchorEl(null);
@@ -16,6 +26,18 @@ export const RenderMenu = (props: any) => {
     const handleMobileMenuClose = () => {
         setMobileMoreAnchorEl(null);
     };
+
+    const handleMyProfile = () => {
+        router.push(`/profile`);
+        handleMenuClose();
+    }
+
+    const handleLogout = () => {
+        sessionStorage.setItem("authUserId","");
+        sessionStorage.setItem("authUser","");
+        sessionStorage.setItem("sessionToken","");
+        router.push(`/auth/login`);
+    }
 
     const renderMenu = (
         <Menu
@@ -33,8 +55,29 @@ export const RenderMenu = (props: any) => {
         open={isMenuOpen}
         onClose={handleMenuClose}
         >
-            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-            <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+            <MenuItem onClick={handleMyProfile}>
+                <IconButton
+                size="small"
+                aria-label="logout from current user"
+                aria-haspopup="true"
+                color="inherit"
+                >
+                    <Avatar src={`images/${currentUser?.image}`} />
+                    My Profile
+                </IconButton>
+            </MenuItem>
+            <MenuItem onClick={handleLogout}>
+                <IconButton
+                size="small"
+                aria-label="logout from current user"
+                aria-controls="logout-menu"
+                aria-haspopup="true"
+                color="inherit"
+                >
+                    <LogoutIcon />
+                    Logout
+                </IconButton>
+            </MenuItem>
         </Menu>
     );
 
@@ -101,7 +144,7 @@ export const RenderMobileMenu = (props: any) => {
                 aria-haspopup="true"
                 color="inherit"
                 >
-                <AccountCircle />
+                    <AccountCircle />
                 </IconButton>
                 <p>Profile</p>
             </MenuItem>

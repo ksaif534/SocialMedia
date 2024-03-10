@@ -2,17 +2,13 @@ import { ButtonBase, Card, CardContent, Grid, IconButton, RadioGroup, Select, Te
 
 export const PostInputCard = styled(Card)(({theme}) => ({
     width: 'auto',
-    marginLeft: theme.spacing(6),
+    marginTop: theme.spacing(2),
     borderRadius: theme.spacing(1),
     backgroundColor: '#ffffff',
 }))
 
 export const ProfileGridItem = styled(Grid)(({theme}) => ({
     marginTop: theme.spacing(2)
-}))
-
-export const PostInputGrid = styled(Grid)(({theme}) => ({
-    marginRight: theme.spacing(4)
 }))
 
 export const PostInputModalButtonBase = styled(ButtonBase)(({theme}) => ({
@@ -93,22 +89,6 @@ export const VisuallyHiddenInput = styled('input')({
     whiteSpace: 'nowrap',
     width: 1,
 });
-
-export const PostInputGridItem = styled(Grid)(({theme}) => ({
-    marginTop: theme.spacing(1),
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center'
-}))
-
-export const PostInputIconButton = styled(IconButton)(({theme}) => ({
-    borderRadius: theme.spacing(2),
-    backgroundColor: '#d3d3d3',
-    '&: hover': {
-        backgroundColor: '#808080'
-    },
-    color: '#000000'
-}))
 
 export const PostSubmissionStyle = styled('div')(() => ({
     justifyContent: 'center',

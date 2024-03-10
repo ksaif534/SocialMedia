@@ -1,5 +1,5 @@
 'use client'
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AppBar, Badge, Box, IconButton, Toolbar, Typography } from "@mui/material";
 import { BoxIconButton, MiddleBox, Search, SearchIconWrapper, StyledInputBase } from "./style";
 import { menuId, mobileMenuId, msgMenuId, notifMenuId, RenderMenu, RenderMobileMenu, RenderMsgMenu, RenderNotifMenu } from "./menu";
@@ -12,12 +12,26 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 import HomeIcon from '@mui/icons-material/Home';
 import VideoCameraBackIcon from '@mui/icons-material/VideoCameraBack';
 import GroupsIcon from '@mui/icons-material/Groups';
+import { useRouter } from "next/navigation";
+import fetchProfileVideoPosts from "../@profileCoverHeading/fetchProfileVideoPosts";
 
 const RootComp = () => {
+    const router = useRouter();
+
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
     const [anchorMsgEl,setAnchorMsgEl] = useState<null | HTMLElement>(null);
     const [anchorNotifMenuEl,setAnchorNotifMenuEl] = useState<null | HTMLElement>(null);
+
+    useEffect(() => {
+        if (sessionStorage.length > 0) {
+            if (sessionStorage.getItem("authUser") == "" || sessionStorage.getItem("sessionToken") == "") {
+                router.push(`/auth/login`);
+            }
+        }else{
+            router.push(`/auth/login`);
+        }
+    },[])
 
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -39,6 +53,10 @@ const RootComp = () => {
     const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };
+
+    const handleGoToHome = () => {
+        router.push(`/home`);
+    }
     
     return (
         <>
@@ -72,14 +90,11 @@ const RootComp = () => {
                             />
                         </Search>
                         <MiddleBox>
-                            <BoxIconButton size="large" aria-label="Home Icon" color="inherit" title="Home">
-                            <HomeIcon fontSize="large" />
-                            </BoxIconButton>
-                            <BoxIconButton size="large" aria-label="Video Icon" color="inherit" title="Videos">
-                            <VideoCameraBackIcon fontSize="large" />
+                            <BoxIconButton size="large" aria-label="Home Icon" color="inherit" title="Home" onClick={handleGoToHome}>
+                                <HomeIcon fontSize="large" />
                             </BoxIconButton>
                             <BoxIconButton size="large" aria-label="User Groups" color="inherit" title="User Groups">
-                            <GroupsIcon fontSize="large" />
+                                <GroupsIcon fontSize="large" />
                             </BoxIconButton>
                         </MiddleBox>
                         <Box sx={{ flexGrow: 1 }} />

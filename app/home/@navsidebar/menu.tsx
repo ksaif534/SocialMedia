@@ -1,11 +1,12 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { IconButton, Menu, MenuItem, Badge, Avatar } from '@mui/material'
 import { AccountCircle } from '@mui/icons-material'
 import MailIcon from '@mui/icons-material/Mail'
 import NotificationsIcon from '@mui/icons-material/Notifications'
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useRouter } from 'next/navigation';
+import fetchUser from '@/app/profile/@profileCoverHeading/fetchUser'
 
 export const menuId = 'primary-search-account-menu';
 export const mobileMenuId = 'primary-search-account-menu-mobile';
@@ -15,6 +16,11 @@ export const notifMenuId = "notification-dropdown-menu";
 export const RenderMenu = (props: any) => {
     const { anchorEl, setAnchorEl } = props;
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
+    const [currentUser,setCurrentUser] = useState({ id: 0, email: '', password: '', image: null, is_active: 0, name: '', phone: 0 })
+
+    useEffect(() => {
+        fetchUser(sessionStorage.getItem("authUserId")).then((currentUser: any) => setCurrentUser(currentUser));
+    },[])
 
     const router = useRouter();
 
@@ -25,6 +31,10 @@ export const RenderMenu = (props: any) => {
         handleMobileMenuClose();
     };
 
+    const goToProfilePage = () => {
+        router.push(`/profile`);
+    }
+
     const handleMobileMenuClose = () => {
         setMobileMoreAnchorEl(null);
     };
@@ -32,6 +42,7 @@ export const RenderMenu = (props: any) => {
     const handleLogout = () => {
         sessionStorage.setItem("sessionToken","");
         sessionStorage.setItem("authUser","");
+        sessionStorage.setItem("authUserId","");
         router.push(`/auth/login`);
     }
 
@@ -51,8 +62,16 @@ export const RenderMenu = (props: any) => {
         open={isMenuOpen}
         onClose={handleMenuClose}
         >
-            <MenuItem onClick={handleMenuClose}>
-                My Profile
+            <MenuItem onClick={goToProfilePage}>
+                <IconButton
+                size="small"
+                aria-label="logout from current user"
+                aria-haspopup="true"
+                color="inherit"
+                >
+                    <Avatar src={`images/${currentUser?.image}`} />
+                    My Profile
+                </IconButton>
             </MenuItem>
             <MenuItem onClick={handleLogout}>
                 <IconButton

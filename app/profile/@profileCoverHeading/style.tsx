@@ -1,5 +1,5 @@
 'use client'
-import { Avatar, Box, Card, Grid, IconButton, Tabs, Typography, styled } from "@mui/material"
+import { Avatar, Box, Card, CardContent, Grid, IconButton, Tabs, TextField, Typography, styled } from "@mui/material"
 
 export const ProfileCoverHeadingGrid = styled(Grid)(({theme}) => ({
     marginTop: theme.spacing(8)

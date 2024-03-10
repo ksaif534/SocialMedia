@@ -2,10 +2,7 @@
 import * as React from 'react';
 import { CardContent, Typography, Grid } from '@mui/material';
 import ProfileLogo from '../@profileLogo/page';
-import VideoCameraBackIcon from '@mui/icons-material/VideoCameraBack';
-import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
-import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
-import { PostInputCard, ProfileGridItem, PostInputGrid, PostInputGridItem, PostInputIconButton } from './style'
+import { PostInputCard, ProfileGridItem } from './style'
 import PostInputModalForm from './modal'
 
 const RootComp = () => {
@@ -22,26 +19,6 @@ const RootComp = () => {
                             <PostInputModalForm />
                         </Grid>
                     </Grid>
-                    <PostInputGrid container spacing={2}>
-                        <PostInputGridItem item md={4} sm={6} xs={12}>
-                            <PostInputIconButton>
-                                <VideoCameraBackIcon fontSize="large" />
-                                <Typography variant="h5" color="text.primary">Video</Typography>
-                            </PostInputIconButton>
-                        </PostInputGridItem>
-                        <PostInputGridItem item md={4} sm={6} xs={12}>
-                            <PostInputIconButton>
-                                <InsertPhotoIcon fontSize="large" />
-                                <Typography variant="h5" color="text.primary">Photos/Images</Typography>
-                            </PostInputIconButton>
-                        </PostInputGridItem>
-                        <PostInputGridItem item md={4} sm={6} xs={12}>
-                            <PostInputIconButton>
-                                <EmojiEmotionsIcon fontSize="large" />
-                                <Typography variant="h5" color="text.primary">Feeling</Typography>
-                            </PostInputIconButton>
-                        </PostInputGridItem>
-                    </PostInputGrid>
                 </CardContent>
             </PostInputCard>
         </>

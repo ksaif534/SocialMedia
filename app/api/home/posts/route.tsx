@@ -5,7 +5,12 @@ import path from "path";
 
 export const GET = async () => {
     const prisma = new PrismaClient();
-    const posts = await prisma.posts.findMany();
+    const posts = await prisma.posts.findMany({
+        include: {
+            user: true,
+            comments: true
+        }
+    });
     return new Response(JSON.stringify(posts));
 }
 
@@ -15,8 +20,18 @@ export const POST = async (req: NextRequest | any, res: NextResponse | any) => {
     const figure = JSON.parse(body.fileObj).figure.name;
     const thumbnail = JSON.parse(body.fileObj).thumbnail.name;
     //Fix Figure & Thumbnail Paths
-    const figurePath = path.join(process.cwd(), 'public/images', figure);
-    const thumbPath = path.join(process.cwd(), 'public/images', thumbnail);
+    const figureType = body.figure.type.split('/')[0];
+    let figurePath: any;
+    if (figureType == 'video') {
+        figurePath = path.join(process.cwd(), 'public/videos', figure);
+    }else{
+        figurePath = path.join(process.cwd(), 'public/images', figure);
+    }
+    let thumbPath: any;
+    const thumbType = body.thumbnail.type.split('/')[0];
+    if (thumbType == 'image') {
+        thumbPath = path.join(process.cwd(), 'public/images', thumbnail);   
+    }
     const bodyText = JSON.parse(body.text);
     //Create File streams & convert to buffer chunks
     const figureStream = body.figure.stream();
@@ -33,12 +48,14 @@ export const POST = async (req: NextRequest | any, res: NextResponse | any) => {
     const thumbBuffer = Buffer.concat(thumbChunks);
     fs.writeFileSync(figurePath, figBuffer);
     fs.writeFileSync(thumbPath, thumbBuffer);
-    //Move the files
     const prisma = new PrismaClient();
+    //Get Auth User
+    const authUserId = JSON.parse(body.sessionData);
+    //Move the files
     const newPost = await prisma.posts.create({
         data: JSON.parse(JSON.stringify(
             {
-                user_id: Number(bodyText.user_id),
+                user_id: Number(authUserId),
                 group_id: Number(bodyText.group_id),
                 title: bodyText.title,
                 sub_title: bodyText.sub_title,
@@ -52,5 +69,5 @@ export const POST = async (req: NextRequest | any, res: NextResponse | any) => {
             }
         ))
     })
-    return new Response(`Post created`);
+    return new Response(`${true}`);
 }

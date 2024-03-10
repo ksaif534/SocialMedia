@@ -1,10 +1,11 @@
 import RootComp from './root'
 
-const Posts = () => {
-  
+const Posts = (props: any) => {
+  const { posts, videoPosts } = props;
+
   return (
     <>
-      <RootComp />
+      <RootComp profilePosts={posts} videoPosts={videoPosts} />
     </>
   );
 }
