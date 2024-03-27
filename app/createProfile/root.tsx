@@ -69,10 +69,16 @@ const RootComp = () => {
         //Backend Call
         const newProfile = await storeProfile(fData);
         if (Boolean(newProfile)) {
-            Swal.fire(`Profile Created Successfully`);
+            Swal.fire({
+                title: `Success`,
+                text: `Profile Created Successfully`
+            });
             router.push(`/home`);
         }else{
-            Swal.fire(`Profile Not Created`);
+            Swal.fire({
+                title: `Failure`,
+                text: `Profile Not Created`
+            });
             router.push(`/home`);
         }
     }

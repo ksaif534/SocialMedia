@@ -63,12 +63,15 @@ model profiles {
   address         String @db.VarChar(255)
   profile_photo   String @db.VarChar(255)
   user            users @relation(fields: [user_id], references: [id])
+  networks        networks[]
 }
 
 model networks {
   id              Int @id @default(autoincrement())
   user_id_from    Int
   user_id_to      Int
+  profile_id      Int @default(0)
   status          Int
-  users           users[]
+  user            users @relation(fields: [user_id_to], references: [id])
+  profile         profiles @relation(fields: [profile_id], references: [id])
 }

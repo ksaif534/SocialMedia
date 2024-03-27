@@ -14,5 +14,6 @@ export const GET = async (req: NextRequest) => {
             type: 2
         }
     });
+    console.log(videoPosts);
     return new Response(JSON.stringify(videoPosts));
 }

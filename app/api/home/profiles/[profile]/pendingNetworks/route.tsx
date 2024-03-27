@@ -4,21 +4,15 @@ import { NextRequest } from "next/server";
 export const GET = async (req: NextRequest) => {
     const profileUserId = req.nextUrl.pathname.split('/')[4];
     const prisma = new PrismaClient();
-    const profileNetworks = await prisma.networks.findMany({
+    const pendingNetworks = await prisma.networks.findMany({
         include: {
             user: true,
             profile: true
         },
         where: {
-            AND: [
-                {
-                    user_id_from: Number(profileUserId)
-                },
-                {
-                    status: 1
-                }
-            ]
+            user_id_to: Number(profileUserId),
+            status: 2
         }
     });
-    return new Response(JSON.stringify(profileNetworks));
+    return new Response(JSON.stringify(pendingNetworks));
 }

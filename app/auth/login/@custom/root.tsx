@@ -38,7 +38,10 @@ const RootComp = () => {
             //Authenticated Successfully
             router.push(`/home`);
         }else{
-            Swal.fire(`Login/Authentication Failed`);
+            Swal.fire({
+                title: `Authentication Failure`,
+                text: `Login/Authentication Failed`
+            });
         }
     }
 

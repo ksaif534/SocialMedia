@@ -57,9 +57,15 @@ const RootComp = () => {
         //Apend Text/Other Inputs
         const response = await createUser(fData);
         if (response.data == `User Registered`) {
-            Swal.fire(`User Registered Successfully`);
+            Swal.fire({
+                title: `Registration Success`,
+                text: `User Registered Successfully`
+            });
         }else{
-            Swal.fire(`User Not Registered`);
+            Swal.fire({
+                title: `Registration Failure`,
+                text: `User Not Registered`
+            });
         }
     }
 

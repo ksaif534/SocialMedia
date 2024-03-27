@@ -6,7 +6,6 @@ import HomeIcon from '@mui/icons-material/Home';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import RssFeedIcon from '@mui/icons-material/RssFeed';
 import fetchUser from "../@profileCoverHeading/fetchUser";
-import fetchProfile from "../@profileCoverHeading/fetchProfile";
 import PostInput from "@/app/home/@postInput/page";
 import Posts from "@/app/home/@posts/page";
 import { useRouter } from "next/navigation";
@@ -39,10 +38,9 @@ const itemData = [
 ];
 
 const RootComp = (props: any) => {
-    const { profilePosts, otherProfile, videoPosts, otherProfilePosts, profileNetworks } = props;
+    const { profilePosts, profile , otherProfile , videoPosts, profileNetworks } = props;
     const router = useRouter();
     const [user,setUser] = useState({ id: 0, email: '', password: '', image: null, is_active: 0, name: '', phone: 0 });
-    const [profile,setProfile] = useState({ user_id: 0, firstname: '', lastname: '', marital_status: 1, gender: 1, birthDate: null, education_level: 1, occupation: 0, country: '', city: '', address: '', profile_photo: null });
 
     const editProfileDetails = () => {
         router.push(`/updateProfile/${profile.user_id}`);
@@ -50,7 +48,6 @@ const RootComp = (props: any) => {
 
     useEffect(() => {
         fetchUser(sessionStorage.getItem("authUserId")).then((user: any) => setUser(user));
-        fetchProfile(sessionStorage.getItem("authUserId")).then((profile: any) => setProfile(profile));
     },[])
 
     return (
@@ -70,13 +67,25 @@ const RootComp = (props: any) => {
                                                 <HomeIcon fontSize="large" />
                                             </Grid>
                                             <Grid item md={10} sm={12} xs={12}>
-                                                <Typography variant="h6">Lives in <strong>{ profile?.address }</strong></Typography>
+                                                {
+                                                    (otherProfile !== undefined) ? (
+                                                        <Typography variant="h6">Lives in <strong>{ otherProfile?.address }</strong></Typography>
+                                                    ) : (
+                                                        <Typography variant="h6">Lives in <strong>{ profile?.address }</strong></Typography>
+                                                    )
+                                                }
                                             </Grid>
                                             <Grid item md={2} sm={12} xs={12}>
                                                 <LocationOnIcon fontSize="large" />
                                             </Grid>
                                             <Grid item md={10} sm={12} xs={12}>
-                                                <Typography variant="h6">From <strong>{ profile?.address }</strong></Typography>
+                                                {
+                                                    (otherProfile !== undefined) ? (
+                                                        <Typography variant="h6">From <strong>{ otherProfile?.address }</strong></Typography>
+                                                    ) : (
+                                                        <Typography variant="h6">From <strong>{ profile?.address }</strong></Typography>
+                                                    )
+                                                }
                                             </Grid>
                                             <Grid item md={2} sm={12} xs={12}>
                                                 <RssFeedIcon fontSize="large" />
@@ -116,19 +125,21 @@ const RootComp = (props: any) => {
                                 </CardContent>
                             </ProfilePhotosCard>
                             <FriendListCard>
-                                <CardHeader title={<Typography variant="h4" sx={{ justifyContent: 'center', alignItems: 'center', display: 'flex' }}><strong>{ profileNetworks?.length } Friends</strong></Typography>} />
+                                <CardHeader title={<Typography variant="h5" sx={{ justifyContent: 'center', alignItems: 'center', display: 'flex' }}><strong>{ profileNetworks?.length } Requested Friend(s)</strong></Typography>} />
                                 <CardContent>
                                     <ImageList cols={3} rowHeight={164}>
                                         {
-                                            profileNetworks?.map((profileNetwork: any) => (
-                                                <ImageListItem key={profileNetwork.id}>
-                                                    <img
-                                                        src={`images/${profileNetwork?.users?.image}`}
-                                                        alt={profileNetwork.users?.name}
-                                                        loading="lazy"
-                                                    />
-                                                </ImageListItem>
-                                            ))
+                                            profileNetworks.map((profileNetwork: any) => {
+                                                return (
+                                                    <ImageListItem key={profileNetwork.id}>
+                                                        <img
+                                                            src={`images/${profileNetwork?.user?.image}`}
+                                                            alt={profileNetwork?.user?.image}
+                                                            loading="lazy"
+                                                        />
+                                                    </ImageListItem>
+                                                )
+                                            })
                                         }
                                     </ImageList>
                                     <SeeAllFriends>

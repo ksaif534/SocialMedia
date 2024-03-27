@@ -2,11 +2,11 @@ import React from "react";
 import RootComp from './root'
 
 const ProfileBody = (props: any) => {
-    const { profilePosts, otherProfile, videoPosts, profileNetworks } = props;
+    const { profilePosts, profile , otherProfile, videoPosts , profileNetworks } = props;
 
     return (
         <>
-            <RootComp profilePosts={profilePosts} otherProfile={otherProfile} videoPosts={videoPosts} profileNetworks={profileNetworks} />
+            <RootComp profilePosts={profilePosts} profile={profile} profileNetworks={profileNetworks} otherProfile={otherProfile} videoPosts={videoPosts} />
         </>
     )
 }

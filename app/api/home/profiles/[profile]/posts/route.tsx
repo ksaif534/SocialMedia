@@ -10,7 +10,8 @@ export const GET = async (req: NextRequest) => {
             comments: true
         },
         where: {
-            user_id: Number(profileUserId)
+            user_id: Number(profileUserId),
+            type: 1
         }
     });
     return new Response(JSON.stringify(profilePosts));

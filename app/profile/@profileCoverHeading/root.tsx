@@ -19,8 +19,14 @@ import ProfileBody from "../@profileBody/page";
 import fetchOtherProfiles from "./fetchOtherProfiles";
 import fetchProfilePosts from "./fetchProfilePosts";
 import fetchProfileVideoPosts from "./fetchProfileVideoPosts";
+import postNetworkStatus from "./postNetworkStatus";
+import Swal from "sweetalert2";
+import fetchPendingNetworks from "./fetchPendingNetworks";
+import updatePendingNetwork from "./updatePendingNetwork";
 import fetchProfileNetworks from "./fetchProfileNetworks";
-import updateNetworkStatus from "./updateNetworkStatus";
+import ProfileFriends from "../@profileFriends/page";
+import fetchAllProfileNetworks from "./fetchAllProfileNetworks";
+import fetchAcceptedProfileNetworks from "./fetchAcceptedProfileNetworks";
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -55,19 +61,27 @@ const RootComp = () => {
     const [user,setUser] = useState({ id: 0, email: '', password: '', image: null, is_active: 0, name: '', phone: 0 });
     const [profile,setProfile] = useState({ id: 0, user_id: 0, firstname: '', lastname: '', marital_status: 1, gender: 1, birthDate: null, education_level: 1, occupation: 0, country: '', city: '', address: '', profile_photo: null, user: null })
     const [otherProfiles,setOtherProfiles] = useState([]);
-    const [otherProfile,setOtherProfile] = useState({ user_id: 0, firstname: '', lastname: '', marital_status: 1, gender: 1, birthDate: null, education_level: 1, occupation: 0, country: '', city: '', address: '', profile_photo: null, user: null });
     const [profilePosts,setProfilePosts] = useState([]);
     const [profileVideoPosts,setProfileVideoPosts] = useState([]);
     const [profileNetworks,setProfileNetworks] = useState([]);
+    const [pendingNetworks,setPendingNetworks] = useState([]);
+    const [allProfileNetworks,setAllProfileNetworks] = useState([]);
+    const [acceptedProfileNetworks,setAcceptedProfileNetworks] = useState([]);
+    const [toggleProfile,setToggleProfile] = useState(false);
     const [value, setValue] = useState(0);
+    let indexCounterArr: any = [];
+    let indexCounterArr2: any = [];
 
     useEffect(() => {
         fetchProfile(sessionStorage.getItem("authUserId")).then((profile: any) => setProfile(profile)); 
         fetchUser(sessionStorage.getItem("authUserId")).then((user: any) => setUser(user));
-        fetchOtherProfiles(sessionStorage.getItem("authUserId")).then((profiles: any) => setOtherProfiles(profiles))
+        fetchOtherProfiles(sessionStorage.getItem("authUserId")).then((otherProfiles: any) => setOtherProfiles(otherProfiles));
         fetchProfilePosts(sessionStorage.getItem("authUserId")).then((posts: any) => setProfilePosts(posts));
         fetchProfileVideoPosts(sessionStorage.getItem("authUserId")).then((posts: any) => setProfileVideoPosts(posts));
+        fetchPendingNetworks(sessionStorage.getItem("authUserId")).then((pendingNetworks: any) => setPendingNetworks(pendingNetworks));
         fetchProfileNetworks(sessionStorage.getItem("authUserId")).then((profileNetworks: any) => setProfileNetworks(profileNetworks));
+        fetchAllProfileNetworks(sessionStorage.getItem("authUserId")).then((allProfileNetworks: any) => setAllProfileNetworks(allProfileNetworks));
+        fetchAcceptedProfileNetworks(sessionStorage.getItem("authUserId")).then((acceptedProfileNetworks: any) => setAcceptedProfileNetworks(acceptedProfileNetworks));
     },[])
 
     const handleProfileTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -82,16 +96,61 @@ const RootComp = () => {
         router.push(`/createProfile`);
     }
 
-    const handleAddFriendClick = (otherProfileUserId: any) => {
-        updateNetworkStatus(sessionStorage.getItem("authUserId"),otherProfileUserId);
+    const handleAddFriendClick = async (otherProfileUserId: any) => {
+        const networkStatus = await postNetworkStatus(sessionStorage.getItem("authUserId"),otherProfileUserId);
+        if (Boolean(networkStatus)) {
+            Swal.fire(`Friend Added Successfully`);
+        }else{
+            Swal.fire(`Friend Not Added`);
+        }
     }
 
     const handleOtherProfiles = async (otherProfile: any) => {
-        setOtherProfile(otherProfile);
-        fetchOtherProfiles(otherProfile.user_id).then((profiles: any) => setOtherProfiles(profiles));
+        fetchProfile(otherProfile?.user_id).then((otherPfl: any) => setProfile(otherPfl));
+        fetchUser(otherProfile?.user_id).then((otherUser: any) => setUser(otherUser));
+        fetchOtherProfiles(otherProfile?.user_id).then((otherProfiles: any) => setOtherProfiles(otherProfiles));
         fetchProfilePosts(otherProfile?.user_id).then((posts: any) => setProfilePosts(posts));
         fetchProfileVideoPosts(otherProfile?.user_id).then((videoPosts: any) => setProfileVideoPosts(videoPosts));
-        fetchProfileNetworks(otherProfile.user_id).then((profileNetworks: any) => setProfileNetworks(profileNetworks));
+        fetchProfileNetworks(otherProfile?.user_id).then((profileNetworks: any) => setProfileNetworks(profileNetworks));
+        fetchAllProfileNetworks(otherProfile?.user_id).then((allProfileNetworks: any) => setAllProfileNetworks(allProfileNetworks));
+        fetchAcceptedProfileNetworks(otherProfile?.user_id).then((acceptedProfileNetworks: any) => setAcceptedProfileNetworks(acceptedProfileNetworks));
+        setToggleProfile(!toggleProfile);
+        indexCounterArr = [];
+        indexCounterArr2 = [];
+    }
+
+    const handleFriendRequestAcceptance = async (pendingNetwork: any) => {
+        Swal.fire({
+            title: `Friend Confirmation`,
+            text: `Do you want to add ${pendingNetwork.user?.name} to your friend network?`,
+            showCancelButton: true,
+            confirmButtonText: `Yes`,
+            denyButtonText: `No`
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                const updatedNetwork = await updatePendingNetwork(sessionStorage.getItem("authUserId"),pendingNetwork);
+                if (Boolean(updatedNetwork)) {
+                    Swal.fire(`Friend Network Updated Successfully`);
+                }else{
+                    Swal.fire(`Friend Network Not Updated`);
+                }
+            }else{
+                Swal.fire(`You decided to reject the invitation to connect for now`);
+            }
+        });
+    }
+
+    const updateProfile = (newValue: any) => {
+        setProfile(newValue);
+        console.log(newValue);
+        fetchUser(newValue?.user_id).then((otherUser: any) => setUser(otherUser));
+        fetchOtherProfiles(newValue?.user_id).then((otherProfiles: any) => setOtherProfiles(otherProfiles));
+        fetchProfilePosts(newValue?.user_id).then((posts: any) => setProfilePosts(posts));
+        fetchProfileVideoPosts(newValue?.user_id).then((videoPosts: any) => setProfileVideoPosts(videoPosts));
+        fetchProfileNetworks(newValue?.user_id).then((profileNetworks: any) => setProfileNetworks(profileNetworks));
+        fetchAllProfileNetworks(newValue?.user_id).then((allProfileNetworks: any) => setAllProfileNetworks(allProfileNetworks));
+        fetchAcceptedProfileNetworks(newValue?.user_id).then((acceptedProfileNetworks: any) => setAcceptedProfileNetworks(acceptedProfileNetworks));
+        setToggleProfile(!toggleProfile);
     }
 
     return (
@@ -99,7 +158,7 @@ const RootComp = () => {
             <ProfileCoverHeadingGrid container spacing={2}>
                 <Grid item md={1} sm={1} xs={12}></Grid>
                 {
-                    (otherProfile.user_id == 0) ? (
+                    (toggleProfile == false) ? (
                         <Grid item md={10} sm={10} xs={12}>
                             <ProfileCoverHeadingCard>
                                 <CardMedia image={`images/` + profile?.profile_photo} title="Beautiful Background" sx={{ height: 250, objectFit: 'cover' }} />
@@ -107,19 +166,19 @@ const RootComp = () => {
                             <ProfileGrid container spacing={2}>
                                 <Grid item md={1} sm={1} xs={12}></Grid>
                                 <ProfileImageGridItem item md={1} sm={1} xs={12}>
-                                    <RoundedAvatar alt="Profile Image" src={`images/`+user.image} />
+                                    <RoundedAvatar alt="Profile Image" src={`images/`+user?.image} />
                                 </ProfileImageGridItem>
                                 <Grid item md={10} sm={10} xs={12}>
                                     <ProfileHeadersGrid container spacing={2}>
-                                        <Grid item md={1} sm={12} xs={12}></Grid>
-                                        <ProfileTitleGrid item md={3} sm={12} xs={12}>
+                                        <Grid item md={1} sm={1} xs={12}></Grid>
+                                        <ProfileTitleGrid item md={3} sm={3} xs={12}>
                                             <ProfileTitleTG variant="h4">
                                                 <strong>{profile?.firstname + " " + profile?.lastname}</strong>
                                             </ProfileTitleTG>
                                         </ProfileTitleGrid>
                                         <Grid item md={2} sm={2} xs={12}>
                                             <ProfileSubTitleTG variant="h6">
-                                                { otherProfiles?.length } Friend(s)
+                                                { otherProfiles?.length } Friend Network(s)
                                             </ProfileSubTitleTG>
                                             <span style={{ display:'flex', justifyContent: 'center'}}>
                                                 {
@@ -149,21 +208,27 @@ const RootComp = () => {
                                                                 Create Profile
                                                             </Typography>
                                                             <EditIcon fontSize="large" />
-                                                        </ProfileEditIconButton> 
+                                                        </ProfileEditIconButton>        
                                                     </>
                                                 )
                                             }
                                         </Grid>
                                         <Grid item md={3} sm={3} xs={12}>
                                             {
-                                                (profileNetworks.length == 0) && (
+                                                (pendingNetworks.length == 1) && (
                                                     <>
-                                                        <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" onClick={() => handleAddFriendClick(otherProfile?.user_id)}>
-                                                            <Typography variant="h6">
-                                                                Add Friend
-                                                            </Typography>
-                                                            <AddIcon fontSize="large" />
-                                                        </ProfileEditIconButton>
+                                                        {
+                                                            pendingNetworks?.map((pendingNetwork: any) => {
+                                                                return (
+                                                                    <ProfileEditIconButton aria-label="Accept Friend Request" title="Accept Friend Request" key={pendingNetwork.id} onClick={() => handleFriendRequestAcceptance(pendingNetwork)}>
+                                                                        <Typography variant="h6">
+                                                                            Accept Friend Request
+                                                                        </Typography>
+                                                                        <SwipeRightIcon />
+                                                                    </ProfileEditIconButton>
+                                                                )
+                                                            })
+                                                        }
                                                     </>
                                                 )
                                             }
@@ -182,12 +247,10 @@ const RootComp = () => {
                                     </ProfileTabs>
                                 </ProfileTabBox>
                                 <CustomProfileTabPanel value={value} index={0}>
-                                    <ProfileBody profilePosts={profilePosts} profileNetworks={profileNetworks} />
+                                    <ProfileBody profilePosts={profilePosts} profile={profile} profileNetworks={profileNetworks} />
                                 </CustomProfileTabPanel>
                                 <CustomProfileTabPanel value={value} index={1}>
-                                    <Typography variant="h6">
-                                        Item 2
-                                    </Typography>
+                                    <ProfileFriends profileNetworks={profileNetworks} acceptedProfileNetworks={acceptedProfileNetworks} updateProfile={updateProfile} allProfileNetworks={allProfileNetworks} profile={profile} />
                                 </CustomProfileTabPanel>
                                 <CustomProfileTabPanel value={value} index={2}>
                                     <Typography variant="h6">
@@ -195,7 +258,7 @@ const RootComp = () => {
                                     </Typography>
                                 </CustomProfileTabPanel>
                                 <CustomProfileTabPanel value={value} index={3}>
-                                    <ProfileBody videoPosts={profileVideoPosts} />
+                                    <ProfileBody videoPosts={profileVideoPosts} profile={profile} profileNetworks={profileNetworks} />
                                 </CustomProfileTabPanel>
                                 <CustomProfileTabPanel value={value} index={4}>
                                     <Grid container spacing={2}>
@@ -239,32 +302,44 @@ const RootComp = () => {
                     ) : (
                         <Grid item md={10} sm={12} xs={12}>
                             <ProfileCoverHeadingCard>
-                                <CardMedia image={`images/` + otherProfile?.profile_photo} title="Beautiful Background" sx={{ height: 250, objectFit: 'cover' }} />
+                                <CardMedia image={`images/` + profile?.profile_photo} title="Beautiful Background" sx={{ height: 250, objectFit: 'cover' }} />
                             </ProfileCoverHeadingCard>
                             <ProfileGrid container spacing={2}>
                                 <Grid item md={1} sm={12} xs={12}></Grid>
                                 <ProfileImageGridItem item md={1} sm={12} xs={12}>
-                                    <RoundedAvatar alt="Profile Image" src={`images/`+ otherProfile.profile_photo} />
+                                    <RoundedAvatar alt="Profile Image" src={`images/`+ user?.image} />
                                 </ProfileImageGridItem>
                                 <Grid item md={10} sm={12} xs={12}>
                                     <ProfileHeadersGrid container spacing={2}>
-                                        <Grid item md={1} sm={12} xs={12}></Grid>
-                                        <ProfileTitleGrid item md={3} sm={12} xs={12}>
+                                        <Grid item md={1} sm={1} xs={12}></Grid>
+                                        <ProfileTitleGrid item md={3} sm={3} xs={12}>
                                             <ProfileTitleTG variant="h4">
-                                                <strong>{otherProfile?.firstname + " " + otherProfile?.lastname}</strong>
+                                                <strong>{profile?.firstname + " " + profile?.lastname}</strong>
                                             </ProfileTitleTG>
                                         </ProfileTitleGrid>
-                                        <Grid item md={3} sm={12} xs={12}>
+                                        <Grid item md={3} sm={3} xs={12}>
                                             <ProfileSubTitleTG variant="h6">
-                                                { otherProfiles?.length } Friends
+                                                { otherProfiles?.length } Friend Network(s)
                                             </ProfileSubTitleTG>
                                             <span style={{ display:'flex', justifyContent: 'center'}}>
                                                 {
-                                                    otherProfiles.map((otherPfl: any) => (
-                                                        <RoundedFirstSmallAvatar alt="Profile Image" src={`images/${otherPfl.user.image}`} onClick={() => handleOtherProfiles(otherPfl)} key={otherPfl.user_id}>
+                                                    (profileNetworks?.length > 0) && (
+                                                        <>
+                                                            {
+                                                                profileNetworks?.map((profileNetwork: any) => {
+                                                                    otherProfiles?.map((otherPfl: any) => {
+                                                                        if (Number(profileNetwork.user_id_to) == Number(profile.user_id)) {
+                                                                            return (
+                                                                                <RoundedFirstSmallAvatar alt="Profile Image" src={`images/${otherPfl.user.image}`} onClick={() => handleOtherProfiles(otherPfl)} key={otherPfl.user_id}>
 
-                                                        </RoundedFirstSmallAvatar>       
-                                                    ))
+                                                                                </RoundedFirstSmallAvatar>  
+                                                                            )
+                                                                        }
+                                                                    })
+                                                                })
+                                                            }
+                                                        </>
+                                                    )
                                                 }
                                             </span>
                                         </Grid>
@@ -273,50 +348,156 @@ const RootComp = () => {
                                             {
                                                 (profileNetworks.length == 0) ? (
                                                     <>
-                                                        <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" onClick={() => handleAddFriendClick(profile?.user_id)}>
-                                                            <Typography variant="h6">
-                                                                Add Friend
-                                                            </Typography>
-                                                            <AddIcon fontSize="large" />
-                                                        </ProfileEditIconButton>
+                                                        {
+                                                            allProfileNetworks?.map((allProfileNetwork: any,index: number) => {
+                                                                if ((allProfileNetwork.user_id_from == sessionStorage.getItem("authUserId") || allProfileNetwork.user_id_from == profile.user_id) && (allProfileNetwork.user_id_to == sessionStorage.getItem("authUserId") || allProfileNetwork.user_id_to == profile.user_id)) {
+                                                                    indexCounterArr.push(index);
+                                                                    if (allProfileNetwork.status == 2) {
+                                                                        if (allProfileNetwork.user_id_from == sessionStorage.getItem("authUserId")) {
+                                                                            return (
+                                                                                <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" key={allProfileNetwork.id}>
+                                                                                    <Typography variant="h6">
+                                                                                        Friend Request Sent
+                                                                                    </Typography>
+                                                                                    <PresentToAllIcon />
+                                                                                </ProfileEditIconButton>
+                                                                            )
+                                                                        }else{
+                                                                            if (allProfileNetwork.user_id_to == sessionStorage.getItem("authUserId")) {
+                                                                                return (
+                                                                                    <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" key={allProfileNetwork.id} onClick={() => handleFriendRequestAcceptance(allProfileNetwork)}>
+                                                                                        <Typography variant="h6">
+                                                                                            Accept Friend Request
+                                                                                        </Typography>
+                                                                                        <SwipeRightIcon />
+                                                                                    </ProfileEditIconButton>
+                                                                                )
+                                                                            }else{
+                                                                                return (
+                                                                                    <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" onClick={() => handleAddFriendClick(profile?.user_id)} key={allProfileNetwork.id}>
+                                                                                        <Typography variant="h6">
+                                                                                            Add Friend
+                                                                                        </Typography>
+                                                                                        <AddIcon fontSize="large" />
+                                                                                    </ProfileEditIconButton>
+                                                                                )
+                                                                            }
+                                                                        }
+                                                                    }else{
+                                                                        if (allProfileNetwork.status == 1) {
+                                                                            if (allProfileNetwork.user_id_from == sessionStorage.getItem("authUserId") || allProfileNetwork.user_id_to == sessionStorage.getItem("authUserId")) {
+                                                                                return (
+                                                                                    <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" key={allProfileNetwork.id}>
+                                                                                        <Typography variant="h6">
+                                                                                            Friends
+                                                                                        </Typography>
+                                                                                        <DoneIcon />
+                                                                                    </ProfileEditIconButton>
+                                                                                ) 
+                                                                            }else{
+
+                                                                            }
+                                                                        }else{
+                                                                            return (
+                                                                                <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" onClick={() => handleAddFriendClick(profile?.user_id)} key={allProfileNetwork.id}>
+                                                                                    <Typography variant="h6">
+                                                                                        Add Friend
+                                                                                    </Typography>
+                                                                                    <AddIcon fontSize="large" />
+                                                                                </ProfileEditIconButton>
+                                                                            )
+                                                                        }
+                                                                    }
+                                                                }else{
+                                                                    indexCounterArr2.push(index);
+                                                                    if (indexCounterArr2.length < 2 && indexCounterArr.length == 0 && index == allProfileNetworks.length - 1) {
+                                                                        return (
+                                                                            <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" onClick={() => handleAddFriendClick(profile?.user_id)} key={allProfileNetwork.id}>
+                                                                                <Typography variant="h6">
+                                                                                    Add Friend
+                                                                                </Typography>
+                                                                                <AddIcon fontSize="large" />
+                                                                            </ProfileEditIconButton>
+                                                                        )    
+                                                                    }
+                                                                }
+                                                            })
+                                                        }
                                                     </>
                                                 ) : (
                                                     <>
                                                         {
-                                                            profileNetworks.map((profileNetwork: any) => {
-                                                                if (profileNetwork.status == 2) {
-                                                                    if (profileNetwork.user_id_from == sessionStorage.getItem("authUserId")) {
-                                                                        return (
-                                                                            <ProfileEditIconButton aria-label="Add Friend" title="Add Friend">
-                                                                                <Typography variant="h6">
-                                                                                    Friend Request Sent
-                                                                                </Typography>
-                                                                                <PresentToAllIcon />
-                                                                            </ProfileEditIconButton>
-                                                                        )
-                                                                    }
-                                                                    if (profileNetwork.user_id_to == sessionStorage.getItem("authUserId")) {
-                                                                        return (
-                                                                            <ProfileEditIconButton aria-label="Add Friend" title="Add Friend">
-                                                                                <Typography variant="h6">
-                                                                                    Accept Friend Request
-                                                                                </Typography>
-                                                                                <SwipeRightIcon />
-                                                                            </ProfileEditIconButton>
-                                                                        )
-                                                                    }
+                                                            profileNetworks?.map((profileNetwork: any,index: number) => {
+                                                                const acceptedNetworks = allProfileNetworks.filter((allProfileNetwork: any) => ((allProfileNetwork.user_id_from == sessionStorage.getItem("authUserId") || allProfileNetwork.user_id_from == profile.user_id) && (allProfileNetwork.user_id_to == sessionStorage.getItem("authUserId") || allProfileNetwork.user_id_to == profile.user_id)));
+                                                                if (acceptedNetworks.length > 0) {
+                                                                    return acceptedNetworks?.map((allProfileNetwork: any) => {
+                                                                        if (allProfileNetwork.status == 2) {
+                                                                            if (allProfileNetwork.user_id_from == sessionStorage.getItem("authUserId")) {
+                                                                                return (
+                                                                                    <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" key={allProfileNetwork.id}>
+                                                                                        <Typography variant="h6">
+                                                                                            Friend Request Sent
+                                                                                        </Typography>
+                                                                                        <PresentToAllIcon />
+                                                                                    </ProfileEditIconButton>
+                                                                                )
+                                                                            }
+                                                                            if (allProfileNetwork.user_id_to == sessionStorage.getItem("authUserId")) {
+                                                                                return (
+                                                                                    <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" key={allProfileNetwork.id} onClick={() => handleFriendRequestAcceptance(allProfileNetwork)}>
+                                                                                        <Typography variant="h6">
+                                                                                            Accept Friend Request
+                                                                                        </Typography>
+                                                                                        <SwipeRightIcon />
+                                                                                    </ProfileEditIconButton>
+                                                                                )
+                                                                            }else{
+                                                                                return (
+                                                                                    <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" onClick={() => handleAddFriendClick(profile?.user_id)} key={allProfileNetwork.id}>
+                                                                                        <Typography variant="h6">
+                                                                                            Add Friend
+                                                                                        </Typography>
+                                                                                        <AddIcon fontSize="large" />
+                                                                                    </ProfileEditIconButton>
+                                                                                )
+                                                                            }
+                                                                        }else{
+                                                                            if (allProfileNetwork.status == 1) {
+                                                                                if (allProfileNetwork.user_id_from == sessionStorage.getItem("authUserId") || allProfileNetwork.user_id_to == sessionStorage.getItem("authUserId")) {
+                                                                                    return (
+                                                                                        <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" key={allProfileNetwork.id}>
+                                                                                            <Typography variant="h6">
+                                                                                                Friends
+                                                                                            </Typography>
+                                                                                            <DoneIcon />
+                                                                                        </ProfileEditIconButton>
+                                                                                    )   
+                                                                                }else{
+                                                                                    return (
+                                                                                        <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" onClick={() => handleAddFriendClick(profile?.user_id)} key={allProfileNetwork.id}>
+                                                                                            <Typography variant="h6">
+                                                                                                Add Friend
+                                                                                            </Typography>
+                                                                                            <AddIcon fontSize="large" />
+                                                                                        </ProfileEditIconButton>
+                                                                                    )
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    })    
                                                                 }else{
-                                                                    if (profileNetwork.status == 1) {
+                                                                    indexCounterArr.push(index);
+                                                                    if (indexCounterArr.length < 2) {
                                                                         return (
-                                                                            <ProfileEditIconButton aria-label="Add Friend" title="Add Friend">
+                                                                            <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" onClick={() => handleAddFriendClick(profile?.user_id)} key={profileNetwork.id}>
                                                                                 <Typography variant="h6">
-                                                                                    Friends
+                                                                                    Add Friend
                                                                                 </Typography>
-                                                                                <DoneIcon />
+                                                                                <AddIcon fontSize="large" />
                                                                             </ProfileEditIconButton>
                                                                         )
                                                                     }
-                                                                }
+                                                                }      
                                                             })
                                                         }
                                                     </>
@@ -337,12 +518,10 @@ const RootComp = () => {
                                     </ProfileTabs>
                                 </ProfileTabBox>
                                 <CustomProfileTabPanel value={value} index={0}>
-                                    <ProfileBody profilePosts={profilePosts} otherProfile={otherProfile} profileNetworks={profileNetworks} />
+                                    <ProfileBody profilePosts={profilePosts} otherProfile={profile} profileNetworks={profileNetworks} />
                                 </CustomProfileTabPanel>
                                 <CustomProfileTabPanel value={value} index={1}>
-                                    <Typography variant="h6">
-                                        Item 2
-                                    </Typography>
+                                    <ProfileFriends profileNetworks={profileNetworks} acceptedProfileNetworks={acceptedProfileNetworks} updateProfile={updateProfile} profile={profile} />
                                 </CustomProfileTabPanel>
                                 <CustomProfileTabPanel value={value} index={2}>
                                     <Typography variant="h6">
@@ -350,7 +529,7 @@ const RootComp = () => {
                                     </Typography>
                                 </CustomProfileTabPanel>
                                 <CustomProfileTabPanel value={value} index={3}>
-                                    <ProfileBody videoPosts={profileVideoPosts} />
+                                    <ProfileBody videoPosts={profileVideoPosts} otherProfile={profile} profileNetworks={profileNetworks} />
                                 </CustomProfileTabPanel>
                                 <CustomProfileTabPanel value={value} index={4}>
                                     <Grid container spacing={2}>

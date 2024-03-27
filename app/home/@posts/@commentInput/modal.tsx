@@ -29,11 +29,17 @@ const CommentInputModalForm = (  { post, authUser }: any ) => {
     const handleSubmit = async () => {
         const response = await createComment(formData);
         if (response.data == `Comment Created Successfully`) {
-            Swal.fire(`Comment Created Successfully`);
+            Swal.fire({
+                title: `Succcessful Comment Creation`,
+                text: `Comment Created Successfully`
+            });
             const currentUrl = window.location.pathname;
             router.push(currentUrl);
         }else{
-            Swal.fire(`Comment not created`);
+            Swal.fire({
+                title: `Unsuccessful Comment Creation`,
+                text: `Comment not created`
+            });
         }
     }
 

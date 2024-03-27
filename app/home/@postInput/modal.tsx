@@ -60,9 +60,15 @@ const PostInputModalForm = () => {
         fData.append('sessionData',JSON.stringify(sessionStorage.getItem("authUserId")));
         const newPostBool = await createPost(fData);
         if (Boolean(newPostBool)) {
-            Swal.fire(`Post Created Successfully`);
+            Swal.fire({
+                title: `Succuesful Post Creation`,
+                text: `Post Created Successfully`
+            });
         }else{
-            Swal.fire(`Post not created`);
+            Swal.fire({
+                title: `Unsuccessful Post Creation`,
+                text: `Post not created`
+            });
         }
     }
 
