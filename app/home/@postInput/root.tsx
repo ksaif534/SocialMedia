@@ -5,7 +5,8 @@ import ProfileLogo from '../@profileLogo/page';
 import { PostInputCard, ProfileGridItem } from './style'
 import PostInputModalForm from './modal'
 
-const RootComp = () => {
+const RootComp = (props: any) => {
+    const { group } = props;
     
     return (
         <>
@@ -16,7 +17,7 @@ const RootComp = () => {
                             <ProfileLogo name="SK" imageUrl="/images/beautiful-bg-custom.jpg" />
                         </ProfileGridItem>
                         <Grid item md={11} sm={11} xs={12}>
-                            <PostInputModalForm />
+                            <PostInputModalForm group={group} />
                         </Grid>
                     </Grid>
                 </CardContent>

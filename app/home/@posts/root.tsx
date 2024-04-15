@@ -10,7 +10,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Grid, Menu, MenuItem } from '@mui/material';
 import ProfileLogo from '../@profileLogo/page';
-import { ExpandMore, PostCard, TopAnswerCard, TopAnswerGrid, TopAnswerGridItem, TopAnswerTG, RelevantAnswersCard, RelevantAnswersGrid, RelevantAnswersGridItem, RelevantAnswersTG, ProfileGrid } from './style'
+import { ExpandMore, PostCard, RelevantAnswersCard, RelevantAnswersGrid, RelevantAnswersGridItem, RelevantAnswersTG, ProfileGrid } from './style'
 import CommentInputModalForm from './@commentInput/modal';
 import fetchUsers from "@/app/auth/login/fetchUsers";
 import PostEditModalForm from "./editModal";
@@ -109,9 +109,17 @@ const RootComp = (props: any) => {
     const handleCommentDelete = async (comment: any) => {
         const deleteCommentBool = await deleteComment(comment);
         if (Boolean(deleteCommentBool)) {
-            Swal.fire(`Comment Deleted Successfully`);
+            Swal.fire({
+                title: `Success`,
+                text: `Comment Deleted Successfully`,
+                icon: `success`
+            });
         }else{
-            Swal.fire(`Comment Not Deleted`);
+            Swal.fire({
+                title: `Failure`,
+                text: `Comment Not Deleted`,
+                icon: `error`
+            });
         }
     }
 
@@ -129,17 +137,23 @@ const RootComp = (props: any) => {
                                         }
                                         action={
                                         <div>
-                                            <IconButton aria-label="settings" onClick={handleVertIconClick}>
-                                                <MoreVertIcon />
-                                            </IconButton>
-                                            <Menu id="vertical-dropdown-menu" anchorEl={anchorEl} open={open} onClose={handleVertClose} MenuListProps={{ 'aria-labelledby': 'icon' }}>
-                                                <MenuItem>
-                                                    <PostEditModalForm post={post} />
-                                                </MenuItem>
-                                                <MenuItem onClick={() => handleDeletion(post)}>
-                                                    Delete Post
-                                                </MenuItem>
-                                            </Menu>
+                                            {
+                                                (post.user_id == sessionStorage.getItem("authUserId")) && (
+                                                    <>
+                                                        <IconButton aria-label="settings" onClick={handleVertIconClick}>
+                                                            <MoreVertIcon />
+                                                        </IconButton>
+                                                        <Menu id="vertical-dropdown-menu" anchorEl={anchorEl} open={open} onClose={handleVertClose} MenuListProps={{ 'aria-labelledby': 'icon' }}>
+                                                            <MenuItem>
+                                                                <PostEditModalForm post={post} />
+                                                            </MenuItem>
+                                                            <MenuItem onClick={() => handleDeletion(post)}>
+                                                                Delete Post
+                                                            </MenuItem>
+                                                        </Menu>       
+                                                    </>
+                                                )
+                                            }
                                         </div>
                                         }
                                         title={<Typography variant="h6">{post.title}</Typography>}

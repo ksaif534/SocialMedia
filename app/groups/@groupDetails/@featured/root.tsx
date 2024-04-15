@@ -1,17 +1,19 @@
 'use client'
-import { Avatar, CardActions, CardContent, CardHeader, CardMedia, Chip, Collapse, Grid, IconButton, InputAdornment, Menu, MenuItem, Typography } from "@mui/material"
-import { ChipStack, CommentInputGrid, CommentTextField, ExpandMore, GPCGridRightItem, GroupPostCard, MediaButtonBase, RelevantCommentCard, RelevantCommentGrid, RelevantCommentGridFirstItem, RelevantCommentGridItem, RelevantCommentTG } from "./style"
+//import { Avatar, CardActions, CardContent, CardHeader, CardMedia, Chip, Collapse, Grid, IconButton, InputAdornment, Menu, MenuItem, Typography } from "@mui/material"
+//import { ChipStack, CommentInputGrid, CommentTextField, ExpandMore, GPCGridRightItem, GroupPostCard, MediaButtonBase, RelevantCommentCard, RelevantCommentGrid, RelevantCommentGridFirstItem, RelevantCommentGridItem, RelevantCommentTG } from "./style"
 import { useState } from "react";
-import ProfileLogo from "@/app/home/@profileLogo/page"
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import ThumbUpIcon from '@mui/icons-material/ThumbUp';
-import CommentIcon from '@mui/icons-material/Comment';
-import ShareIcon from '@mui/icons-material/Share';
-import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
-import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+// import ProfileLogo from "@/app/home/@profileLogo/page"
+// import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+// import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+// import CommentIcon from '@mui/icons-material/Comment';
+// import ShareIcon from '@mui/icons-material/Share';
+// import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
+// import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
+// import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Discussion from "../@discussion/page";
 
-const RootComp = () => {
+const RootComp = (props: any) => {
+    const { group } = props;
     const [anchorGPCIconElement,setAnchorGPCIconElement] = useState<null | HTMLElement>(null);
     const [expanded,setExpanded] = useState(false);
     const GPCIconOpen = Boolean(anchorGPCIconElement);
@@ -30,7 +32,7 @@ const RootComp = () => {
     
     return (
         <>
-            <GroupPostCard>
+            {/* <GroupPostCard>
                 <CardHeader 
                 avatar={<Avatar src="/images/rasel-rana.jpeg" />}
                 title={
@@ -166,7 +168,8 @@ const RootComp = () => {
                         </CommentInputGrid>
                     </CardContent>
                 </Collapse>
-            </GroupPostCard>
+            </GroupPostCard> */}
+            <Discussion group={group} />
         </>
     )
 }

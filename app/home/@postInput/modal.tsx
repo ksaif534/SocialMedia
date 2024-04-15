@@ -1,13 +1,20 @@
 import { Backdrop, Box, Fade, Grid, Modal, Typography, MenuItem, FormControlLabel, Radio, Button } from "@mui/material"
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PostInputModalButtonBase, PostInputStyle, PostInputModalFormCard, PostInputModalFormCardContent, PostInputFieldsGrid , PostInputModalFormTextField, FormHeaderTG, PostInputModalFormSelect, PostInputModalFormsRadioGroup, VisuallyHiddenInput, PostSubmissionStyle } from "./style";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import createPost from "./createPost";
 import Swal from "sweetalert2";
 
-const PostInputModalForm = () => {
+const PostInputModalForm = (props: any) => {
+    const { group } = props;
+    let groupId: any;
+    if (group !== undefined) {
+        groupId = group?.id;
+    }else{
+        groupId = 1;
+    }
     const [open,setOpen] = useState(false);
-    const [formData,setFormData] = useState({ title: "", sub_title: "", description: "", type: 1, tags: "", is_share: 0, video_post_url: "", user_id: 1, group_id: 1 });
+    const [formData,setFormData] = useState({ title: "", sub_title: "", description: "", type: 1, tags: "", is_share: 0, video_post_url: "", user_id: 1, group_id: groupId, is_group: 0 });
     const [fileData,setFileData] = useState({ figure: null, thumbnail: null });
     const fData = new FormData();
 
@@ -170,6 +177,17 @@ const PostInputModalForm = () => {
                                     </Grid>
                                     <Grid item md={9} sm={9} xs={12}>
                                         <PostInputModalFormTextField title="Enter Video Post URL" placeholder="Video Post URL" name="video_post_url" value={formData.video_post_url} onChange={handleInputChange} />
+                                    </Grid>
+                                </PostInputFieldsGrid>
+                                <PostInputFieldsGrid container spacing={2}>
+                                    <Grid item md={3} sm={3} xs={12}>
+                                        <Typography variant="h6"><strong>Is it a Group Post?</strong></Typography>
+                                    </Grid>
+                                    <Grid item md={9} sm={9} xs={12}>
+                                        <PostInputModalFormsRadioGroup name="is_group" value={formData.is_group} onChange={handleInputChange}>
+                                            <FormControlLabel label="Yes" value={Number("1")} control={<Radio />} />
+                                            <FormControlLabel label="No" value={Number("0")} control={<Radio />} />
+                                        </PostInputModalFormsRadioGroup>
                                     </Grid>
                                 </PostInputFieldsGrid>
                                 <br />

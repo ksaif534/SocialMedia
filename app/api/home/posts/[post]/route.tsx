@@ -43,6 +43,7 @@ export const PUT = async (req: NextRequest) => {
             tags: bodyText.tags,
             is_share: Number(bodyText.is_share),
             video_post_url: bodyText.video_post_url,
+            is_group: bodyText.is_group,
             figure: figure,
             thumbnail: thumbnail
         }))

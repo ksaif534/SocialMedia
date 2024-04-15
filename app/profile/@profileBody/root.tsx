@@ -38,9 +38,10 @@ const itemData = [
 ];
 
 const RootComp = (props: any) => {
-    const { profilePosts, profile , otherProfile , videoPosts, profileNetworks } = props;
+    const { profilePosts, profile , otherProfile , videoPosts, acceptedProfileNetworks, recipientUser } = props;
     const router = useRouter();
     const [user,setUser] = useState({ id: 0, email: '', password: '', image: null, is_active: 0, name: '', phone: 0 });
+    let lengthMeasureArr: any = [];
 
     const editProfileDetails = () => {
         router.push(`/updateProfile/${profile.user_id}`);
@@ -125,20 +126,57 @@ const RootComp = (props: any) => {
                                 </CardContent>
                             </ProfilePhotosCard>
                             <FriendListCard>
-                                <CardHeader title={<Typography variant="h5" sx={{ justifyContent: 'center', alignItems: 'center', display: 'flex' }}><strong>{ profileNetworks?.length } Requested Friend(s)</strong></Typography>} />
+                                {
+                                    acceptedProfileNetworks.map((acceptedProfileNetwork: any,index: number) => {
+                                        if (acceptedProfileNetwork.user_id_from == profile?.user_id) {
+                                            lengthMeasureArr.push(index);
+                                        }else{
+                                            if (acceptedProfileNetwork.user_id_to == profile?.user_id) {
+                                                if (JSON.stringify(recipientUser) == '{}') {
+                                                    
+                                                }else{
+                                                    if (recipientUser?.id == acceptedProfileNetwork.user_id_from) {
+                                                        lengthMeasureArr.push(index);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    })
+                                }
+                                <CardHeader title={<Typography variant="h5" sx={{ justifyContent: 'center', alignItems: 'center', display: 'flex' }}><strong>{ lengthMeasureArr?.length } Requested Friend(s)</strong></Typography>} />
                                 <CardContent>
                                     <ImageList cols={3} rowHeight={164}>
                                         {
-                                            profileNetworks.map((profileNetwork: any) => {
-                                                return (
-                                                    <ImageListItem key={profileNetwork.id}>
-                                                        <img
-                                                            src={`images/${profileNetwork?.user?.image}`}
-                                                            alt={profileNetwork?.user?.image}
-                                                            loading="lazy"
-                                                        />
-                                                    </ImageListItem>
-                                                )
+                                            acceptedProfileNetworks.map((acceptedProfileNetwork: any) => {
+                                                if (acceptedProfileNetwork.user_id_from == profile?.user_id) {
+                                                    return (
+                                                        <ImageListItem key={acceptedProfileNetwork.id}>
+                                                            <img
+                                                                src={`images/${acceptedProfileNetwork?.user?.image}`}
+                                                                alt={acceptedProfileNetwork?.user?.image}
+                                                                loading="lazy"
+                                                            />
+                                                        </ImageListItem>
+                                                    )    
+                                                }else{
+                                                    if (acceptedProfileNetwork.user_id_to == profile?.user_id) {
+                                                        if (JSON.stringify(recipientUser) == '{}') {
+                                                            
+                                                        }else{
+                                                            if (recipientUser?.id == acceptedProfileNetwork.user_id_from) {
+                                                                return (
+                                                                    <ImageListItem key={acceptedProfileNetwork.id}>
+                                                                        <img
+                                                                            src={`images/${recipientUser?.image}`}
+                                                                            alt={acceptedProfileNetwork?.user?.image}
+                                                                            loading="lazy"
+                                                                        />
+                                                                    </ImageListItem>
+                                                                )
+                                                            }
+                                                        }
+                                                    }
+                                                }
                                             })
                                         }
                                     </ImageList>

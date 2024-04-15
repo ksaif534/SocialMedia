@@ -16,7 +16,7 @@ const CommentInputModalForm = (  { post, authUser }: any ) => {
             ...prevFormData,
             [name]: value
         }))
-        if (authUser.id !== undefined || post.post.id !== undefined) {
+        if (authUser?.id !== undefined || post?.post?.id !== undefined) {
             //Update User ID and Post ID
             setFormData((prevFormData) => ({
                 ...prevFormData,

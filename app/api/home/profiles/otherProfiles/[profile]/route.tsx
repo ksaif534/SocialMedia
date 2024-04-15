@@ -6,7 +6,8 @@ export const GET = async (req: NextRequest) => {
     const prisma = new PrismaClient();
     const otherProfiles = await prisma.profiles.findMany({
         include: {
-            user: true
+            user: true,
+            networks: true
         },
         where: {
             NOT: {

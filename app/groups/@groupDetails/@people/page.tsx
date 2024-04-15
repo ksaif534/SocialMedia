@@ -1,9 +1,11 @@
 import RootComp from "./root"
 
-const People = () => {
+const People = (props: any) => {
+    const { group } = props;
+
     return (
         <>
-            <RootComp />
+            <RootComp group={group} />
         </>
     )
 }

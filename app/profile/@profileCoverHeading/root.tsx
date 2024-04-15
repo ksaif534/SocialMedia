@@ -27,6 +27,7 @@ import fetchProfileNetworks from "./fetchProfileNetworks";
 import ProfileFriends from "../@profileFriends/page";
 import fetchAllProfileNetworks from "./fetchAllProfileNetworks";
 import fetchAcceptedProfileNetworks from "./fetchAcceptedProfileNetworks";
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -68,9 +69,12 @@ const RootComp = () => {
     const [allProfileNetworks,setAllProfileNetworks] = useState([]);
     const [acceptedProfileNetworks,setAcceptedProfileNetworks] = useState([]);
     const [toggleProfile,setToggleProfile] = useState(false);
+    const [initProfileState,setInitProfileState] = useState(true);
     const [value, setValue] = useState(0);
+    const [recipientUser,setRecipientUser] = useState({ id: 0, email: '', password: '', image: null, is_active: 0, name: '', phone: 0, profile: null });
     let indexCounterArr: any = [];
     let indexCounterArr2: any = [];
+    let profileCounterArr: any = [];
 
     useEffect(() => {
         fetchProfile(sessionStorage.getItem("authUserId")).then((profile: any) => setProfile(profile)); 
@@ -81,7 +85,10 @@ const RootComp = () => {
         fetchPendingNetworks(sessionStorage.getItem("authUserId")).then((pendingNetworks: any) => setPendingNetworks(pendingNetworks));
         fetchProfileNetworks(sessionStorage.getItem("authUserId")).then((profileNetworks: any) => setProfileNetworks(profileNetworks));
         fetchAllProfileNetworks(sessionStorage.getItem("authUserId")).then((allProfileNetworks: any) => setAllProfileNetworks(allProfileNetworks));
-        fetchAcceptedProfileNetworks(sessionStorage.getItem("authUserId")).then((acceptedProfileNetworks: any) => setAcceptedProfileNetworks(acceptedProfileNetworks));
+        fetchAcceptedProfileNetworks(sessionStorage.getItem("authUserId")).then((result: any) => {
+            setAcceptedProfileNetworks(result.acceptedNetworks);
+            setRecipientUser(result.recipientUser);
+        });
     },[])
 
     const handleProfileTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -113,8 +120,12 @@ const RootComp = () => {
         fetchProfileVideoPosts(otherProfile?.user_id).then((videoPosts: any) => setProfileVideoPosts(videoPosts));
         fetchProfileNetworks(otherProfile?.user_id).then((profileNetworks: any) => setProfileNetworks(profileNetworks));
         fetchAllProfileNetworks(otherProfile?.user_id).then((allProfileNetworks: any) => setAllProfileNetworks(allProfileNetworks));
-        fetchAcceptedProfileNetworks(otherProfile?.user_id).then((acceptedProfileNetworks: any) => setAcceptedProfileNetworks(acceptedProfileNetworks));
+        fetchAcceptedProfileNetworks(otherProfile?.user_id).then((result: any) => {
+            setAcceptedProfileNetworks(result.acceptedNetworks);
+            setRecipientUser(result.recipientUser);
+        });
         setToggleProfile(!toggleProfile);
+        setInitProfileState(false);
         indexCounterArr = [];
         indexCounterArr2 = [];
     }
@@ -123,6 +134,7 @@ const RootComp = () => {
         Swal.fire({
             title: `Friend Confirmation`,
             text: `Do you want to add ${pendingNetwork.user?.name} to your friend network?`,
+            icon: 'question',
             showCancelButton: true,
             confirmButtonText: `Yes`,
             denyButtonText: `No`
@@ -142,15 +154,25 @@ const RootComp = () => {
 
     const updateProfile = (newValue: any) => {
         setProfile(newValue);
-        console.log(newValue);
         fetchUser(newValue?.user_id).then((otherUser: any) => setUser(otherUser));
         fetchOtherProfiles(newValue?.user_id).then((otherProfiles: any) => setOtherProfiles(otherProfiles));
         fetchProfilePosts(newValue?.user_id).then((posts: any) => setProfilePosts(posts));
         fetchProfileVideoPosts(newValue?.user_id).then((videoPosts: any) => setProfileVideoPosts(videoPosts));
         fetchProfileNetworks(newValue?.user_id).then((profileNetworks: any) => setProfileNetworks(profileNetworks));
         fetchAllProfileNetworks(newValue?.user_id).then((allProfileNetworks: any) => setAllProfileNetworks(allProfileNetworks));
-        fetchAcceptedProfileNetworks(newValue?.user_id).then((acceptedProfileNetworks: any) => setAcceptedProfileNetworks(acceptedProfileNetworks));
+        fetchAcceptedProfileNetworks(newValue?.user_id).then((result: any) => {
+            setAcceptedProfileNetworks(result.acceptedNetworks);
+            setRecipientUser(result.recipientUser);
+        });
         setToggleProfile(!toggleProfile);
+        setInitProfileState(false);
+        indexCounterArr = [];
+        indexCounterArr2 = [];
+    }
+
+    const handleAllFriendsGeneration = () => {
+        setValue(1);
+        a11yProps(1);
     }
 
     return (
@@ -176,23 +198,75 @@ const RootComp = () => {
                                                 <strong>{profile?.firstname + " " + profile?.lastname}</strong>
                                             </ProfileTitleTG>
                                         </ProfileTitleGrid>
-                                        <Grid item md={2} sm={2} xs={12}>
+                                        <Grid item md={4} sm={4} xs={12}>
                                             <ProfileSubTitleTG variant="h6">
-                                                { otherProfiles?.length } Friend Network(s)
+                                                { acceptedProfileNetworks?.length } Friend(s)
                                             </ProfileSubTitleTG>
                                             <span style={{ display:'flex', justifyContent: 'center'}}>
                                                 {
-                                                    otherProfiles.map((otherProfile: any) => (
-                                                        <RoundedFirstSmallAvatar alt="Profile Image" src={`images/${otherProfile.user.image}`} onClick={() => handleOtherProfiles(otherProfile)} key={otherProfile.id}>
-
-                                                        </RoundedFirstSmallAvatar>       
-                                                    ))
+                                                    acceptedProfileNetworks.map((acceptedProfileNetwork: any,acceptedProfileNetworkIndex: number) => {
+                                                        if (acceptedProfileNetwork.user_id_from == profile?.user_id) {
+                                                            profileCounterArr.push(acceptedProfileNetworkIndex);
+                                                            if (profileCounterArr.length < 4) {
+                                                                return (
+                                                                    <RoundedFirstSmallAvatar alt="Profile Image" src={`images/${acceptedProfileNetwork.user?.image}`} onClick={() => handleOtherProfiles(acceptedProfileNetwork.profile)} key={acceptedProfileNetwork.id}>
+        
+                                                                    </RoundedFirstSmallAvatar>
+                                                                )   
+                                                            }
+                                                            if (profileCounterArr.length == 4) {
+                                                                return (
+                                                                    <ArrowRightIcon fontSize="large" key={acceptedProfileNetwork.id} onClick={handleAllFriendsGeneration} />
+                                                                )
+                                                            }
+                                                        }else{
+                                                            if (acceptedProfileNetwork.user_id_to == profile?.user_id) {
+                                                                if (JSON.stringify(recipientUser) == '{}') {
+                                                                    
+                                                                }else{
+                                                                    if (recipientUser?.id == acceptedProfileNetwork.user_id_from) {
+                                                                        profileCounterArr.push(acceptedProfileNetworkIndex);
+                                                                        if (profileCounterArr.length < 4) {
+                                                                            return (
+                                                                                <RoundedFirstSmallAvatar alt="Profile Image" src={`images/${recipientUser.image}`} onClick={() => handleOtherProfiles(recipientUser?.profile)} key={acceptedProfileNetwork.id}>
+                    
+                                                                                </RoundedFirstSmallAvatar>
+                                                                            )   
+                                                                        }
+                                                                        if (profileCounterArr.length == 4) {
+                                                                            return (
+                                                                                <ArrowRightIcon fontSize="large" key={acceptedProfileNetwork.id} onClick={handleAllFriendsGeneration} />
+                                                                            )
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    })
                                                 }
                                             </span>
+                                            {/* <span style={{ display:'flex', justifyContent: 'center'}}>
+                                                {
+                                                    otherProfiles.map((otherProfile: any,index: number) => {
+                                                        if (index < 4) {
+                                                            return (
+                                                                <RoundedFirstSmallAvatar alt="Profile Image" src={`images/${otherProfile.user.image}`} onClick={() => handleOtherProfiles(otherProfile)} key={otherProfile.id}>
+    
+                                                                </RoundedFirstSmallAvatar>
+                                                            )   
+                                                        }
+                                                        if (index == 4) {
+                                                            return (
+                                                                <ArrowRightIcon fontSize="large" key={otherProfile.id} onClick={handleAllFriendsGeneration} />
+                                                            )
+                                                        }       
+                                                    })
+                                                }
+                                            </span> */}
                                         </Grid>
-                                        <Grid item md={3} sm={3} xs={12}>
+                                        <Grid item md={2} sm={2} xs={12}>
                                             {
-                                                (Number(profile?.user_id) == Number(user.id)) ? (
+                                                (Number(profile?.user_id) == Number(sessionStorage.getItem("authUserId"))) ? (
                                                     <>
                                                         <ProfileEditIconButton aria-label="Edit Profile" title="Edit Profile (Heading)" onClick={handleProfileUpdate}>
                                                             <Typography variant="h6">
@@ -203,17 +277,25 @@ const RootComp = () => {
                                                     </>
                                                 ) : (
                                                     <>
-                                                        <ProfileEditIconButton aria-label="Create Profile" title="Edit Profile (Heading)" onClick={handleProfileCreate}>
-                                                            <Typography variant="h6">
-                                                                Create Profile
-                                                            </Typography>
-                                                            <EditIcon fontSize="large" />
-                                                        </ProfileEditIconButton>        
+                                                        {
+                                                            (initProfileState) ? (
+                                                                <ProfileEditIconButton aria-label="Create Profile" title="Edit Profile (Heading)" onClick={handleProfileCreate}>
+                                                                    <Typography variant="h6">
+                                                                        Create Profile
+                                                                    </Typography>
+                                                                    <EditIcon fontSize="large" />
+                                                                </ProfileEditIconButton>       
+                                                            ) : (
+                                                                <>
+                                                                    
+                                                                </>
+                                                            )
+                                                        }        
                                                     </>
                                                 )
                                             }
                                         </Grid>
-                                        <Grid item md={3} sm={3} xs={12}>
+                                        <Grid item md={2} sm={2} xs={12}>
                                             {
                                                 (pendingNetworks.length == 1) && (
                                                     <>
@@ -247,10 +329,10 @@ const RootComp = () => {
                                     </ProfileTabs>
                                 </ProfileTabBox>
                                 <CustomProfileTabPanel value={value} index={0}>
-                                    <ProfileBody profilePosts={profilePosts} profile={profile} profileNetworks={profileNetworks} />
+                                    <ProfileBody profilePosts={profilePosts} profile={profile} acceptedProfileNetworks={acceptedProfileNetworks} recipientUser={recipientUser} />
                                 </CustomProfileTabPanel>
                                 <CustomProfileTabPanel value={value} index={1}>
-                                    <ProfileFriends profileNetworks={profileNetworks} acceptedProfileNetworks={acceptedProfileNetworks} updateProfile={updateProfile} allProfileNetworks={allProfileNetworks} profile={profile} />
+                                    <ProfileFriends profileNetworks={profileNetworks} acceptedProfileNetworks={acceptedProfileNetworks} updateProfile={updateProfile} allProfileNetworks={allProfileNetworks} profile={profile} recipientUser={recipientUser} />
                                 </CustomProfileTabPanel>
                                 <CustomProfileTabPanel value={value} index={2}>
                                     <Typography variant="h6">
@@ -319,20 +401,68 @@ const RootComp = () => {
                                         </ProfileTitleGrid>
                                         <Grid item md={3} sm={3} xs={12}>
                                             <ProfileSubTitleTG variant="h6">
-                                                { otherProfiles?.length } Friend Network(s)
+                                                { acceptedProfileNetworks?.length } Friend(s)
                                             </ProfileSubTitleTG>
                                             <span style={{ display:'flex', justifyContent: 'center'}}>
+                                                {
+                                                    acceptedProfileNetworks.map((acceptedProfileNetwork: any,acceptedProfileNetworkIndex: number) => {
+                                                        if (acceptedProfileNetwork.user_id_from == profile?.user_id) {
+                                                            profileCounterArr.push(acceptedProfileNetworkIndex);
+                                                            if (profileCounterArr.length < 4) {
+                                                                return (
+                                                                    <RoundedFirstSmallAvatar alt="Profile Image" src={`images/${acceptedProfileNetwork.user?.image}`} onClick={() => handleOtherProfiles(acceptedProfileNetwork.profile)} key={acceptedProfileNetwork.id}>
+        
+                                                                    </RoundedFirstSmallAvatar>
+                                                                )   
+                                                            }
+                                                            if (profileCounterArr.length == 4) {
+                                                                return (
+                                                                    <ArrowRightIcon fontSize="large" key={acceptedProfileNetwork.id} onClick={handleAllFriendsGeneration} />
+                                                                )
+                                                            }
+                                                        }else{
+                                                            if (acceptedProfileNetwork.user_id_to == profile?.user_id) {
+                                                                if (JSON.stringify(recipientUser) == '{}') {
+                                                                    
+                                                                }else{
+                                                                    if (recipientUser?.id == acceptedProfileNetwork.user_id_from) {
+                                                                        profileCounterArr.push(acceptedProfileNetworkIndex);
+                                                                        if (profileCounterArr.length < 4) {
+                                                                            return (
+                                                                                <RoundedFirstSmallAvatar alt="Profile Image" src={`images/${recipientUser.image}`} onClick={() => handleOtherProfiles(recipientUser?.profile)} key={acceptedProfileNetwork.id}>
+                    
+                                                                                </RoundedFirstSmallAvatar>
+                                                                            )   
+                                                                        }
+                                                                        if (profileCounterArr.length == 4) {
+                                                                            return (
+                                                                                <ArrowRightIcon fontSize="large" key={acceptedProfileNetwork.id} onClick={handleAllFriendsGeneration} />
+                                                                            )
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    })
+                                                }
+                                            </span>
+                                            {/* <span style={{ display:'flex', justifyContent: 'center'}}>
                                                 {
                                                     (profileNetworks?.length > 0) && (
                                                         <>
                                                             {
                                                                 profileNetworks?.map((profileNetwork: any) => {
-                                                                    otherProfiles?.map((otherPfl: any) => {
-                                                                        if (Number(profileNetwork.user_id_to) == Number(profile.user_id)) {
+                                                                    return otherProfiles?.map((otherPfl: any,index: number) => {
+                                                                        if (index < 4) {
                                                                             return (
-                                                                                <RoundedFirstSmallAvatar alt="Profile Image" src={`images/${otherPfl.user.image}`} onClick={() => handleOtherProfiles(otherPfl)} key={otherPfl.user_id}>
+                                                                                <RoundedFirstSmallAvatar alt="Profile Image" src={`images/${otherPfl.user.image}`} onClick={() => handleOtherProfiles(otherPfl)} key={otherPfl.id}>
 
                                                                                 </RoundedFirstSmallAvatar>  
+                                                                            )
+                                                                        }
+                                                                        if (index == 4) {
+                                                                            return (
+                                                                                <ArrowRightIcon fontSize="large" key={otherPfl.id} />
                                                                             )
                                                                         }
                                                                     })
@@ -341,7 +471,7 @@ const RootComp = () => {
                                                         </>
                                                     )
                                                 }
-                                            </span>
+                                            </span> */}
                                         </Grid>
                                         <Grid item md={1} sm={12} xs={12}></Grid>
                                         <Grid item md={4} sm={12} xs={12}>
@@ -518,10 +648,10 @@ const RootComp = () => {
                                     </ProfileTabs>
                                 </ProfileTabBox>
                                 <CustomProfileTabPanel value={value} index={0}>
-                                    <ProfileBody profilePosts={profilePosts} otherProfile={profile} profileNetworks={profileNetworks} />
+                                    <ProfileBody profilePosts={profilePosts} otherProfile={profile} acceptedProfileNetworks={acceptedProfileNetworks} recipientUser={recipientUser} />
                                 </CustomProfileTabPanel>
                                 <CustomProfileTabPanel value={value} index={1}>
-                                    <ProfileFriends profileNetworks={profileNetworks} acceptedProfileNetworks={acceptedProfileNetworks} updateProfile={updateProfile} profile={profile} />
+                                    <ProfileFriends profileNetworks={profileNetworks} acceptedProfileNetworks={acceptedProfileNetworks} updateProfile={updateProfile} recipientUser={recipientUser} profile={profile} />
                                 </CustomProfileTabPanel>
                                 <CustomProfileTabPanel value={value} index={2}>
                                     <Typography variant="h6">

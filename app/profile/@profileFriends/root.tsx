@@ -7,9 +7,12 @@ import { useState } from "react";
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import CancelIcon from '@mui/icons-material/Cancel';
 import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
 
 const RootComp = (props: any) => {
-    const { updateProfile, acceptedProfileNetworks, profile } = props;
+    const router = useRouter();
+    const { updateProfile, acceptedProfileNetworks, profile, recipientUser } = props;
+    
     const [anchorEl,setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
 
@@ -21,9 +24,14 @@ const RootComp = (props: any) => {
         setAnchorEl(null);
     }
 
-    const handleProfileClick = (otherProfileNetworks: any) => {
-        const pfl = otherProfileNetworks.profile;
-        updateProfile(pfl);
+    const handleProfileClick = (profileNetwork: any,recipientUser: any = {}) => {
+        if (JSON.stringify(recipientUser) == '{}') {
+            const pfl = profileNetwork?.profile;
+            updateProfile(pfl);
+        }else{
+            const pfl = recipientUser?.profile;
+            updateProfile(pfl);
+        }
     }
 
     const handleUnfriendProfile = (otherProfileNetwork: any) => {
@@ -41,6 +49,10 @@ const RootComp = (props: any) => {
                 Swal.fire(`Not Unfriended ${otherProfileNetwork.user.name}`);
             }
         });
+    }
+
+    const handleFriendFinding = () => {
+        router.push(`/friends`);
     }
 
     return (
@@ -72,7 +84,7 @@ const RootComp = (props: any) => {
                                 </Grid>
                                 <Grid item md={4} sm={4} xs={12}>
                                     <div style={{ justifyContent: 'center', alignItems: 'center', display: 'flex' }}>
-                                        <FindFriendsButton aria-label="Find Friends" title="Find Friends Outside Your Network">
+                                        <FindFriendsButton aria-label="Find Friends" title="Find Friends Outside Your Network" onClick={handleFriendFinding}>
                                             <SearchIcon fontSize="large" />
                                             <Typography variant="h6">
                                                 Find Friends
@@ -127,7 +139,55 @@ const RootComp = (props: any) => {
                                             </Grid>
                                         )   
                                     }else{
-                                            
+                                        if (profileNetwork.user_id_to == profile.user_id) {
+                                            if (JSON.stringify(recipientUser) == '{}') {
+                                                
+                                            }else{
+                                                if (recipientUser.id == profileNetwork.user_id_from) {
+                                                    return (
+                                                        <Grid item md={6} sm={6} xs={12} key={profileNetwork.id}>
+                                                            <FriendListItemPaper elevation={3}>
+                                                                <Grid container spacing={2}>
+                                                                    <Grid item md={4} sm={4} xs={12}>
+                                                                        <FriendsAvatar src={`images/${recipientUser?.image}`} onClick={() => handleProfileClick(profileNetwork,recipientUser)} />
+                                                                    </Grid>
+                                                                    <Grid item md={4} sm={4} xs={12}>
+                                                                        <FriendsNamesTG>
+                                                                            { recipientUser?.name }
+                                                                        </FriendsNamesTG>
+                                                                    </Grid>
+                                                                    <Grid item md={4} sm={4} xs={12}>
+                                                                        <div style={{ justifyContent: 'center', alignItems: 'center', display: 'flex' }}>
+                                                                            <IconButton onClick={handleMenuClick} id="basic-icon-button" aria-controls={open ? 'basic-menu' : undefined } aria-haspopup="true" aria-expanded={ open ? 'true' : undefined}>
+                                                                                <MoreHorizIcon fontSize="large" />
+                                                                            </IconButton>
+                                                                            <Menu 
+                                                                            id="basic-menu" 
+                                                                            anchorEl={anchorEl} 
+                                                                            open={open} 
+                                                                            onClose={handleMenuClose}
+                                                                            MenuListProps={{
+                                                                                'aria-labelledby': 'basic-icon-button'
+                                                                            }}
+                                                                            >
+                                                                                <MenuItem onClick={() => handleUnfriendProfile(profileNetwork)}>
+                                                                                    <PersonRemoveIcon fontSize="large" />
+                                                                                    Unfriend
+                                                                                </MenuItem>
+                                                                                <MenuItem>
+                                                                                    <CancelIcon fontSize="large" />
+                                                                                    Unfollow
+                                                                                </MenuItem>
+                                                                            </Menu>
+                                                                        </div>
+                                                                    </Grid>
+                                                                </Grid>
+                                                            </FriendListItemPaper>
+                                                        </Grid>
+                                                    )   
+                                                }
+                                            }    
+                                        }
                                     }
                                 })
                             }

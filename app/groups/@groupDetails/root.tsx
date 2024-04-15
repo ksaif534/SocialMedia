@@ -1,12 +1,20 @@
 'use client'
-import { Box, CardMedia, Tab, Typography } from "@mui/material"
-import { DownIconButton, GroupCoverHeadingCard, GroupCoverHeadingDivider, GroupCoverHeadingEndDiv, GroupCoverHeadingStartDiv, GroupCoverHeadingTabWrapperDiv, GroupCoverHeadingTabs, GroupCoverHeadingWrapper, GroupCoverHeadingWrapperDiv, InviteButton } from "./style"
-import { useState } from "react"
+import { Box, CardMedia, Menu, MenuItem, Tab, Typography } from "@mui/material"
+import { DownIconButton, GroupCoverHeadingCard, GroupCoverHeadingDivider, GroupCoverHeadingEndDiv, GroupCoverHeadingStartDiv, GroupCoverHeadingTabWrapperDiv, GroupCoverHeadingTabs, GroupCoverHeadingWrapper, GroupCoverHeadingWrapperDiv, InviteButton, JoinButton } from "./style"
+import { useEffect, useState } from "react"
 import Discussion from "./@discussion/page"
 import Featured from "./@featured/page"
 import People from "./@people/page"
 import AddIcon from '@mui/icons-material/Add';
+import DoneIcon from '@mui/icons-material/Done';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
+import fetchUser from "@/app/profile/@profileCoverHeading/fetchUser"
+import storeGroupMember from "./storeGroupMember"
+import Swal from "sweetalert2"
+import fetchGroupMembers from "./fetchGroupMembers"
+import leaveGroup from "./leaveGroup"
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -40,31 +48,160 @@ const a11yProps = (index: number) => {
     }
 }
 
-export const RootComp = () => {
+export const RootComp = (props: any) => {
+    const { group } = props;
     const [groupHeadingTabValue,setGroupHeadingTabValue] = useState(0);
+    const [anchorEl,setAnchorEl] = useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
+    const [user,setUser] = useState({ id: 0, name: '', email: '', password: '', image: null, phone: 0, is_active: 0 });
+    const [groupMembers,setGroupMembers] = useState([]);
+    let counter = 0;
+
+    useEffect(() => {
+        fetchUser(sessionStorage.getItem("authUserId")).then((user: any) => setUser(user));
+        fetchGroupMembers().then((groupMembers: any) => setGroupMembers(groupMembers));
+    },[])
+
+    const handleJoinedButtonClick = (event: any) => {
+        setAnchorEl(event.currentTarget);
+    }
+
+    const handleJoinedButtonClose = () => {
+        setAnchorEl(null);
+    }
     
     const handleTabChange = (event: React.SyntheticEvent, newTabValue: number) => {
         setGroupHeadingTabValue(newTabValue);
+    }
+
+    const handleGroupJoin = async () => {
+        const formData = {
+            userId: user?.id,
+            userName: user?.name,
+            groupId: group?.id
+        }
+        Swal.fire({
+            title: `Group Join Confirmation`,
+            text: `Are you sure you want to join the group?`,
+            confirmButtonText: `Yes`,
+            denyButtonText: `No`,
+            showDenyButton: true
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                const isGroupmember = await storeGroupMember(formData);
+                if (Boolean(isGroupmember)) {
+                    Swal.fire({
+                        title: `Success`,
+                        text: `Group Successfully Joined`,
+                        icon: `success`
+                    });
+                }else{
+                    Swal.fire({
+                        title: `Failure`,
+                        text: `Sorry, Could not join group`,
+                        icon: `error`
+                    });
+                }
+            }else{
+                Swal.fire({
+                    title: `Failure`,
+                    text: `Sorry, Could not join group`,
+                    icon: `error`
+                });
+            }
+        })
+    }
+
+    const handleGroupLeave = async () => {
+        Swal.fire({
+            title: `Group Leave Confirmation`,
+            text: `Are you sure you want to leave this group?`,
+            icon: `question`,
+            confirmButtonText: `Yes`,
+            denyButtonText: `No`,
+            showDenyButton: true
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                const groupLeave = await leaveGroup(group?.id,user?.id);
+                if (Boolean(groupLeave)) {
+                    Swal.fire({
+                        title: `Success`,
+                        text: `Group Left Successfully`,
+                        icon: `success`
+                    });
+                }else{
+                    Swal.fire({
+                        title: `Failure`,
+                        text: `Sorry, Failed to Leave Group`,
+                        icon: `error`
+                    });
+                }
+            }else{
+                Swal.fire({
+                    title: `Failure`,
+                    text: `Sorry, Failed to Leave Group`,
+                    icon: `error`
+                });
+            }
+        })
     }
 
     return (
         <>
             <GroupCoverHeadingWrapper>
                 <GroupCoverHeadingCard>
-                    <CardMedia image="/images/circular-teaching-system.jpeg" title="Circular Teaching System" sx={{ height: 250 }} />
+                    <CardMedia image={`images/${group.group_photo}`} title={group.name} sx={{ height: 250 }} />
                 </GroupCoverHeadingCard>
                 <GroupCoverHeadingWrapperDiv>
                     <GroupCoverHeadingStartDiv>
-                        <Typography variant="h5"><strong>Circular Teaching System</strong></Typography>
+                        <Typography variant="h5"><strong>{ group.name }</strong></Typography>
                     </GroupCoverHeadingStartDiv>
                     <GroupCoverHeadingEndDiv>
-                        <InviteButton variant="outlined">
+                        {/* <InviteButton variant="contained">
                             <AddIcon fontSize="medium" />
                             <Typography variant="h6">Invite</Typography>
-                        </InviteButton>
-                        <DownIconButton>
+                        </InviteButton> */}
+                        {
+                            groupMembers.map((groupMember: any, index: number) => {
+                                if (groupMember.group_id == group.id && groupMember.user_id == sessionStorage.getItem("authUserId")) {
+                                    counter++;
+                                }
+                                if (counter > 0 && index == groupMembers.length - 1) {
+                                    return (
+                                        <div key={groupMember.id}>
+                                            <JoinButton id="joined-button-basic" aria-controls={ open ? 'basic-menu' : undefined } aria-haspopup="true" aria-expanded={ open ? 'true': undefined } onClick={handleJoinedButtonClick} variant="contained" color="success">
+                                                <DoneIcon fontSize="large" />
+                                                <Typography variant="h6">Joined</Typography>
+                                                <ArrowDropDownIcon fontSize="large" />
+                                            </JoinButton>
+                                            <Menu 
+                                            id="joined-button-basic-menu" 
+                                            anchorEl={anchorEl} 
+                                            open={open} 
+                                            onClose={handleJoinedButtonClose}
+                                            MenuListProps={{ 'aria-labelledby': 'joined-button-basic' }}
+                                            >
+                                                <MenuItem onClick={handleGroupLeave}>
+                                                    <CancelPresentationIcon fontSize="large" />
+                                                    Leave Group
+                                                </MenuItem>
+                                            </Menu>
+                                        </div>
+                                    )
+                                }
+                            })
+                        }
+                        {
+                            (counter == 0) && (
+                                <JoinButton variant="contained" color="success" onClick={handleGroupJoin}>
+                                    <AddIcon fontSize="medium" />
+                                    <Typography variant="h6">Join Group</Typography>
+                                </JoinButton>
+                            )
+                        }
+                        {/* <DownIconButton>
                             <KeyboardArrowDownIcon fontSize="medium" />
-                        </DownIconButton>
+                        </DownIconButton> */}
                     </GroupCoverHeadingEndDiv>
                 </GroupCoverHeadingWrapperDiv>
                 <GroupCoverHeadingTabWrapperDiv>
@@ -77,13 +214,13 @@ export const RootComp = () => {
                                 <Tab label="People" {...a11yProps(2)} />
                             </GroupCoverHeadingTabs>
                             <GroupHeadingTabPanel value={groupHeadingTabValue} index={0}>
-                                <Discussion />
+                                <Discussion group={group} />
                             </GroupHeadingTabPanel>
                             <GroupHeadingTabPanel value={groupHeadingTabValue} index={1}>
-                                <Featured />
+                                <Featured group={group} />
                             </GroupHeadingTabPanel>
                             <GroupHeadingTabPanel value={groupHeadingTabValue} index={2}>
-                                <People />
+                                <People group={group} />
                             </GroupHeadingTabPanel>
                         </Box>
                     </Box>

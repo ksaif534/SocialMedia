@@ -1,9 +1,10 @@
 import RootComp from "./root"
 
-const GroupDetails = () => {
+const GroupDetails = (props: any) => {
+    const { group } = props;
     return (
         <>
-            <RootComp />    
+            <RootComp group={group} />    
         </>
     )
 }

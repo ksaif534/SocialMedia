@@ -1,12 +1,13 @@
+
 import React from "react";
 import RootComp from './root'
 
 const ProfileFriends = (props: any) => {
-    const { profileNetworks, updateProfile, acceptedProfileNetworks, profile } = props;
+    const { updateProfile, acceptedProfileNetworks, profile, recipientUser } = props;
 
     return (
         <>
-            <RootComp profileNetworks={profileNetworks} updateProfile={updateProfile} acceptedProfileNetworks={acceptedProfileNetworks} profile={profile} />
+            <RootComp updateProfile={updateProfile} acceptedProfileNetworks={acceptedProfileNetworks} profile={profile} recipientUser={recipientUser} />
         </>
     )
 }

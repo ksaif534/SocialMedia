@@ -19,6 +19,9 @@ model users {
   posts             posts[]
   profile           profiles?
   networks          networks[]
+  groups            groups[]
+  groupModerators   groupModerators[]
+  groupMembers      groupMembers[]
 }
 
 model posts {
@@ -34,6 +37,7 @@ model posts {
   figure          String @db.VarChar(255)
   thumbnail       String @db.VarChar(255)
   video_post_url  String @db.VarChar(255)
+  is_group        Int @default(0)
   comments        comments[]
   user            users @relation(fields: [user_id], references: [id])
 }
@@ -74,4 +78,34 @@ model networks {
   status          Int
   user            users @relation(fields: [user_id_to], references: [id])
   profile         profiles @relation(fields: [profile_id], references: [id])
+}
+
+model groups {
+  id              Int @id @default(autoincrement())
+  user_id         Int
+  name            String @db.VarChar(255)
+  description     String @db.VarChar(255)
+  status          Int
+  group_photo     String @db.VarChar(255) @default("")
+  group_mods      String @db.VarChar(255) @default("")
+  user            users @relation(fields: [user_id], references: [id])
+  groupModerators groupModerators[]
+  groupMembers    groupMembers[]
+}
+
+model groupModerators {
+  id              Int @id @default(autoincrement())
+  user_id         Int
+  group_id        Int
+  user            users @relation(fields: [user_id], references: [id])
+  groups          groups[]
+}
+
+model groupMembers {
+  id              Int @id @default(autoincrement())
+  user_id         Int
+  group_id        Int
+  name            String @db.VarChar(255)
+  user            users @relation(fields: [user_id], references: [id])
+  groups          groups[]
 }

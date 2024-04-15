@@ -7,7 +7,8 @@ import AppBarComp from './appbar';
 import DrawerComp from './drawer';
 import { useRouter } from 'next/navigation';
 
-const RootComp = () => {
+const RootComp = (props: any) => {
+    const { page } = props;
     const router = useRouter();
     const theme = useThemeHook();
     const [anchorEl, setAnchorEl] = getAnchorState(null);
@@ -31,7 +32,7 @@ const RootComp = () => {
     return (
         <>
             <AppBarComp anchorEl={anchorEl} setAnchorEl={setAnchorEl} msgAnchorEl={msgAnchorEl} setMsgAnchorEl={setMsgAnchorEl} notifAnchorEl={notifAnchorEl} setNotifAnchorEl={setNotifAnchorEl} open={open} setOpen={setOpen} auth={auth} setAuth={setAuth} />
-            <DrawerComp open={open} setOpen={setOpen} theme={theme} />
+            <DrawerComp open={open} setOpen={setOpen} theme={theme} page={page} />
             <RenderMenu anchorEl={anchorEl} setAnchorEl={setAnchorEl} />
             <RenderMobileMenu />
             <RenderMsgMenu msgAnchorEl={msgAnchorEl} setMsgAnchorEl={setMsgAnchorEl} />

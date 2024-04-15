@@ -68,24 +68,24 @@ export const MediaButtonBase = styled(ButtonBase)(() => () => ({
     width: '100%',
 }))
 
-export const TopCommentGrid = styled(Grid)(({theme}) => ({
+export const CommentsGrid = styled(Grid)(({theme}) => ({
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
 }))
 
-export const TopCommentGridFirstItem = styled(Grid)(({theme}) => ({
+export const CommentsGridFirstItem = styled(Grid)(({theme}) => ({
     marginBottom: theme.spacing(2),
     justifyContent: 'center',
     alignItems: 'center',
     display: 'flex',
 }))
 
-export const TopCommentGridItem = styled(Grid)(({theme}) => ({
+export const CommentsGridItem = styled(Grid)(({theme}) => ({
     marginBottom: theme.spacing(2),
     paddingRight: theme.spacing(2),
 }))
 
-export const TopCommentCard = styled(Card)(({theme}) => ({
+export const CommentsCard = styled(Card)(({theme}) => ({
     borderRadius: theme.spacing(1),
 }))
 

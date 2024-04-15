@@ -21,5 +21,25 @@ export const GET = async (req: NextRequest) => {
             status: 1
         }
     });
-    return new Response(JSON.stringify(acceptedNetworks));
+    let recipientUser: any;
+    let index: any = 0;
+    for await(const acceptedNetwork of acceptedNetworks) {
+        if (acceptedNetwork.user_id_to == Number(profileUserId)) {
+            index++;
+            if (index < 2) {
+                recipientUser = await prisma.users.findFirst({
+                    include: {
+                        profile: true
+                    },
+                    where: {
+                        id: Number(acceptedNetwork.user_id_from)
+                    }
+                });    
+            }    
+        }
+    }
+    return new Response(JSON.stringify({
+        acceptedNetworks: acceptedNetworks,
+        recipientUser: recipientUser
+    }));
 }

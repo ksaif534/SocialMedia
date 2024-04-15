@@ -1,5 +1,5 @@
 'use client'
-import { Avatar, Button, Divider, Grid, IconButton, TextField, Typography, styled } from "@mui/material"
+import { Avatar, Button, Card, CardContent, Divider, Grid, IconButton, RadioGroup, Select, TextField, Typography, styled } from "@mui/material"
 
 export const SidebarWrapper = styled('div')(() => ({
     height: '100vh',
@@ -139,4 +139,67 @@ export const GroupIconButton = styled(IconButton)(() => ({
 export const GroupDetailsWrapper = styled('div')(({theme}) => ({
     marginTop: theme.spacing(10),
     backgroundColor: 'inherit',
+}))
+
+export const GroupPostInputStyle = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+};
+
+export const GroupInputModalFormCard = styled(Card)(({theme}) => ({
+    marginTop: theme.spacing(5),
+    backgroundColor: 'inherit',
+    justifyContent: 'center',
+    alignItems: 'center',
+    display: 'flex',
+}))
+
+export const GroupInputModalFormCardContent = styled(CardContent)(({theme}) => ({
+    backgroundColor: 'rgba(32,32,32,1)',
+    color: 'rgba(255,255,255,1)',
+    borderRadius: theme.spacing(2),
+    width: '50%',
+    height: 'auto',
+    overflow: 'auto',
+    maxHeight: '600px'
+}))
+
+export const FormHeaderTG = styled(Typography)(({theme}) => ({
+    justifyContent: 'center',
+    alignItems: 'center',
+    display: 'flex',
+    marginBottom: theme.spacing(2),
+    color: 'rgba(255,255,255,1)'
+}))
+
+export const GroupInputFieldsGrid = styled(Grid)(({theme}) => ({
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(2)
+}))
+
+export const GroupInputModalFormTextField = styled(TextField)(() => ({
+    width: '100%',
+    backgroundColor: 'rgba(255,255,255,1)'
+}))
+
+export const GroupInputModalFormSelect = styled(Select)(() => ({
+    width: '100%',
+    backgroundColor: 'rgba(255,255,255,1)'
+}))
+
+export const GroupInputModalFormsRadioGroup = styled(RadioGroup)(() => ({
+    color: 'rgba(255,255,255,1)'
+}))
+
+export const GroupSubmissionStyle = styled('div')(() => ({
+    justifyContent: 'center',
+    alignItems: 'center',
+    display: 'flex'
 }))

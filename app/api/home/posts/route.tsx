@@ -64,6 +64,7 @@ export const POST = async (req: NextRequest | any, res: NextResponse | any) => {
                 tags: bodyText.tags,
                 is_share: Number(bodyText.is_share),
                 video_post_url: bodyText.video_post_url,
+                is_group: Number(bodyText.is_group),
                 figure: figure,
                 thumbnail: thumbnail
             }

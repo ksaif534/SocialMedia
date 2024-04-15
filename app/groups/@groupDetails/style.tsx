@@ -70,6 +70,10 @@ export const InviteButton = styled(Button)(({theme}) => ({
     marginRight: theme.spacing(2),
 }))
 
+export const JoinButton = styled(Button)(({theme}) => ({
+    marginRight: theme.spacing(2),
+}))
+
 export const DownIconButton = styled(IconButton)(({theme}) => ({
     backgroundColor: 'rgba(128,128,128,0.5)',
     color: '#ffffff',

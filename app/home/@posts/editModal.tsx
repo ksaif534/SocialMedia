@@ -8,7 +8,7 @@ import Swal from "sweetalert2";
 
 const PostEditModalForm = ({ post }: any) => {
     const [open,setOpen] = useState(false);
-    const [formData,setFormData] = useState({ user_id: post.user_id, group_id: post.group_id, title: post.title, sub_title: post.sub_title, description: post.description, type: post.type, tags: post.tags, is_share: post.is_share, video_post_url: post.video_post_url  });
+    const [formData,setFormData] = useState({ user_id: post.user_id, group_id: post.group_id, title: post.title, sub_title: post.sub_title, description: post.description, type: post.type, tags: post.tags, is_share: post.is_share, video_post_url: post.video_post_url, is_group: post.is_group  });
     const [fileData,setFileData] = useState({ figure: post.figure, thumbnail: post.thumbnail });
     const fData = new FormData();
 
@@ -181,6 +181,17 @@ const PostEditModalForm = ({ post }: any) => {
                                     </Grid>
                                     <Grid item md={9} sm={9} xs={12}>
                                         <PostInputModalFormTextField title="Enter Video Post URL" placeholder="Video Post URL" name="video_post_url" value={formData.video_post_url} onChange={handleInputChange} />
+                                    </Grid>
+                                </PostInputFieldsGrid>
+                                <PostInputFieldsGrid container spacing={2}>
+                                    <Grid item md={3} sm={3} xs={12}>
+                                        <Typography variant="h6"><strong>Is it a Group Post?</strong></Typography>
+                                    </Grid>
+                                    <Grid item md={9} sm={9} xs={12}>
+                                        <PostInputModalFormsRadioGroup name="is_group" value={formData.is_group} onChange={handleInputChange}>
+                                            <FormControlLabel label="Yes" value={Number("1")} control={<Radio />} />
+                                            <FormControlLabel label="No" value={Number("0")} control={<Radio />} />
+                                        </PostInputModalFormsRadioGroup>
                                     </Grid>
                                 </PostInputFieldsGrid>
                                 <br />
