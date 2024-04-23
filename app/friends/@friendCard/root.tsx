@@ -6,6 +6,9 @@ import fetchOtherProfiles from "@/app/profile/@profileCoverHeading/fetchOtherPro
 import fetchAllProfileNetworks from "@/app/profile/@profileCoverHeading/fetchAllProfileNetworks";
 import fetchProfileNetworks from "@/app/profile/@profileCoverHeading/fetchProfileNetworks";
 import fetchTotalNetworks from './fetchTotalNetworks'
+import Swal from "sweetalert2";
+import postNetworkStatus from "@/app/profile/@profileCoverHeading/postNetworkStatus";
+import updatePendingNetwork from "@/app/profile/@profileCoverHeading/updatePendingNetwork";
 
 const RootComp = () => {
     const [otherProfiles,setOtherProfiles] = useState([]);
@@ -22,6 +25,73 @@ const RootComp = () => {
         fetchProfileNetworks(sessionStorage.getItem("authUserId")).then((profileNetworks: any) => setProfileNetworks(profileNetworks));
         fetchTotalNetworks().then((totalNetworks: any) => setTotalNetworks(totalNetworks));
     },[])
+
+    const handleAddFriendClick = async (user: any) => {
+        Swal.fire({
+            title: `Add Friend Confirmation`,
+            text: `Are you sure you want to add ${user.name} in your friend network?`,
+            confirmButtonText: `Yes`,
+            denyButtonText: `No`,
+            showDenyButton: true
+        }).then(async (result: any) => {
+            if (result.isConfirmed) {
+                const networkStatus = await postNetworkStatus(sessionStorage.getItem("authUserId"),user.id);
+                if (Boolean(networkStatus)) {
+                    Swal.fire({
+                        title: `Success`,
+                        text: `Friend Added Successfully`,
+                        icon: `success`
+                    });
+                }else{
+                    Swal.fire({
+                        title: `Failure`,
+                        text: `Sorry, couldn't add ${user.name} in your friend network`,
+                        icon: `error`
+                    });
+                }
+            }else{
+                Swal.fire({
+                    title: `Failure`,
+                    text: `Sorry, couldn't add ${user.name} in your friend network`,
+                    icon: `error`
+                });
+            }
+        })
+    }
+
+    const handleFriendRequestAcceptance = (pendingNetwork: any) => {
+        Swal.fire({
+            title: `Friend Confirmation`,
+            text: `Do you want to add ${pendingNetwork.user?.name} to your friend network?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: `Yes`,
+            denyButtonText: `No`
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                const updatedNetwork = await updatePendingNetwork(sessionStorage.getItem("authUserId"),pendingNetwork);
+                if (Boolean(updatedNetwork)) {
+                    Swal.fire({
+                        title: `Success`,
+                        text: `Friend Network Updated Successfully`,
+                        icon: `success`
+                    });
+                }else{
+                    Swal.fire({
+                        title: `Failure`,
+                        text: `Friend Network Not Updated`,
+                        icon: `error`
+                    });
+                }
+            }else{
+                Swal.fire({
+                    title: `Failure`,
+                    text: `You decided to reject the invitation to connect for now`,
+                    icon: `error`
+                });
+            }
+        });
+    }
 
     return (
         <>
@@ -90,7 +160,7 @@ const RootComp = () => {
                                                                                             if (allProfileNetwork.user_id_to == sessionStorage.getItem("authUserId")) {
                                                                                                 return (
                                                                                                     <div key={allProfileNetwork.id}>
-                                                                                                        <FriendCardButton variant="contained" color="success">
+                                                                                                        <FriendCardButton variant="contained" color="success" onClick={() => handleFriendRequestAcceptance(allProfileNetwork)}>
                                                                                                             <Typography variant="body2" align="center">
                                                                                                                 Accept Friend Request
                                                                                                             </Typography>
@@ -105,7 +175,7 @@ const RootComp = () => {
                                                                                             }else{
                                                                                                 return (
                                                                                                     <div key={allProfileNetwork.id}>
-                                                                                                        <FriendCardButton variant="contained" color="success">
+                                                                                                        <FriendCardButton variant="contained" color="success" onClick={() => handleAddFriendClick(allProfileNetwork.user)}>
                                                                                                             <Typography variant="body2" align="center">
                                                                                                                 Add Friend
                                                                                                             </Typography>
@@ -157,7 +227,7 @@ const RootComp = () => {
                                                                                         if (indexCounterArr.length == 0) {
                                                                                             return (
                                                                                                 <div key={allProfileNetwork.id}>
-                                                                                                    <FriendCardButton variant="contained" color="success">
+                                                                                                    <FriendCardButton variant="contained" color="success" onClick={() => handleAddFriendClick(allProfileNetwork.user)}>
                                                                                                         <Typography variant="body2" align="center">
                                                                                                             Add Friend
                                                                                                         </Typography>
@@ -179,7 +249,7 @@ const RootComp = () => {
                                                                     </>
                                                                 ) : (
                                                                     <div key={otherProfile.id}>
-                                                                        <FriendCardButton variant="contained" color="success">
+                                                                        <FriendCardButton variant="contained" color="success" onClick={() => handleAddFriendClick(otherProfile.user)}>
                                                                             <Typography variant="body2" align="center">
                                                                                 Add Friend
                                                                             </Typography>
@@ -220,7 +290,7 @@ const RootComp = () => {
                                                                                     if (acceptedNetwork.user_id_to == sessionStorage.getItem("authUserId")) {
                                                                                         return (
                                                                                             <div key={acceptedNetwork.id}>
-                                                                                                <FriendCardButton variant="contained" color="success">
+                                                                                                <FriendCardButton variant="contained" color="success" onClick={() => handleFriendRequestAcceptance(acceptedNetwork)}>
                                                                                                     <Typography variant="body2" align="center">
                                                                                                         Accept Friend Request
                                                                                                     </Typography>
@@ -235,7 +305,7 @@ const RootComp = () => {
                                                                                     }else{
                                                                                         return (
                                                                                             <div key={acceptedNetwork.id}>
-                                                                                                <FriendCardButton variant="contained" color="success">
+                                                                                                <FriendCardButton variant="contained" color="success" onClick={() => handleAddFriendClick(acceptedNetwork.user)}>
                                                                                                     <Typography variant="body2" align="center">
                                                                                                         Add Friend
                                                                                                     </Typography>
@@ -264,7 +334,7 @@ const RootComp = () => {
                                                                                     }else{
                                                                                         return (
                                                                                             <div key={acceptedNetwork.id}>
-                                                                                                <FriendCardButton variant="contained" color="success">
+                                                                                                <FriendCardButton variant="contained" color="success" onClick={() => handleAddFriendClick(acceptedNetwork.user)}>
                                                                                                     <Typography variant="body2" align="center">
                                                                                                         Add Friend
                                                                                                     </Typography>

@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Badge, Box, IconButton, Toolbar, Typography } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import MailIcon from '@mui/icons-material/Mail'
@@ -9,9 +9,18 @@ import LogoDevIcon from '@mui/icons-material/LogoDev'
 import { AccountCircle } from '@mui/icons-material'
 import { menuId, msgMenuId, notifMenuId } from './menu'
 import { AppBar, Search, SearchIconWrapper, StyledInputBase } from './style'
+import fetchNewNotificationsFromDB from './fetchNewNotificationsFromDB'
+import fetchNewMsgNotificationsFromDB from './fetchNewMsgNotificationsFromDB'
 
 export const AppBarComp = (props: any) => {
     const { setAnchorEl, setMsgAnchorEl, setNotifAnchorEl, open, setOpen, auth } = props;
+    const [newNotif,setNewNotif] = useState([]);
+    const [newMsgNotif,setNewMsgNotif] = useState([]);
+
+    useEffect(() => {
+        fetchNewNotificationsFromDB(sessionStorage.getItem("authUserId")).then((notif: any) => setNewNotif(notif));
+        fetchNewMsgNotificationsFromDB(sessionStorage.getItem("authUserId")).then((msgNotif: any) => setNewMsgNotif(msgNotif));
+    },[])
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -70,13 +79,13 @@ export const AppBarComp = (props: any) => {
                 <>
                     <div>
                         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                            <IconButton size="large" aria-label="show 4 new mails" aria-controls={msgMenuId} aria-haspopup="true" color="inherit" onClick={handleMsgIconClick}>
-                                <Badge badgeContent={4} color="error">
+                            <IconButton size="large" aria-label={`show ${newMsgNotif?.length} new mails`} aria-controls={msgMenuId} aria-haspopup="true" color="inherit" onClick={handleMsgIconClick}>
+                                <Badge badgeContent={Number(newMsgNotif?.length)} color="error">
                                     <MailIcon />
                                 </Badge>
                             </IconButton>
-                            <IconButton size="large" aria-label="show 17 new notifications" aria-controls={notifMenuId} aria-haspopup="true" color="inherit" onClick={handleNotifOnClick}>
-                                <Badge badgeContent={17} color="error">
+                            <IconButton size="large" aria-label={`show ${newNotif?.length} new notifications`} aria-controls={notifMenuId} aria-haspopup="true" color="inherit" onClick={handleNotifOnClick}>
+                                <Badge badgeContent={Number(newNotif?.length)} color="error">
                                     <NotificationsIcon />
                                 </Badge>
                             </IconButton>

@@ -22,6 +22,8 @@ model users {
   groups            groups[]
   groupModerators   groupModerators[]
   groupMembers      groupMembers[]
+  messages          messages[]
+  notifications     notifications[]
 }
 
 model posts {
@@ -108,4 +110,24 @@ model groupMembers {
   name            String @db.VarChar(255)
   user            users @relation(fields: [user_id], references: [id])
   groups          groups[]
+}
+
+model messages {
+  id              Int @id @default(autoincrement())
+  user_id         Int
+  target_user_id  Int
+  message         String @db.VarChar(255)
+  is_allow        Int
+  user            users @relation(fields: [user_id], references: [id])
+}
+
+model notifications {
+  id              Int @id @default(autoincrement())
+  user_id         Int
+  type            Int
+  notifiable_type Int
+  notifiable_id   Int
+  data            String @db.VarChar(255)
+  read_at         DateTime? 
+  user            users @relation(fields: [user_id], references: [id])
 }

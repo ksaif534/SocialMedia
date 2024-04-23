@@ -106,9 +106,17 @@ const RootComp = () => {
     const handleAddFriendClick = async (otherProfileUserId: any) => {
         const networkStatus = await postNetworkStatus(sessionStorage.getItem("authUserId"),otherProfileUserId);
         if (Boolean(networkStatus)) {
-            Swal.fire(`Friend Added Successfully`);
+            Swal.fire({
+                title: `Success`,
+                text: `Friend Added Successfully`,
+                icon: `success`
+            });
         }else{
-            Swal.fire(`Friend Not Added`);
+            Swal.fire({
+                title: `Failure`,
+                text: `Sorry, couldn't add ${user.name} in your friend network`,
+                icon: `error`
+            });
         }
     }
 

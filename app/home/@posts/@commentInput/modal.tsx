@@ -4,6 +4,8 @@ import { useState } from "react";
 import createComment from "./createComment";
 import Swal from "sweetalert2";
 import { useRouter } from 'next/navigation';
+import * as PusherPushNotifications from "@pusher/push-notifications-web";
+import sendNotification from "./sendNotification";
 
 const CommentInputModalForm = (  { post, authUser }: any ) => {
     const router = useRouter();
@@ -29,6 +31,7 @@ const CommentInputModalForm = (  { post, authUser }: any ) => {
     const handleSubmit = async () => {
         const response = await createComment(formData);
         if (response.data == `Comment Created Successfully`) {
+            sendNotification(authUser,post);
             Swal.fire({
                 title: `Succcessful Comment Creation`,
                 text: `Comment Created Successfully`
