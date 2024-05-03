@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
-import { ModalMessageChatButton, ModalMessageChatCard, ModalMessageChatCardContent, ModalMessageChatFormTextField, ModalMessageChatGrid, ModalMessageChatsButtonBase, ModalMessagePaper, ModalMessageStyle } from "./style"
-import { Backdrop, Box, Fade, Grid, Modal, Typography } from "@mui/material";
+import { ModalMessageChatButton, ModalMessageChatCard, ModalMessageChatCardContent, ModalMessageChatFormTextField, ModalMessageChatGrid, ModalMessageChatGridIconButton, ModalMessageChatGridItemGrid, ModalMessageChatsButtonBase, ModalMessagePaper, ModalMessageStyle } from "./style"
+import { Backdrop, Box, Fade, Grid, IconButton, Menu, MenuItem, Modal, Typography } from "@mui/material";
 import ProfileLogo from "../@profileLogo/page";
 import Pusher from "pusher-js";
 import fetchUser from "@/app/profile/@profileCoverHeading/fetchUser";
 import sendMessage from "./sendMessage";
 import fetchUserMessages from "./fetchUserMessages";
 import sendMsgNotification from "./sendMsgNotification";
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import removeMsg from "./removeMsg";
+import Swal from "sweetalert2";
 
 const ModalMessageChats = (props: any) => {
     const { user } = props;
@@ -15,6 +18,8 @@ const ModalMessageChats = (props: any) => {
     const [chats,setChats] = useState([]);
     let chatsArr: any = [...chats];
     const [messageToSend,setMessageToSend] = useState("");
+    const [removeMsgMenuAnchorEl,setRemoveMsgMenuAnchorEl] = useState<null | HTMLElement>(null);
+    const removeMsgMenuOpen = Boolean(removeMsgMenuAnchorEl);
 
     useEffect(() => {
         fetchUser(sessionStorage.getItem("authUserId")).then((user: any) => setSender(user));
@@ -82,15 +87,40 @@ const ModalMessageChats = (props: any) => {
         });
     }
 
+    const handleMsgMenuRemoveClick = (event: any) => {
+        setRemoveMsgMenuAnchorEl(event.currentTarget);
+    }
+
+    const handleMsgMenuRemoveClose = () => {
+        setRemoveMsgMenuAnchorEl(null);
+    }
+
+    const handleMsgRemove = async (chatMsg: any) => {
+        const msgRemove = await removeMsg(chatMsg);
+        if (Boolean(msgRemove)) {
+            Swal.fire({
+                title: `Success`,
+                text: `Message Deleted`,
+                icon: `success`
+            });
+        }else{
+            Swal.fire({
+                title: `Failure`,
+                text: `Sorry, Couldn't delete message`,
+                icon: `error`
+            });
+        }
+    }
+
     return (
         <>
             <ModalMessageChatsButtonBase onClick={handleOpen}>
                 <Grid container spacing={2}>
-                    <Grid item md={3} sm={3} xs={12}>
+                    <Grid item md={2} sm={2} xs={12}>
                         <ProfileLogo name={user.name} imageUrl={`images/${user.image}`} />
                     </Grid>
-                    <Grid item md={9} sm={9} xs={12}>
-                        <Typography variant="h6">{ user.name }</Typography>    
+                    <Grid item md={10} sm={10} xs={12}>
+                        <Typography variant="h6"><strong>{ user.name }</strong></Typography>    
                     </Grid>
                 </Grid>
             </ModalMessageChatsButtonBase>
@@ -107,9 +137,29 @@ const ModalMessageChats = (props: any) => {
                                                     (chat?.user_id == sessionStorage.getItem("authUserId") || chat?.recipientUserId == sessionStorage.getItem("authUserId")) ? (
                                                         <>
                                                             <Grid item md={11} sm={11} xs={12}>
-                                                                <ModalMessagePaper elevation={3}>
-                                                                    <p>{ chat.message }</p>
-                                                                </ModalMessagePaper>
+                                                                <ModalMessageChatGridItemGrid container spacing={2}>
+                                                                    <Grid item md={10} sm={10} xs={12}>
+                                                                        <ModalMessagePaper elevation={3}>
+                                                                            <p>{ chat.message }</p>
+                                                                        </ModalMessagePaper>
+                                                                    </Grid>
+                                                                    <Grid item md={2} sm={2} xs={12}>
+                                                                        {
+                                                                            (chat?.user_id == sessionStorage.getItem("authUserId")) && (
+                                                                                <ModalMessageChatGridIconButton onClick={handleMsgMenuRemoveClick} aria-controls={ removeMsgMenuOpen ? 'basic-msg-menu': undefined } aria-haspopup="true" aria-expanded={ removeMsgMenuOpen ? 'true' : undefined }>
+                                                                                    <MoreVertIcon fontSize="medium" />
+                                                                                </ModalMessageChatGridIconButton>
+                                                                            )
+                                                                        }
+                                                                        <Menu id="basic-update-msg-menu" anchorEl={removeMsgMenuAnchorEl} open={removeMsgMenuOpen} onClose={handleMsgMenuRemoveClose} MenuListProps={{ 'aria-labelledby': 'basic-icon-button' }}>
+                                                                            <MenuItem onClick={() => handleMsgRemove(chat)}>
+                                                                                <Typography variant="body2">
+                                                                                    Delete Message
+                                                                                </Typography>
+                                                                            </MenuItem>
+                                                                        </Menu>
+                                                                    </Grid>
+                                                                </ModalMessageChatGridItemGrid>
                                                             </Grid>
                                                             <Grid item md={1} sm={1} xs={12}>
                                                                 {
@@ -133,9 +183,29 @@ const ModalMessageChats = (props: any) => {
                                                                 }
                                                             </Grid>
                                                             <Grid item md={11} sm={11} xs={12}>
-                                                                <ModalMessagePaper elevation={3}>
-                                                                    <p>{ chat.message }</p>
-                                                                </ModalMessagePaper>
+                                                                <ModalMessageChatGridItemGrid container spacing={2} sx={{ justifyContent: 'center', alignItems: 'center', display: 'flex' }}> 
+                                                                    <Grid item md={2} sm={2} xs={12}>
+                                                                        {
+                                                                            (chat?.user_id == sessionStorage.getItem("authUserId")) && (
+                                                                                <ModalMessageChatGridIconButton onClick={handleMsgMenuRemoveClick} id="basic-icon-button" aria-controls={ removeMsgMenuOpen ? 'basic-msg-menu': undefined } aria-haspopup="true" aria-expanded={ removeMsgMenuOpen ? 'true' : undefined }>
+                                                                                    <MoreVertIcon fontSize="medium" />
+                                                                                </ModalMessageChatGridIconButton>
+                                                                            )
+                                                                        }
+                                                                        <Menu id="basic-update-msg-menu" anchorEl={removeMsgMenuAnchorEl} open={removeMsgMenuOpen} onClose={handleMsgMenuRemoveClose} MenuListProps={{ 'aria-labelledby': 'basic-icon-button' }}>
+                                                                            <MenuItem onClick={() => handleMsgRemove(chat)}>
+                                                                                <Typography variant="body2">
+                                                                                    Delete Message
+                                                                                </Typography>
+                                                                            </MenuItem>
+                                                                        </Menu>
+                                                                    </Grid>
+                                                                    <Grid item md={10} sm={10} xs={12}>
+                                                                        <ModalMessagePaper elevation={3}>
+                                                                            <p>{ chat.message }</p>
+                                                                        </ModalMessagePaper>
+                                                                    </Grid>
+                                                                </ModalMessageChatGridItemGrid>
                                                             </Grid>       
                                                         </>
                                                     )

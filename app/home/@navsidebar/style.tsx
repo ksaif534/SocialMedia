@@ -2,7 +2,7 @@
 import { styled, alpha, useTheme, Theme, CSSObject } from '@mui/material/styles';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import MuiDrawer from '@mui/material/Drawer';
-import { Button, ButtonBase, Card, CardContent, Grid, InputBase, Paper, TextField } from '@mui/material';
+import { Button, ButtonBase, Card, CardContent, Grid, IconButton, InputBase, Paper, TextField } from '@mui/material';
 
 const drawerWidth = 240;
 
@@ -118,7 +118,18 @@ export const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export const ModalMessageChatsButtonBase = styled(ButtonBase)(({theme}) => ({
-  borderRadius: theme.spacing(4),
+  marginTop: theme.spacing(1),
+  marginBottom: theme.spacing(1),
+  borderRadius: theme.spacing(2),
+  justifyContent: 'center',
+  alignItems: 'center',
+  display: 'flex',
+  [theme.breakpoints.down('md')]: {
+      display: 'none'
+  },
+  [theme.breakpoints.down('sm')]: {
+      display: 'none'
+  },
   width: '100%'
 }));
 
@@ -165,6 +176,19 @@ export const ModalMessageChatButton = styled(Button)(({theme}) => ({
 
 export const ModalMessageChatGrid = styled(Grid)(({ theme }) => ({
   marginTop: theme.spacing(1)
+}))
+
+export const ModalMessageChatGridItemGrid = styled(Grid)(({ theme }) => ({
+  justifyContent: 'center',
+  alignItems: 'center', 
+  display: 'flex'
+}))
+
+export const ModalMessageChatGridIconButton = styled(IconButton)(({ theme }) => ({
+  backgroundColor: 'rgba(123,123,123,0.7)', 
+  '&:hover': { 
+    backgroundColor: 'rgba(123,123,123,0.5)' 
+  }
 }))
 
 export const ModalMessagePaper = styled(Paper)(({ theme}) => ({

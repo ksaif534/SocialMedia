@@ -24,6 +24,8 @@ model users {
   groupMembers      groupMembers[]
   messages          messages[]
   notifications     notifications[]
+  likes             likes[]
+  shares            shares[]
 }
 
 model posts {
@@ -42,6 +44,8 @@ model posts {
   is_group        Int @default(0)
   comments        comments[]
   user            users @relation(fields: [user_id], references: [id])
+  likes           likes[]
+  shares          shares[]
 }
 
 model comments {
@@ -119,6 +123,7 @@ model messages {
   message         String @db.VarChar(255)
   is_allow        Int
   user            users @relation(fields: [user_id], references: [id])
+  notification    notifications?
 }
 
 model notifications {
@@ -126,8 +131,28 @@ model notifications {
   user_id         Int
   type            Int
   notifiable_type Int
-  notifiable_id   Int
+  notifiable_id   Int @unique
   data            String @db.VarChar(255)
   read_at         DateTime? 
   user            users @relation(fields: [user_id], references: [id])
+  message         messages @relation(fields: [notifiable_id], references: [id], onDelete: Cascade)
+}
+
+model likes {
+  id              Int @id @default(autoincrement())
+  user_id         Int
+  post_id         Int
+  is_count        Int
+  user            users @relation(fields: [user_id], references: [id])
+  post            posts @relation(fields: [post_id], references: [id])
+}
+
+model shares {
+  id              Int @id @default(autoincrement())
+  user_id         Int
+  post_id         Int
+  is_count        Int
+  shared          Int
+  user            users @relation(fields: [user_id], references: [id])
+  post            posts @relation(fields: [post_id], references: [id])
 }

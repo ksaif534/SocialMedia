@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Badge, Box, IconButton, Toolbar, Typography } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import MailIcon from '@mui/icons-material/Mail'
@@ -11,9 +11,12 @@ import { menuId, msgMenuId, notifMenuId } from './menu'
 import { AppBar, Search, SearchIconWrapper, StyledInputBase } from './style'
 import fetchNewNotificationsFromDB from './fetchNewNotificationsFromDB'
 import fetchNewMsgNotificationsFromDB from './fetchNewMsgNotificationsFromDB'
+import searchPosts from './searchPosts'
+import { SearchContext } from './root'
 
 export const AppBarComp = (props: any) => {
     const { setAnchorEl, setMsgAnchorEl, setNotifAnchorEl, open, setOpen, auth } = props;
+    const { srchPosts,setSrchPosts, srchKey, setSrchKey } = useContext(SearchContext);
     const [newNotif,setNewNotif] = useState([]);
     const [newMsgNotif,setNewMsgNotif] = useState([]);
 
@@ -36,6 +39,12 @@ export const AppBarComp = (props: any) => {
     
     const handleNotifOnClick = (event: React.MouseEvent<HTMLElement>) => {
         setNotifAnchorEl(event.currentTarget);
+    }
+
+    const searchResults = async (event: any) => {
+        const searchedPosts = await searchPosts(event.target.value);
+        setSrchPosts(searchedPosts);
+        setSrchKey(event.target.value);
     }
     
     return (
@@ -72,6 +81,8 @@ export const AppBarComp = (props: any) => {
                     <StyledInputBase
                     placeholder="Search…"
                     inputProps={{ 'aria-label': 'search' }}
+                    name="search"
+                    onChange={searchResults}
                     />
                 </Search>
             {

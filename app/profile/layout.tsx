@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import { Grid } from '@mui/material'
+import ProfileRootLayout from './root'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -23,16 +23,7 @@ const ProfileLayout = ({
     return (
         <div>
             { children }
-            <Grid container spacing={2}>
-                <Grid item md={12} sm={12} xs={12}>
-                    <div style={{ justifyContent: 'center' }}>
-                        {navbar}
-                    </div>
-                    <div style={{ marginTop: '20px', marginBottom: '20px', justifyContent: 'center' }}>
-                        {profileCoverHeading}
-                    </div>
-                </Grid>
-            </Grid>
+            <ProfileRootLayout navbar={navbar} profileCoverHeading={profileCoverHeading} profileBody={profileBody} />
         </div>
     )
 }

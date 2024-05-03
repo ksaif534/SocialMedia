@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from "react";
+import { useState, useEffect, createContext, useContext } from "react";
 import { AppBar, Badge, Box, IconButton, Toolbar, Typography } from "@mui/material";
 import { BoxIconButton, MiddleBox, Search, SearchIconWrapper, StyledInputBase } from "./style";
 import { menuId, mobileMenuId, msgMenuId, notifMenuId, RenderMenu, RenderMobileMenu, RenderMsgMenu, RenderNotifMenu } from "./menu";
@@ -10,14 +10,30 @@ import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import HomeIcon from '@mui/icons-material/Home';
-import VideoCameraBackIcon from '@mui/icons-material/VideoCameraBack';
 import GroupsIcon from '@mui/icons-material/Groups';
 import { useRouter } from "next/navigation";
-import fetchProfileVideoPosts from "../@profileCoverHeading/fetchProfileVideoPosts";
+import fetchProfileUserPosts from "./fetchProfileUserPosts";
+import { SearchGroupPostContext } from "@/app/groups/@navbar/page";
+import fetchGroupPosts from "./fetchGroupPosts";
+
+interface ProfileSearchProps {
+    srchProfilePosts: Array<any>,
+    setSrchProfilePosts: (newSearchProfilePosts: any) => void,
+    srchProfileKey: string,
+    setSrchProfileKey: (newSearchKey: any) => void
+}
+
+export const ProfileSearchContext = createContext<ProfileSearchProps>({
+    srchProfilePosts: [],
+    setSrchProfilePosts: () => {},
+    srchProfileKey: '',
+    setSrchProfileKey: () => {}
+})
 
 const RootComp = () => {
     const router = useRouter();
-
+    const { setSrchProfilePosts, setSrchProfileKey } = useContext(ProfileSearchContext);
+    const {  setSrchGrpPosts, setSrchGrpPostKey } = useContext(SearchGroupPostContext);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
     const [anchorMsgEl,setAnchorMsgEl] = useState<null | HTMLElement>(null);
@@ -57,6 +73,20 @@ const RootComp = () => {
     const handleGoToHome = () => {
         router.push(`/home`);
     }
+
+    const searchProfilePosts = async (event: any) => {
+        const currentUrl = window.location.href;
+        if (currentUrl == 'http://localhost:3000/profile') {
+            setSrchProfileKey(event.target.value);
+            const searchProfilePosts = await fetchProfileUserPosts(sessionStorage.getItem("authUserId"),event.target.value);
+            setSrchProfilePosts(searchProfilePosts);    
+        }
+        if (currentUrl == 'http://localhost:3000/groups') {
+            setSrchGrpPostKey(event.target.value);
+            const searchGrpPosts = await fetchGroupPosts(event.target.value);
+            setSrchGrpPosts(searchGrpPosts);
+        }
+    }
     
     return (
         <>
@@ -87,6 +117,7 @@ const RootComp = () => {
                             <StyledInputBase
                             placeholder="Search…"
                             inputProps={{ 'aria-label': 'search' }}
+                            onChange={searchProfilePosts}
                             />
                         </Search>
                         <MiddleBox>

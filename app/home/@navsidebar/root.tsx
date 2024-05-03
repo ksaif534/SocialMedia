@@ -1,11 +1,25 @@
 'use client'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState, createContext } from 'react'
 import { RenderMenu, RenderMobileMenu, RenderMsgMenu, RenderNotifMenu, getAuthUserState, getUsersState } from './menu';
 import { getAnchorState, getMsgAnchorState, getNotifAnchorState } from './menu';
 import { initOpenState, authState, useThemeHook } from './misc';
 import AppBarComp from './appbar';
 import DrawerComp from './drawer';
 import { useRouter } from 'next/navigation';
+
+interface SearchContextProps {
+    srchPosts: Array<any>,
+    setSrchPosts: (newSrchPost: any) => void,
+    srchKey: string,
+    setSrchKey: (newSrchKey: any) => void
+}
+
+export const SearchContext = createContext<SearchContextProps>({
+    srchPosts: [],
+    setSrchPosts: () => {},
+    srchKey: '',
+    setSrchKey: () => {}
+})
 
 const RootComp = (props: any) => {
     const { page } = props;

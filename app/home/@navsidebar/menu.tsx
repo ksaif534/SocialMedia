@@ -13,6 +13,7 @@ import fetchNewNotificationsFromDB from './fetchNewNotificationsFromDB'
 import fetchNewMsgNotificationsFromDB from './fetchNewMsgNotificationsFromDB'
 import makeNotificationRead from './makeNotificationRead'
 import Swal from 'sweetalert2'
+import makeMsgNotificationAsRead from './makeMsgNotificationAsRead'
 
 export const menuId = 'primary-search-account-menu';
 export const mobileMenuId = 'primary-search-account-menu-mobile';
@@ -171,11 +172,13 @@ export const RenderMobileMenu = () => {
 export const RenderMsgMenu = (props: any) => {
     const { msgAnchorEl, setMsgAnchorEl } = props;
     const [user,setUser] = useState({ id: 0, name: '', email: '', password: '', image: null, phone: 0, is_active: 0 });
+    const [newMsgNotif,setNewMsgNotif] = useState([]);
     const [users,setUsers] = useState([]);
 
     useEffect(() => {
         fetchUser(sessionStorage.getItem("authUserId")).then((user: any) => setUser(user));
         fetchUsers().then((users: any) => setUsers(users));
+        fetchNewMsgNotificationsFromDB(sessionStorage.getItem("authUserId")).then((newMsgNotif: any) => setNewMsgNotif(newMsgNotif));
     },[])
 
     const isMsgMenuOpen = Boolean(msgAnchorEl);
@@ -184,18 +187,47 @@ export const RenderMsgMenu = (props: any) => {
         setMsgAnchorEl(null);
     }
 
+    const makeMsgNotifRead = async (msgNotif: any) => {
+        const updateMsgNotifAsRead = await makeMsgNotificationAsRead(sessionStorage.getItem("authUserId"),msgNotif);
+    }
+
     return (
         <Menu anchorEl={msgAnchorEl} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} id={msgMenuId} keepMounted transformOrigin={{ vertical: 'top', horizontal: 'right' }} open={isMsgMenuOpen} onClose={handleMsgMenuClose}>
             {
                 users.map((user: any) => {
                     if (user.id != sessionStorage.getItem("authUserId")) {
-                        return (
-                            <div key={user.id}>
-                                <MenuItem>
-                                    <ModalMessageChats user={user} />
-                                </MenuItem>
-                            </div>
-                        )   
+                        let counter = 0;
+                        if (newMsgNotif.length > 0) {
+                            return newMsgNotif.map((msgNotif: any) => {
+                                if (user.id == msgNotif.message.user_id) {
+                                    counter++;
+                                    return (
+                                        <div key={user.id}>
+                                            <MenuItem sx={{ backgroundColor: 'rgba(123,123,123,0.5)' }} onClick={() => makeMsgNotifRead(msgNotif)}>
+                                                <ModalMessageChats user={user} />
+                                            </MenuItem>
+                                        </div>
+                                    )
+                                }
+                                if (counter == 0) {
+                                    return (
+                                        <div key={user.id}>
+                                            <MenuItem>
+                                                <ModalMessageChats user={user} />
+                                            </MenuItem>
+                                        </div>
+                                    )
+                                }
+                            })   
+                        }else{
+                            return (
+                                <div key={user.id}>
+                                    <MenuItem>
+                                        <ModalMessageChats user={user} />
+                                    </MenuItem>
+                                </div>
+                            )
+                        }   
                     }
                 })
             }
@@ -209,7 +241,6 @@ export const RenderNotifMenu = (props : any) => {
 
     useEffect(() => {
         fetchNewNotificationsFromDB(sessionStorage.getItem("authUserId")).then((notif: any) => setNewNotif(notif));
-        //sendNotificationFromBeams();
     },[])
 
     const isNotifMenuOpen = Boolean(notifAnchorEl);

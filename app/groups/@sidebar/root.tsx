@@ -1,7 +1,7 @@
 'use client'
 import { Box, Grid, InputAdornment, Typography } from "@mui/material"
 import { GroupAvatar, GroupDetailsWrapper, GroupIconButton, SidebarContentGrid, SidebarContentGridItem, SidebarContentHeaderGrid, SidebarContentHeaderGridItem, SidebarContentTG, SidebarDivider, SidebarExploreGrid, SidebarExploreGridItem, SidebarExploreIconButton, SidebarHeaderGrid, SidebarHeaderGridItem, SidebarIconButton, SidebarSearchGrid, SidebarSearchGridItem, SidebarSearchTextField, SidebarWrapper } from "./style"
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, createContext, useContext } from "react"
 import GroupDetails from "../@groupDetails/page"
 import Link from "next/link"
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
@@ -10,11 +10,27 @@ import SettingsIcon from '@mui/icons-material/Settings'
 import SearchIcon from '@mui/icons-material/Search'
 import GroupInputModalForm from "./modal"
 import fetchAllGroups from "./fetchAllGroups"
+import searchGroup from "./searchGroup"
+
+interface SearchGroupContextProps{
+    srchGrp: Array<any>,
+    setSrchGrp: (newSrchGrp: any) => void,
+    srchGrpKey: string,
+    setSrchGrpKey: (newSrchGrpKey: any) => void
+}
+
+export const SearchGroupContext = createContext<SearchGroupContextProps>({
+    srchGrp: [],
+    setSrchGrp: () => {},
+    srchGrpKey: '',
+    setSrchGrpKey: () => {}
+})
 
 const RootComp = () => {
     const [checkGrpDetails,setCheckGrpDetails] = useState(false);
     const [groups,setGroups] = useState([]);
     const [group,setGroup] = useState({ user_id: 0, name: '', description: '', status: 0, group_photo: null });
+    const { srchGrp ,setSrchGrp, srchGrpKey , setSrchGrpKey } = useContext(SearchGroupContext);
 
     useEffect(() => {
         fetchAllGroups().then((groups: any) => setGroups(groups));
@@ -27,6 +43,12 @@ const RootComp = () => {
     const handleGroupClick = (group: any) => {
         setCheckGrpDetails(true);
         setGroup(group);
+    }
+
+    const handleSrchGrp = async (event: any) => {
+        setSrchGrpKey(event.target.value);
+        const srchGroup = await searchGroup(event.target.value);
+        setSrchGrp(srchGroup);
     }
 
     return (
@@ -59,6 +81,7 @@ const RootComp = () => {
                                         </InputAdornment>
                                     ),
                                 }}
+                                onChange={handleSrchGrp}
                                 />
                             </SidebarSearchGridItem>
                         </SidebarSearchGrid>
@@ -100,32 +123,72 @@ const RootComp = () => {
                             </SidebarContentHeaderGridItem>
                         </SidebarContentHeaderGrid>
                         {
-                            (groups.length < 5) ? (
+                            (srchGrpKey !== '') ? (
                                 <>
                                     {
-                                        groups.map((group: any) => {
-                                            return (
-                                                <SidebarContentGrid container spacing={2} onClick={() => handleGroupClick(group)} key={group.id}>
-                                                    <SidebarContentGridItem item md={2} sm={2} xs={12}>
-                                                        <Box>
-                                                            <GroupAvatar alt={group.name} src={`images/${group.group_photo}`} />
-                                                        </Box>
-                                                    </SidebarContentGridItem>
-                                                    <SidebarContentGridItem item md={8} sm={8} xs={12}>
-                                                        <Typography><strong>{ group.name }</strong></Typography>
-                                                    </SidebarContentGridItem>
-                                                    <SidebarContentGridItem item md={2} sm={2} xs={12}>
-                                                        <GroupIconButton>
-                                                            <KeyboardArrowDownIcon fontSize="medium" />
-                                                        </GroupIconButton>
-                                                    </SidebarContentGridItem>
-                                                </SidebarContentGrid>
-                                            )
-                                        })
+                                        (srchGrp.length > 0) ? (
+                                            <>
+                                                {
+                                                    srchGrp.map((srchGroup: any) => {
+                                                        return (
+                                                            <SidebarContentGrid container spacing={2} onClick={() => handleGroupClick(srchGroup)} key={srchGroup.id}>
+                                                                <SidebarContentGridItem item md={2} sm={2} xs={12}>
+                                                                    <Box>
+                                                                        <GroupAvatar alt={srchGroup.name} src={`images/${srchGroup.group_photo}`} />
+                                                                    </Box>
+                                                                </SidebarContentGridItem>
+                                                                <SidebarContentGridItem item md={8} sm={8} xs={12}>
+                                                                    <Typography><strong>{ srchGroup.name }</strong></Typography>
+                                                                </SidebarContentGridItem>
+                                                                <SidebarContentGridItem item md={2} sm={2} xs={12}>
+                                                                    <GroupIconButton>
+                                                                        <KeyboardArrowDownIcon fontSize="medium" />
+                                                                    </GroupIconButton>
+                                                                </SidebarContentGridItem>
+                                                            </SidebarContentGrid>
+                                                        )
+                                                    })
+                                                }
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Typography variant="h6"><strong>Sorry, no groups available</strong></Typography>
+                                            </>
+                                        )
                                     }
                                 </>
                             ) : (
-                                <></>
+                                <>
+                                    {
+                                        (groups.length < 5) ? (
+                                            <>
+                                                {
+                                                    groups.map((group: any) => {
+                                                        return (
+                                                            <SidebarContentGrid container spacing={2} onClick={() => handleGroupClick(group)} key={group.id}>
+                                                                <SidebarContentGridItem item md={2} sm={2} xs={12}>
+                                                                    <Box>
+                                                                        <GroupAvatar alt={group.name} src={`images/${group.group_photo}`} />
+                                                                    </Box>
+                                                                </SidebarContentGridItem>
+                                                                <SidebarContentGridItem item md={8} sm={8} xs={12}>
+                                                                    <Typography><strong>{ group.name }</strong></Typography>
+                                                                </SidebarContentGridItem>
+                                                                <SidebarContentGridItem item md={2} sm={2} xs={12}>
+                                                                    <GroupIconButton>
+                                                                        <KeyboardArrowDownIcon fontSize="medium" />
+                                                                    </GroupIconButton>
+                                                                </SidebarContentGridItem>
+                                                            </SidebarContentGrid>
+                                                        )
+                                                    })
+                                                }
+                                            </>
+                                        ) : (
+                                            <></>
+                                        )
+                                    }
+                                </>
                             )
                         }
                         {/* <SidebarContentGrid container spacing={2} onClick={handleGroupClick}>

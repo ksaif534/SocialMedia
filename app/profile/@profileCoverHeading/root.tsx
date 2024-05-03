@@ -454,32 +454,6 @@ const RootComp = () => {
                                                     })
                                                 }
                                             </span>
-                                            {/* <span style={{ display:'flex', justifyContent: 'center'}}>
-                                                {
-                                                    (profileNetworks?.length > 0) && (
-                                                        <>
-                                                            {
-                                                                profileNetworks?.map((profileNetwork: any) => {
-                                                                    return otherProfiles?.map((otherPfl: any,index: number) => {
-                                                                        if (index < 4) {
-                                                                            return (
-                                                                                <RoundedFirstSmallAvatar alt="Profile Image" src={`images/${otherPfl.user.image}`} onClick={() => handleOtherProfiles(otherPfl)} key={otherPfl.id}>
-
-                                                                                </RoundedFirstSmallAvatar>  
-                                                                            )
-                                                                        }
-                                                                        if (index == 4) {
-                                                                            return (
-                                                                                <ArrowRightIcon fontSize="large" key={otherPfl.id} />
-                                                                            )
-                                                                        }
-                                                                    })
-                                                                })
-                                                            }
-                                                        </>
-                                                    )
-                                                }
-                                            </span> */}
                                         </Grid>
                                         <Grid item md={1} sm={12} xs={12}></Grid>
                                         <Grid item md={4} sm={12} xs={12}>
