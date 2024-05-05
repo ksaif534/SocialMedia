@@ -146,7 +146,7 @@ const RootComp = (props: any) => {
                         )
                     }
                     <CustomDivider />
-                    <CommonSpanList>
+                    {/* <CommonSpanList>
                         <CommonSpanTG variant="body1"><strong>Group Contributors:</strong></CommonSpanTG>
                         <CommonSpanTG variant="body1"><strong>1</strong></CommonSpanTG>
                     </CommonSpanList>
@@ -167,7 +167,7 @@ const RootComp = (props: any) => {
                                 </Grid>
                             </Grid>
                         </Grid>
-                    </GroupContributorGrid>
+                    </GroupContributorGrid> */}
                 </CardContent>
             </PeopleCard>
         </>

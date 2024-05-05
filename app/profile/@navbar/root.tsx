@@ -15,6 +15,8 @@ import { useRouter } from "next/navigation";
 import fetchProfileUserPosts from "./fetchProfileUserPosts";
 import { SearchGroupPostContext } from "@/app/groups/@navbar/page";
 import fetchGroupPosts from "./fetchGroupPosts";
+import fetchNewMsgNotificationsFromDB from "@/app/home/@navsidebar/fetchNewMsgNotificationsFromDB";
+import fetchNewNotificationsFromDB from "@/app/home/@navsidebar/fetchNewNotificationsFromDB";
 
 interface ProfileSearchProps {
     srchProfilePosts: Array<any>,
@@ -38,6 +40,8 @@ const RootComp = () => {
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
     const [anchorMsgEl,setAnchorMsgEl] = useState<null | HTMLElement>(null);
     const [anchorNotifMenuEl,setAnchorNotifMenuEl] = useState<null | HTMLElement>(null);
+    const [newMsgNotif,setNewMsgNotif] = useState([]);
+    const [newNotif,setNewNotif] = useState([]);
 
     useEffect(() => {
         if (sessionStorage.length > 0) {
@@ -47,6 +51,8 @@ const RootComp = () => {
         }else{
             router.push(`/auth/login`);
         }
+        fetchNewMsgNotificationsFromDB(sessionStorage.getItem("authUserId")).then((newMsgNotif: any) => setNewMsgNotif(newMsgNotif));
+        fetchNewNotificationsFromDB(sessionStorage.getItem("authUserId")).then((newNotif: any) => setNewNotif(newNotif));
     },[])
 
     const isMenuOpen = Boolean(anchorEl);
@@ -72,6 +78,10 @@ const RootComp = () => {
 
     const handleGoToHome = () => {
         router.push(`/home`);
+    }
+
+    const handleGoToGroups = () => {
+        router.push(`/groups`);
     }
 
     const searchProfilePosts = async (event: any) => {
@@ -124,14 +134,14 @@ const RootComp = () => {
                             <BoxIconButton size="large" aria-label="Home Icon" color="inherit" title="Home" onClick={handleGoToHome}>
                                 <HomeIcon fontSize="large" />
                             </BoxIconButton>
-                            <BoxIconButton size="large" aria-label="User Groups" color="inherit" title="User Groups">
+                            <BoxIconButton size="large" aria-label="User Groups" color="inherit" title="User Groups" onClick={handleGoToGroups}>
                                 <GroupsIcon fontSize="large" />
                             </BoxIconButton>
                         </MiddleBox>
                         <Box sx={{ flexGrow: 1 }} />
                         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                             <IconButton size="large" aria-label="show 4 new mails" aria-controls={msgMenuId} color="inherit" onClick={handleMsgMenuOpen}>
-                                <Badge badgeContent={4} color="error">
+                                <Badge badgeContent={Number(newMsgNotif.length)} color="error">
                                     <MailIcon />
                                 </Badge>
                             </IconButton>
@@ -142,7 +152,7 @@ const RootComp = () => {
                             color="inherit"
                             onClick={handleNotifMenuOpen}
                             >
-                                <Badge badgeContent={17} color="error">
+                                <Badge badgeContent={Number(newNotif.length)} color="error">
                                     <NotificationsIcon />
                                 </Badge>
                             </IconButton>

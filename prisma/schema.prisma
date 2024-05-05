@@ -26,6 +26,7 @@ model users {
   notifications     notifications[]
   likes             likes[]
   shares            shares[]
+  chat_settings     chat_settings?
 }
 
 model posts {
@@ -155,4 +156,12 @@ model shares {
   shared          Int
   user            users @relation(fields: [user_id], references: [id])
   post            posts @relation(fields: [post_id], references: [id])
+}
+
+model chat_settings {
+  id              Int @id @default(autoincrement())
+  user_id         Int @unique
+  is_active       Int
+  is_shown        Int
+  user            users @relation(fields: [user_id], references: [id])
 }
