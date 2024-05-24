@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, createContext, useContext } from "react";
+import React from "react";
 import { AppBar, Badge, Box, IconButton, Toolbar, Typography } from "@mui/material";
 import { BoxIconButton, MiddleBox, Search, SearchIconWrapper, StyledInputBase } from "./style";
 import { menuId, mobileMenuId, msgMenuId, notifMenuId, RenderMenu, RenderMobileMenu, RenderMsgMenu, RenderNotifMenu } from "./menu";
@@ -13,10 +14,92 @@ import HomeIcon from '@mui/icons-material/Home';
 import GroupsIcon from '@mui/icons-material/Groups';
 import { useRouter } from "next/navigation";
 import fetchProfileUserPosts from "./fetchProfileUserPosts";
-import { SearchGroupPostContext } from "@/app/groups/@navbar/page";
+import { SearchGroupPostContext } from "../../groups/@navbar/page";
 import fetchGroupPosts from "./fetchGroupPosts";
-import fetchNewMsgNotificationsFromDB from "@/app/home/@navsidebar/fetchNewMsgNotificationsFromDB";
-import fetchNewNotificationsFromDB from "@/app/home/@navsidebar/fetchNewNotificationsFromDB";
+import fetchNewMsgNotificationsFromDB from "../../home/@navsidebar/fetchNewMsgNotificationsFromDB";
+import fetchNewNotificationsFromDB from "../../home/@navsidebar/fetchNewNotificationsFromDB";
+
+export const AppBarForUnitTesting = () => {
+    return (
+        <AppBar position="fixed" sx={{ justifyContent: 'center' }}>
+            <Toolbar>
+                <IconButton
+                    size="large"
+                    edge="start"
+                    color="inherit"
+                    aria-label="open drawer"
+                    sx={{ mr: 2 }}
+                >
+                    <LogoDevIcon />
+                </IconButton>
+                <Typography
+                    variant="h6"
+                    noWrap
+                    component="div"
+                    sx={{ display: { xs: 'none', sm: 'block' } }}
+                >
+                    SkSocial
+                </Typography>
+                <Search>
+                    <SearchIconWrapper>
+                    <SearchIcon />
+                    </SearchIconWrapper>
+                    <StyledInputBase
+                    placeholder="Search…"
+                    inputProps={{ 'aria-label': 'search' }}
+                    />
+                </Search>
+                <MiddleBox>
+                    <BoxIconButton size="large" aria-label="Home Icon" color="inherit" title="Home">
+                        <HomeIcon fontSize="large" />
+                    </BoxIconButton>
+                    <BoxIconButton size="large" aria-label="User Groups" color="inherit" title="User Groups">
+                        <GroupsIcon fontSize="large" />
+                    </BoxIconButton>
+                </MiddleBox>
+                <Box sx={{ flexGrow: 1 }} />
+                <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+                    <IconButton size="large" aria-label="show 4 new mails" aria-controls={msgMenuId} color="inherit">
+                        <Badge badgeContent={5} color="error">
+                            <MailIcon />
+                        </Badge>
+                    </IconButton>
+                    <IconButton
+                    size="large"
+                    aria-label="show 17 new notifications"
+                    aria-controls={notifMenuId}
+                    color="inherit"
+                    >
+                        <Badge badgeContent={3} color="error">
+                            <NotificationsIcon />
+                        </Badge>
+                    </IconButton>
+                    <IconButton
+                    size="large"
+                    edge="end"
+                    aria-label="account of current user"
+                    aria-controls={menuId}
+                    aria-haspopup="true"
+                    color="inherit"
+                    >
+                        <AccountCircle />
+                    </IconButton>
+                </Box>
+                <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+                    <IconButton
+                    size="large"
+                    aria-label="show more"
+                    aria-controls={mobileMenuId}
+                    aria-haspopup="true"
+                    color="inherit"
+                    >
+                        <MoreIcon />
+                    </IconButton>
+                </Box>
+            </Toolbar>
+        </AppBar>
+    )
+}
 
 interface ProfileSearchProps {
     srchProfilePosts: Array<any>,
@@ -88,13 +171,17 @@ const RootComp = () => {
         const currentUrl = window.location.href;
         if (currentUrl == 'http://localhost:3000/profile') {
             setSrchProfileKey(event.target.value);
-            const searchProfilePosts = await fetchProfileUserPosts(sessionStorage.getItem("authUserId"),event.target.value);
-            setSrchProfilePosts(searchProfilePosts);    
+            if (event.target.value !== '') {
+                const searchProfilePosts = await fetchProfileUserPosts(sessionStorage.getItem("authUserId"),event.target.value);
+                setSrchProfilePosts(searchProfilePosts);   
+            }    
         }
         if (currentUrl == 'http://localhost:3000/groups') {
             setSrchGrpPostKey(event.target.value);
-            const searchGrpPosts = await fetchGroupPosts(event.target.value);
-            setSrchGrpPosts(searchGrpPosts);
+            if (event.target.value !== '') {
+                const searchGrpPosts = await fetchGroupPosts(event.target.value);
+                setSrchGrpPosts(searchGrpPosts);   
+            }
         }
     }
     

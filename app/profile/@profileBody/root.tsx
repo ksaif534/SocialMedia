@@ -2,13 +2,51 @@
 import { Grid, CardContent, Typography, Button, ImageList, ImageListItem, CardHeader } from "@mui/material";
 import { FriendListCard, IntroBox, IntroBoxCard, IntroGrid, IntroTG, ProfilePhotosCard, SeeAllFriends, SeeAllPhotos } from "./style";
 import { useState, useEffect } from 'react';
+import React from "react";
 import HomeIcon from '@mui/icons-material/Home';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import RssFeedIcon from '@mui/icons-material/RssFeed';
 import fetchUser from "../@profileCoverHeading/fetchUser";
-import PostInput from "@/app/home/@postInput/page";
-import Posts from "@/app/home/@posts/page";
+import PostInput from "../../home/@postInput/page";
+import Posts from "../../home/@posts/page";
 import { useRouter } from "next/navigation";
+
+export const IntroBoxForUnitTesting = () => {
+    return (
+        <IntroBox>
+            <IntroBoxCard variant="outlined">
+                <div style={{ justifyContent: 'center', alignItems: 'center', display: 'flex'}}>
+                    <IntroTG variant="h4">Intro</IntroTG>
+                </div>
+                <CardContent>
+                    <IntroGrid container spacing={2}>
+                        <Grid item md={2} sm={12} xs={12}>
+                            <HomeIcon fontSize="large" />
+                        </Grid>
+                        <Grid item md={10} sm={12} xs={12}>
+                            <Typography variant="h6">Lives in <strong>Ka-115/6/1,Mohakhali Dakkhin Para, Dhaka-1212</strong></Typography>
+                        </Grid>
+                        <Grid item md={2} sm={12} xs={12}>
+                            <LocationOnIcon fontSize="large" />
+                        </Grid>
+                        <Grid item md={10} sm={12} xs={12}>
+                            <Typography variant="h6">From <strong>Ka-115/6/1,Mohakhali Dakkhin Para, Dhaka-1212</strong></Typography>
+                        </Grid>
+                        <Grid item md={2} sm={12} xs={12}>
+                            <RssFeedIcon fontSize="large" />
+                        </Grid>
+                        <Grid item md={10} sm={12} xs={12}>
+                            <Typography variant="h6">Followed by <strong>2 People</strong></Typography>
+                        </Grid>
+                    </IntroGrid>
+                    <div style={{ justifyContent: 'center', alignItems: 'center', display: 'flex'}}>
+                        <Button variant="outlined" color="secondary">Edit Details</Button>
+                    </div>
+                </CardContent>
+            </IntroBoxCard>
+        </IntroBox>
+    )
+}
 
 const itemData = [
     {
@@ -127,57 +165,69 @@ const RootComp = (props: any) => {
                             </ProfilePhotosCard>
                             <FriendListCard>
                                 {
-                                    acceptedProfileNetworks.map((acceptedProfileNetwork: any,index: number) => {
-                                        if (acceptedProfileNetwork.user_id_from == profile?.user_id) {
-                                            lengthMeasureArr.push(index);
-                                        }else{
-                                            if (acceptedProfileNetwork.user_id_to == profile?.user_id) {
-                                                if (JSON.stringify(recipientUser) == '{}') {
-                                                    
-                                                }else{
-                                                    if (recipientUser?.id == acceptedProfileNetwork.user_id_from) {
+                                    (acceptedProfileNetworks?.length > 0) && (
+                                        <>
+                                            {
+                                                acceptedProfileNetworks?.map((acceptedProfileNetwork: any,index: number) => {
+                                                    if (acceptedProfileNetwork.user_id_from == profile?.user_id) {
                                                         lengthMeasureArr.push(index);
+                                                    }else{
+                                                        if (acceptedProfileNetwork.user_id_to == profile?.user_id) {
+                                                            if (JSON.stringify(recipientUser) == '{}') {
+                                                                
+                                                            }else{
+                                                                if (recipientUser?.id == acceptedProfileNetwork.user_id_from) {
+                                                                    lengthMeasureArr.push(index);
+                                                                }
+                                                            }
+                                                        }
                                                     }
-                                                }
-                                            }
-                                        }
-                                    })
+                                                })
+                                            }       
+                                        </>
+                                    )
                                 }
                                 <CardHeader title={<Typography variant="h5" sx={{ justifyContent: 'center', alignItems: 'center', display: 'flex' }}><strong>{ lengthMeasureArr?.length } Requested Friend(s)</strong></Typography>} />
                                 <CardContent>
                                     <ImageList cols={3} rowHeight={164}>
                                         {
-                                            acceptedProfileNetworks.map((acceptedProfileNetwork: any) => {
-                                                if (acceptedProfileNetwork.user_id_from == profile?.user_id) {
-                                                    return (
-                                                        <ImageListItem key={acceptedProfileNetwork.id}>
-                                                            <img
-                                                                src={`images/${acceptedProfileNetwork?.user?.image}`}
-                                                                alt={acceptedProfileNetwork?.user?.image}
-                                                                loading="lazy"
-                                                            />
-                                                        </ImageListItem>
-                                                    )    
-                                                }else{
-                                                    if (acceptedProfileNetwork.user_id_to == profile?.user_id) {
-                                                        if (JSON.stringify(recipientUser) == '{}') {
-                                                            
-                                                        }else{
-                                                            if (recipientUser?.id == acceptedProfileNetwork.user_id_from) {
+                                            (acceptedProfileNetworks?.length > 0) && (
+                                                <>
+                                                    {
+                                                        acceptedProfileNetworks.map((acceptedProfileNetwork: any) => {
+                                                            if (acceptedProfileNetwork.user_id_from == profile?.user_id) {
                                                                 return (
                                                                     <ImageListItem key={acceptedProfileNetwork.id}>
                                                                         <img
-                                                                            src={`images/${recipientUser?.image}`}
+                                                                            src={`images/${acceptedProfileNetwork?.user?.image}`}
                                                                             alt={acceptedProfileNetwork?.user?.image}
                                                                             loading="lazy"
                                                                         />
                                                                     </ImageListItem>
-                                                                )
+                                                                )    
+                                                            }else{
+                                                                if (acceptedProfileNetwork.user_id_to == profile?.user_id) {
+                                                                    if (JSON.stringify(recipientUser) == '{}') {
+                                                                        
+                                                                    }else{
+                                                                        if (recipientUser?.id == acceptedProfileNetwork.user_id_from) {
+                                                                            return (
+                                                                                <ImageListItem key={acceptedProfileNetwork.id}>
+                                                                                    <img
+                                                                                        src={`images/${recipientUser?.image}`}
+                                                                                        alt={acceptedProfileNetwork?.user?.image}
+                                                                                        loading="lazy"
+                                                                                    />
+                                                                                </ImageListItem>
+                                                                            )
+                                                                        }
+                                                                    }
+                                                                }
                                                             }
-                                                        }
-                                                    }
-                                                }
-                                            })
+                                                        })
+                                                    }       
+                                                </>
+                                            )
                                         }
                                     </ImageList>
                                     <SeeAllFriends>

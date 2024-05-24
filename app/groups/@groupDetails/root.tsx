@@ -10,7 +10,7 @@ import DoneIcon from '@mui/icons-material/Done';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
-import fetchUser from "@/app/profile/@profileCoverHeading/fetchUser"
+import fetchUser from "../../profile/@profileCoverHeading/fetchUser"
 import storeGroupMember from "./storeGroupMember"
 import Swal from "sweetalert2"
 import fetchGroupMembers from "./fetchGroupMembers"

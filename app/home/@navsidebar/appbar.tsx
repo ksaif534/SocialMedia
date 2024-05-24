@@ -42,9 +42,11 @@ export const AppBarComp = (props: any) => {
     }
 
     const searchResults = async (event: any) => {
-        const searchedPosts = await searchPosts(event.target.value);
-        setSrchPosts(searchedPosts);
         setSrchKey(event.target.value);
+        if (event.target.value !== '') {
+            const searchedPosts = await searchPosts(event.target.value);
+            setSrchPosts(searchedPosts);   
+        }
     }
     
     return (

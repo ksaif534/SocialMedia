@@ -11,13 +11,13 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Grid, Menu, MenuItem } from '@mui/material';
 import ProfileLogo from '../@profileLogo/page';
 import { ExpandMore, PostCard, RelevantAnswersCard, RelevantAnswersGrid, RelevantAnswersGridItem, RelevantAnswersTG, ProfileGrid } from './style'
-import CommentInputModalForm from './@commentInput/modal';
-import fetchUsers from "@/app/auth/login/fetchUsers";
+import CommentInputModalForm, { CommentInputModalFormForUnitTesting } from './@commentInput/modal';
+import fetchUsers from "../../auth/login/fetchUsers";
 import PostEditModalForm from "./editModal";
 import deletePost from "./deletePost";
 import Swal from "sweetalert2";
 import DeleteIcon from '@mui/icons-material/Delete';
-import CommentEditModalForm from "./@commentInput/editModal";
+import CommentEditModalForm, { CommentEditModalFormForUnitTesting } from "./@commentInput/editModal";
 import deleteComment from "./@commentInput/deleteComment";
 import { useRouter } from "next/navigation";
 import addLikes from "./addLikes";
@@ -27,7 +27,97 @@ import fetchShares from "./fetchShares";
 import addShares from "./addShares";
 import fetchSharesByPost from "./fetchSharesByPost";
 import { SearchContext } from "../@navsidebar/root";
-import { ProfileSearchContext } from "@/app/profile/@navbar/root";
+import { ProfileSearchContext } from "../../profile/@navbar/root";
+
+export const PostCardForUnitTesting = () => {
+    return (
+        <PostCard>
+            <CardHeader
+                avatar={
+                <Avatar src="images/eid-sk.jpg" aria-label="eid-saif-kamal" />
+                }
+                title={<Typography variant="h6">How to build a React web application</Typography>}
+                subheader="May 5, 2024"
+            />
+            <CardMedia
+                component="img"
+                height="200"
+                image="images/beautiful-bg-custom.jpg"
+                alt=""
+            />
+            <CardContent>
+                <Typography variant="body2" color="text.secondary">
+                    First you have to ...
+                </Typography>
+            </CardContent>
+            <CardActions disableSpacing>
+                <IconButton aria-label="add to favorites">
+                    <FavoriteIcon />
+                    <Typography variant="body2">1</Typography>
+                </IconButton>
+                <IconButton aria-label="share">
+                    <ShareIcon />
+                    <Typography variant="body2">0</Typography>
+                </IconButton>
+                <ExpandMore
+                expand={true}
+                aria-expanded="true"
+                aria-label="show more"
+                >
+                    <ExpandMoreIcon />
+                </ExpandMore>
+            </CardActions>
+            <Collapse in={true} timeout="auto" unmountOnExit>
+                <CardContent>
+                    <Typography variant="h6">
+                        <strong>Relevant Comments:</strong>
+                    </Typography>
+                    <RelevantAnswersGrid container spacing={2}>
+                        <RelevantAnswersGridItem item md={2} sm={2} xs={12}>
+                            <ProfileLogo name="Ivdad Ahmed" imageUrl="images/ivdad-ahmed.jpeg" />
+                        </RelevantAnswersGridItem>
+                        <RelevantAnswersGridItem item md={10} sm={10} xs={12}>
+                            <RelevantAnswersCard elevation={3}>
+                                <CardContent>
+                                    <Typography>
+                                        <strong>Ivdad Ahmed</strong>
+                                    </Typography>
+                                    <Grid container spacing={2}>
+                                        <Grid item md={9} sm={9} xs={12}>
+                                            <RelevantAnswersTG paragraph>
+                                                Great Post, hats off
+                                            </RelevantAnswersTG>
+                                        </Grid>
+                                        <Grid item md={3} sm={3} xs={12}>
+                                            <Grid container spacing={2}>
+                                                <Grid item md={6} sm={6} xs={12}>
+                                                    <CommentEditModalFormForUnitTesting />
+                                                </Grid>
+                                                <Grid item md={6} sm={6} xs={12}>
+                                                    <IconButton title="Delete Comment">
+                                                        <DeleteIcon />
+                                                    </IconButton>
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </CardContent>
+                            </RelevantAnswersCard>
+                        </RelevantAnswersGridItem>
+                    </RelevantAnswersGrid>
+                    <Grid container spacing={2}>
+                        <ProfileGrid item md={1}>
+                            <ProfileLogo name="Saif Kamal" imageUrl="images/saif.jpeg" />
+                        </ProfileGrid>
+                        <Grid item md={11}>
+                            <CommentInputModalFormForUnitTesting />
+                        </Grid>
+                    </Grid>
+                </CardContent>
+            </Collapse>
+        </PostCard>
+    )
+}
 
 const RootComp = (props: any) => {
     const router = useRouter();
@@ -795,152 +885,158 @@ const RootComp = (props: any) => {
                                                     (videoPosts !== undefined) ? (
                                                         <>
                                                             {
-                                                                videoPosts.map((videoPost: any, index: number) => (
-                                                                    <PostCard key={`${videoPost.user_id}-${index}`}>
-                                                                        <CardHeader
-                                                                            avatar={
-                                                                            <Avatar src={`images/${videoPost?.user?.image}`} aria-label="recipe" />
-                                                                            }
-                                                                            action={
-                                                                            <div>
-                                                                                <IconButton aria-label="settings" onClick={handleVertIconClick}>
-                                                                                    <MoreVertIcon />
-                                                                                </IconButton>
-                                                                                <Menu id="vertical-dropdown-menu" anchorEl={anchorEl} open={open} onClose={handleVertClose} MenuListProps={{ 'aria-labelledby': 'icon' }}>
-                                                                                    <MenuItem>
-                                                                                        <PostEditModalForm post={videoPost} />
-                                                                                    </MenuItem>
-                                                                                    <MenuItem onClick={() => handleDeletion(videoPost)}>
-                                                                                        Delete Post
-                                                                                    </MenuItem>
-                                                                                </Menu>
-                                                                            </div>
-                                                                            }
-                                                                            title={<Typography variant="h6">{videoPost.title}</Typography>}
-                                                                            subheader={videoPost.sub_title}
-                                                                        />
-                                                                        <div style={{ position: 'relative', paddingBottom: '56.25%' }}>
-                                                                            <video 
-                                                                            src={`/videos/${videoPost.figure}`} 
-                                                                            controls 
-                                                                            height="200"
-                                                                            style={{
-                                                                                position: 'absolute',
-                                                                                width: '100%',
-                                                                                height: '100%',
-                                                                                top: 0,
-                                                                                left: 0,
-                                                                            }}
-                                                                            >
-            
-                                                                            </video>
-                                                                        </div>
-                                                                        <CardContent>
-                                                                            <Typography variant="body2" color="text.secondary">
-                                                                                { videoPost.description }
-                                                                            </Typography>
-                                                                        </CardContent>
-                                                                        <CardActions disableSpacing>
-                                                                            <IconButton aria-label="add to favorites">
-                                                                                <FavoriteIcon />
-                                                                                {
-                                                                                    (likesByPost.length == 0) ? (
-                                                                                        <Typography variant="body2">{ likes.filter((like: any) => like.post_id == videoPost.id).length }</Typography>
-                                                                                    ) : (
-                                                                                        <Typography variant="body2">{ likesByPost.length }</Typography>
-                                                                                    )
-                                                                                }
-                                                                            </IconButton>
-                                                                            <IconButton aria-label="share">
-                                                                                <ShareIcon />
-                                                                                {
-                                                                                    (sharesByPost.length == 0) ? (
-                                                                                        <Typography variant="body2">{ shares.filter((share: any) => share.post_id == videoPost.id).length }</Typography>
-                                                                                    ) : (
-                                                                                        <Typography variant="body2">{ sharesByPost.length }</Typography>
-                                                                                    )
-                                                                                }
-                                                                            </IconButton>
-                                                                            <ExpandMore
-                                                                            expand={expandedPosts[index]}
-                                                                            onClick={() => handleExpandClick(videoPost.id)}
-                                                                            aria-expanded={expandedPosts[index]}
-                                                                            aria-label="show more"
-                                                                            >
-                                                                                <ExpandMoreIcon />
-                                                                            </ExpandMore>
-                                                                        </CardActions>
-                                                                        <Collapse in={expandedPosts[index]} timeout="auto" unmountOnExit>
-                                                                            <CardContent>
-                                                                                <Typography variant="h6">
-                                                                                    <strong>Relevant Comments:</strong>
-                                                                                </Typography>
-                                                                                {
-                                                                                    videoPosts?.comments?.map((comment: any,index: number) => 
-                                                                                    {
-                                                                                        if(comment.is_allow == 1){
-                                                                                            return (
-                                                                                                <RelevantAnswersGrid container spacing={2} key={`${comment.user_id}-${index}`}>
-                                                                                                    <RelevantAnswersGridItem item md={2} sm={2} xs={12}>
-                                                                                                        <ProfileLogo name="Nayeem Ahmad" imageUrl={`/images/` + comment.user.image} />
-                                                                                                    </RelevantAnswersGridItem>
-                                                                                                    <RelevantAnswersGridItem item md={10} sm={10} xs={12}>
-                                                                                                        <RelevantAnswersCard elevation={3}>
-                                                                                                            <CardContent>
-                                                                                                                <Typography>
-                                                                                                                    <strong>{ comment.user.name }</strong>
-                                                                                                                </Typography>
-                                                                                                                <Grid container spacing={2}>
-                                                                                                                    <Grid item md={9} sm={9} xs={12}>
-                                                                                                                        <RelevantAnswersTG paragraph>
-                                                                                                                            { comment.description }
-                                                                                                                        </RelevantAnswersTG>
-                                                                                                                    </Grid>
-                                                                                                                    <Grid item md={3} sm={3} xs={12}>
-                                                                                                                        <Grid container spacing={2}>
-                                                                                                                            <Grid item md={6} sm={6} xs={12}>
-                                                                                                                                {
-                                                                                                                                    (authUser.id == comment.user_id) && (
-                                                                                                                                        <>
-                                                                                                                                            <CommentEditModalForm comment={comment} />
-                                                                                                                                        </>
-                                                                                                                                    )
-                                                                                                                                }
-                                                                                                                            </Grid>
-                                                                                                                            <Grid item md={6} sm={6} xs={12}>
-                                                                                                                                {
-                                                                                                                                    (authUser.id == comment.user_id) && (
-                                                                                                                                        <>
-                                                                                                                                            <IconButton title="Delete Comment" onClick={() => handleCommentDelete(comment)}>
-                                                                                                                                                <DeleteIcon />
-                                                                                                                                            </IconButton>
-                                                                                                                                        </>
-                                                                                                                                    )
-                                                                                                                                }
-                                                                                                                            </Grid>
-                                                                                                                        </Grid>
-                                                                                                                    </Grid>
-                                                                                                                </Grid>
-                                                                                                            </CardContent>
-                                                                                                        </RelevantAnswersCard>
-                                                                                                    </RelevantAnswersGridItem>
-                                                                                                </RelevantAnswersGrid>
-                                                                                            )
+                                                                (videoPosts.length > 0) && (
+                                                                    <>
+                                                                        {
+                                                                            videoPosts.map((videoPost: any, index: number) => (
+                                                                                <PostCard key={`${videoPost.user_id}-${index}`}>
+                                                                                    <CardHeader
+                                                                                        avatar={
+                                                                                        <Avatar src={`images/${videoPost?.user?.image}`} aria-label="recipe" />
                                                                                         }
-                                                                                    })
-                                                                                }
-                                                                                <Grid container spacing={2}>
-                                                                                    <ProfileGrid item md={1}>
-                                                                                        <ProfileLogo name={authUser.name} imageUrl={`/images/` + authUser.image} />
-                                                                                    </ProfileGrid>
-                                                                                    <Grid item md={11}>
-                                                                                        <CommentInputModalForm post={videoPost} authUser={authUser} />
-                                                                                    </Grid>
-                                                                                </Grid>
-                                                                            </CardContent>
-                                                                        </Collapse>
-                                                                    </PostCard>
-                                                                )) 
+                                                                                        action={
+                                                                                        <div>
+                                                                                            <IconButton aria-label="settings" onClick={handleVertIconClick}>
+                                                                                                <MoreVertIcon />
+                                                                                            </IconButton>
+                                                                                            <Menu id="vertical-dropdown-menu" anchorEl={anchorEl} open={open} onClose={handleVertClose} MenuListProps={{ 'aria-labelledby': 'icon' }}>
+                                                                                                <MenuItem>
+                                                                                                    <PostEditModalForm post={videoPost} />
+                                                                                                </MenuItem>
+                                                                                                <MenuItem onClick={() => handleDeletion(videoPost)}>
+                                                                                                    Delete Post
+                                                                                                </MenuItem>
+                                                                                            </Menu>
+                                                                                        </div>
+                                                                                        }
+                                                                                        title={<Typography variant="h6">{videoPost.title}</Typography>}
+                                                                                        subheader={videoPost.sub_title}
+                                                                                    />
+                                                                                    <div style={{ position: 'relative', paddingBottom: '56.25%' }}>
+                                                                                        <video 
+                                                                                        src={`/videos/${videoPost.figure}`} 
+                                                                                        controls 
+                                                                                        height="200"
+                                                                                        style={{
+                                                                                            position: 'absolute',
+                                                                                            width: '100%',
+                                                                                            height: '100%',
+                                                                                            top: 0,
+                                                                                            left: 0,
+                                                                                        }}
+                                                                                        >
+                        
+                                                                                        </video>
+                                                                                    </div>
+                                                                                    <CardContent>
+                                                                                        <Typography variant="body2" color="text.secondary">
+                                                                                            { videoPost.description }
+                                                                                        </Typography>
+                                                                                    </CardContent>
+                                                                                    <CardActions disableSpacing>
+                                                                                        <IconButton aria-label="add to favorites">
+                                                                                            <FavoriteIcon />
+                                                                                            {
+                                                                                                (likesByPost.length == 0) ? (
+                                                                                                    <Typography variant="body2">{ likes.filter((like: any) => like.post_id == videoPost.id).length }</Typography>
+                                                                                                ) : (
+                                                                                                    <Typography variant="body2">{ likesByPost.length }</Typography>
+                                                                                                )
+                                                                                            }
+                                                                                        </IconButton>
+                                                                                        <IconButton aria-label="share">
+                                                                                            <ShareIcon />
+                                                                                            {
+                                                                                                (sharesByPost.length == 0) ? (
+                                                                                                    <Typography variant="body2">{ shares.filter((share: any) => share.post_id == videoPost.id).length }</Typography>
+                                                                                                ) : (
+                                                                                                    <Typography variant="body2">{ sharesByPost.length }</Typography>
+                                                                                                )
+                                                                                            }
+                                                                                        </IconButton>
+                                                                                        <ExpandMore
+                                                                                        expand={expandedPosts[index]}
+                                                                                        onClick={() => handleExpandClick(videoPost.id)}
+                                                                                        aria-expanded={expandedPosts[index]}
+                                                                                        aria-label="show more"
+                                                                                        >
+                                                                                            <ExpandMoreIcon />
+                                                                                        </ExpandMore>
+                                                                                    </CardActions>
+                                                                                    <Collapse in={expandedPosts[index]} timeout="auto" unmountOnExit>
+                                                                                        <CardContent>
+                                                                                            <Typography variant="h6">
+                                                                                                <strong>Relevant Comments:</strong>
+                                                                                            </Typography>
+                                                                                            {
+                                                                                                videoPosts?.comments?.map((comment: any,index: number) => 
+                                                                                                {
+                                                                                                    if(comment.is_allow == 1){
+                                                                                                        return (
+                                                                                                            <RelevantAnswersGrid container spacing={2} key={`${comment.user_id}-${index}`}>
+                                                                                                                <RelevantAnswersGridItem item md={2} sm={2} xs={12}>
+                                                                                                                    <ProfileLogo name="Nayeem Ahmad" imageUrl={`/images/` + comment.user.image} />
+                                                                                                                </RelevantAnswersGridItem>
+                                                                                                                <RelevantAnswersGridItem item md={10} sm={10} xs={12}>
+                                                                                                                    <RelevantAnswersCard elevation={3}>
+                                                                                                                        <CardContent>
+                                                                                                                            <Typography>
+                                                                                                                                <strong>{ comment.user.name }</strong>
+                                                                                                                            </Typography>
+                                                                                                                            <Grid container spacing={2}>
+                                                                                                                                <Grid item md={9} sm={9} xs={12}>
+                                                                                                                                    <RelevantAnswersTG paragraph>
+                                                                                                                                        { comment.description }
+                                                                                                                                    </RelevantAnswersTG>
+                                                                                                                                </Grid>
+                                                                                                                                <Grid item md={3} sm={3} xs={12}>
+                                                                                                                                    <Grid container spacing={2}>
+                                                                                                                                        <Grid item md={6} sm={6} xs={12}>
+                                                                                                                                            {
+                                                                                                                                                (authUser.id == comment.user_id) && (
+                                                                                                                                                    <>
+                                                                                                                                                        <CommentEditModalForm comment={comment} />
+                                                                                                                                                    </>
+                                                                                                                                                )
+                                                                                                                                            }
+                                                                                                                                        </Grid>
+                                                                                                                                        <Grid item md={6} sm={6} xs={12}>
+                                                                                                                                            {
+                                                                                                                                                (authUser.id == comment.user_id) && (
+                                                                                                                                                    <>
+                                                                                                                                                        <IconButton title="Delete Comment" onClick={() => handleCommentDelete(comment)}>
+                                                                                                                                                            <DeleteIcon />
+                                                                                                                                                        </IconButton>
+                                                                                                                                                    </>
+                                                                                                                                                )
+                                                                                                                                            }
+                                                                                                                                        </Grid>
+                                                                                                                                    </Grid>
+                                                                                                                                </Grid>
+                                                                                                                            </Grid>
+                                                                                                                        </CardContent>
+                                                                                                                    </RelevantAnswersCard>
+                                                                                                                </RelevantAnswersGridItem>
+                                                                                                            </RelevantAnswersGrid>
+                                                                                                        )
+                                                                                                    }
+                                                                                                })
+                                                                                            }
+                                                                                            <Grid container spacing={2}>
+                                                                                                <ProfileGrid item md={1}>
+                                                                                                    <ProfileLogo name={authUser.name} imageUrl={`/images/` + authUser.image} />
+                                                                                                </ProfileGrid>
+                                                                                                <Grid item md={11}>
+                                                                                                    <CommentInputModalForm post={videoPost} authUser={authUser} />
+                                                                                                </Grid>
+                                                                                            </Grid>
+                                                                                        </CardContent>
+                                                                                    </Collapse>
+                                                                                </PostCard>
+                                                                            )) 
+                                                                        }       
+                                                                    </>
+                                                                )
                                                             }
                                                         </>
                                                     ) : (

@@ -8,9 +8,75 @@ import EmailIcon from '@mui/icons-material/Email';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { VisuallyHiddenInput } from '@/app/home/@postInput/style';
+import { VisuallyHiddenInput } from '../../../home/@postInput/style';
 import createUser from './createUser';
 import Swal from 'sweetalert2';
+
+export const RegistrationCardForUnitTesting = () => {
+    return (
+        <AuthCard>
+            <CardHeader
+            title={
+                <Typography variant='h5' align='center'><strong>User Registration Form</strong></Typography>
+            }
+            />
+            <CardMedia component='img' height="194" image="/images/user-reg-form.jpg" />
+            <CardContent>
+                <Typography variant='h6' align='center'>
+                    <strong>Register a User Account</strong>
+                </Typography>
+                <AuthRegFormBox>
+                    <AuthInputFieldsGrid container spacing={2}>
+                        <Grid item md={3} sm={3} xs={12}>
+                            <Typography variant='h6' align="center"><strong>Username:</strong></Typography>
+                        </Grid>
+                        <Grid item md={9} sm={9} xs={12}>
+                            <AuthInputTextField title="Your name" placeholder="Enter your Name/Username" name="name" InputProps={{ startAdornment: <InputAdornment position="start"><IconButton aria-label="Get User Name"><AccountCircleIcon /></IconButton></InputAdornment> }} />
+                        </Grid>
+                    </AuthInputFieldsGrid>
+                    <AuthInputFieldsGrid container spacing={2}>
+                        <Grid item md={3} sm={3} xs={12}>
+                            <Typography variant="h6" align="center"><strong>Email:</strong></Typography>
+                        </Grid>
+                        <Grid item md={9} sm={9} xs={12}>
+                            <AuthInputTextField title="Your Email" placeholder="Enter your Email" name="email" InputProps={{ startAdornment: <InputAdornment position="start"><IconButton aria-label="get-user-email"><EmailIcon /></IconButton></InputAdornment> }} />
+                        </Grid>
+                    </AuthInputFieldsGrid>
+                    <AuthInputFieldsGrid container spacing={2}>
+                        <Grid item md={3} sm={3} xs={12}>
+                            <Typography variant="h6" align="center"><strong>Password:</strong></Typography>
+                        </Grid>
+                        <Grid item md={9} sm={9} xs={12}>
+                            <AuthInputTextField title="Your Password" placeholder="Enter your password" name="password" type="password" InputProps={{ startAdornment: <InputAdornment position="start"><IconButton aria-label="get-user-pass"><VisibilityOff /></IconButton></InputAdornment> }} />
+                        </Grid>
+                    </AuthInputFieldsGrid>
+                    <AuthInputFieldsGrid container spacing={2}>
+                        <Grid item md={3} sm={3} xs={12}>
+                            <Typography variant="h6" align="center"><strong>Phone Number:</strong></Typography>
+                        </Grid>
+                        <Grid item md={9} sm={9} xs={12}>
+                            <AuthInputTextField title="Phone Number" placeholder="Enter Phone Number" name="phone" InputProps={{ startAdornment: <InputAdornment position='start'><IconButton aria-label="Get Phone Number"><LocalPhoneIcon /></IconButton></InputAdornment> }} />
+                        </Grid>
+                    </AuthInputFieldsGrid>
+                    <AuthInputFieldsGrid container spacing={2}>
+                        <Grid item md={3} sm={3} xs={12}>
+                            <Typography variant="h6" align="center"><strong>Your Photo:</strong></Typography>
+                        </Grid>
+                        <Grid item md={9} sm={9} xs={12}>
+                            <Button component="label" variant="contained" startIcon={<CloudUploadIcon />} sx={{ width: '100%' }}>
+                                Upload Your Image
+                                <VisuallyHiddenInput type="file" name="image" id="image" />
+                            </Button>
+                        </Grid>
+                    </AuthInputFieldsGrid>
+                    <AuthSubmissionStyle>
+                        <SubmitButton variant="contained" color="success" type="submit">Submit Registration Data</SubmitButton>
+                    </AuthSubmissionStyle>
+                </AuthRegFormBox>
+            </CardContent>
+        </AuthCard>
+    )
+}
 
 const RootComp = () => {
     const [showPassword,setShowPassword] = useState(false);

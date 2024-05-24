@@ -2,22 +2,22 @@
 import { Avatar, CardActions, CardContent, CardHeader, CardMedia, Chip, Collapse, Grid, IconButton, InputAdornment, Menu, MenuItem, Typography } from "@mui/material"
 import { ChipStack, CommentInputGrid, CommentTextField, CommentsCard, CommentsGrid, CommentsGridFirstItem, CommentsGridItem, ExpandMore, GPCGridRightItem, GroupPostCard, MediaButtonBase, TopCommentTG } from "./style"
 import { useState, useEffect, useContext } from "react";
-import ProfileLogo from "@/app/home/@profileLogo/page";
+import ProfileLogo from "../../../home/@profileLogo/page";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import CommentIcon from '@mui/icons-material/Comment';
 import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteIcon from '@mui/icons-material/Delete';
-import PostInput from "@/app/home/@postInput/page";
-import CommentInputModalForm from "@/app/home/@posts/@commentInput/modal";
-import CommentEditModalForm from "@/app/home/@posts/@commentInput/editModal";
-import deleteComment from "@/app/home/@posts/@commentInput/deleteComment";
+import PostInput from "../../../home/@postInput/page";
+import CommentInputModalForm from "../../../home/@posts/@commentInput/modal";
+import CommentEditModalForm from "../../../home/@posts/@commentInput/editModal";
+import deleteComment from "../../../home/@posts/@commentInput/deleteComment";
 import Swal from "sweetalert2";
-import PostEditModalForm from "@/app/home/@posts/editModal";
+import PostEditModalForm from "../../../home/@posts/editModal";
 import fetchGroupPosts from "./fetchGroupPosts";
-import fetchUser from "@/app/profile/@profileCoverHeading/fetchUser";
-import fetchComments from "@/app/home/@posts/@commentInput/fetchComments";
+import fetchUser from "../../../profile/@profileCoverHeading/fetchUser";
+import fetchComments from "../../../home/@posts/@commentInput/fetchComments";
 import { SearchGroupPostContext } from "../../@navbar/page";
 
 

@@ -6,9 +6,9 @@ import MailIcon from '@mui/icons-material/Mail'
 import NotificationsIcon from '@mui/icons-material/Notifications'
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useRouter } from 'next/navigation';
-import fetchUser from '@/app/profile/@profileCoverHeading/fetchUser'
+import fetchUser from '../../profile/@profileCoverHeading/fetchUser'
 import ModalMessageChats from './msgModal'
-import fetchUsers from '@/app/auth/login/fetchUsers'
+import fetchUsers from '../../auth/login/fetchUsers'
 import fetchNewNotificationsFromDB from './fetchNewNotificationsFromDB'
 import fetchNewMsgNotificationsFromDB from './fetchNewMsgNotificationsFromDB'
 import makeNotificationRead from './makeNotificationRead'

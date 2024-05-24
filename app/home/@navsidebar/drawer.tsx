@@ -10,6 +10,54 @@ import { DrawerHeader, Drawer } from './style';
 import { useRouter } from 'next/navigation';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 
+export const DrawerForUnitTesting = () => {
+    return (
+        <Drawer variant="permanent" open={true}>
+            <DrawerHeader>
+                <IconButton>
+                    <ChevronRightIcon />
+                </IconButton>
+            </DrawerHeader>
+            <Divider />
+            <List>
+            {['Home', 'Profile'].map((text, index: number) => (
+                <ListItem key={text} disablePadding sx={{ display: 'block' }}>
+                    <ListItemButton
+                        sx={{
+                        minHeight: 48,
+                        justifyContent: true ? 'initial' : 'center',
+                        px: 2.5,
+                        }}
+                    >
+                        <ListItemIcon
+                        sx={{
+                            minWidth: 0,
+                            mr: 'auto',
+                            justifyContent: 'center',
+                        }}
+                        >
+                        {index % 2 === 0 ? <HomeIcon /> : <PersonOutlineIcon />}
+                        </ListItemIcon>
+                        <ListItemText primary={text} sx={{ opacity: true ? 1 : 0 }} />
+                    </ListItemButton>
+                </ListItem>
+            ))}
+            </List>
+            <Divider />
+            <List>
+                <ListItem disablePadding sx={{ display: 'block' }}>
+                    <ListItemButton sx={{ minHeight: 48, justifyContent: true ? 'initial' : 'center', px: 2.5 }}>
+                        <ListItemIcon sx={{ minWidth: 0, mr: true ? 3 : 'auto', justifyContent: 'center' }}>
+                            <PersonAddAltIcon />
+                        </ListItemIcon>
+                        <ListItemText sx={{ opacity: true ? 1 : 0 }} />
+                    </ListItemButton>
+                </ListItem>
+            </List>
+        </Drawer>
+    )
+}
+
 const DrawerComp = (props: any) => {
     const router = useRouter();
     const { open, setOpen, theme, page } = props;

@@ -1,14 +1,70 @@
 'use client'
 import { useEffect, useState } from "react";
+import React from 'react'
 import ProfileLogo from "../@profileLogo/page";
 import SearchIcon from '@mui/icons-material/Search';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { searchStyle, FriendRequestCard, FriendRequestGrid, ContactCard, ContactGridHeader, SearchContactTextField, ContactModalGridContent, ContactModalGridContentItem, ContactModalStyling, ContactStyling } from './style'
+import { searchStyle, FriendRequestCard, FriendRequestGrid, ContactCard, ContactGridHeader, SearchContactTextField, ContactModalStyling, ContactStyling } from './style'
 import { Box, Button, CardContent, Fade, Grid, IconButton, InputAdornment, Link, Modal, Typography, Backdrop } from "@mui/material";
-import ChatSettings from "./chatSettings";
-import fetchUsers from "@/app/auth/login/fetchUsers";
-import MessageModalChats from '../@navsidebar/msgModal';
+import ChatSettings, { ChatSettingsForUnitTesting } from "./chatSettings";
+import fetchUsers from "../../auth/login/fetchUsers";
+import MessageModalChats, { ModalMessageChatForUnitTesting } from '../@navsidebar/msgModal';
 import fetchPendingRecipientUserNetworks from "./fetchPendingRecipientUserNetworks";
+
+export const ContactCardForUnitTesting = () => {
+    return (
+        <ContactCard>
+            <CardContent>
+                <ContactGridHeader container spacing={2}>
+                    <Grid item md={2} sm={2} xs={2}>
+                        <Typography variant="h6"><strong>Contacts</strong></Typography>
+                    </Grid>
+                    <Grid item md={6} sm={6} xs={6}>
+                        
+                    </Grid>
+                    <Grid item md={2} sm={2} xs={2}>
+                        <IconButton title="Search Contacts">
+                            <SearchIcon fontSize="large" />
+                        </IconButton>
+                    </Grid>
+                    <Grid item md={2} sm={2} xs={2}>
+                        <IconButton title="More Contact Options">
+                            <MoreHorizIcon fontSize="large" />
+                        </IconButton>
+                    </Grid>
+                </ContactGridHeader>
+                <ContactStyling>
+                    <ModalMessageChatForUnitTesting />
+                    <br />
+                </ContactStyling>
+            </CardContent>
+            <Modal open={true} closeAfterTransition slots={{ backdrop: Backdrop }} slotProps={{ backdrop: { timeout: 500 } }}>
+                <Fade in={true}>
+                    <Box sx={searchStyle}>
+                        <SearchContactTextField 
+                        placeholder="Search Contacts here" 
+                        variant="outlined" 
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <SearchIcon fontSize="large" />
+                                </InputAdornment>
+                            )
+                        }}
+                        />
+                        <ContactModalStyling style={{ marginTop: '10px' }}>
+                            <br />
+                            <ModalMessageChatForUnitTesting />
+                        </ContactModalStyling>
+                    </Box>
+                </Fade>
+            </Modal>
+            <Box sx={{ flexGrow: 1, display: 'flex' }}>
+                <ChatSettingsForUnitTesting />
+            </Box>  
+        </ContactCard>
+    )
+}
 
 const RootComp = () => {
     const [openSearchModal,setOpenSearchModal] = useState(false);

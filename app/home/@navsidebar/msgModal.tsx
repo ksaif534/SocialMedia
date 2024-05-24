@@ -1,15 +1,83 @@
 import { useState, useEffect } from "react";
+import React from "react";
 import { ModalMessageChatButton, ModalMessageChatCard, ModalMessageChatCardContent, ModalMessageChatFormTextField, ModalMessageChatGrid, ModalMessageChatGridIconButton, ModalMessageChatGridItemGrid, ModalMessageChatsButtonBase, ModalMessagePaper, ModalMessageStyle } from "./style"
 import { Backdrop, Box, Fade, Grid, IconButton, Menu, MenuItem, Modal, Typography } from "@mui/material";
 import ProfileLogo from "../@profileLogo/page";
 import Pusher from "pusher-js";
-import fetchUser from "@/app/profile/@profileCoverHeading/fetchUser";
+import fetchUser from "../../profile/@profileCoverHeading/fetchUser";
 import sendMessage from "./sendMessage";
 import fetchUserMessages from "./fetchUserMessages";
 import sendMsgNotification from "./sendMsgNotification";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import removeMsg from "./removeMsg";
 import Swal from "sweetalert2";
+
+export const ModalMessageChatForUnitTesting = () => {
+    return (
+        <>
+            <ModalMessageChatsButtonBase>
+                <Grid container spacing={2}>
+                    <Grid item md={2} sm={2} xs={12}>
+                        <ProfileLogo name="Saif Kamal" imageUrl="images/eid-sk.jpeg" />
+                    </Grid>
+                    <Grid item md={10} sm={10} xs={12}>
+                        <Typography variant="h6"><strong>Saif Kamal</strong></Typography>    
+                    </Grid>
+                </Grid>
+            </ModalMessageChatsButtonBase>
+            <Modal open={true} closeAfterTransition slots={{ backdrop: Backdrop }} slotProps={{ backdrop: { timeout: 500 } }}>
+                <Fade in={true}>
+                    <Box sx={{ ModalMessageStyle }}>
+                        <ModalMessageChatCard>
+                            <ModalMessageChatCardContent>
+                                <ModalMessageChatGrid container spacing={2}>
+                                <Grid item md={11} sm={11} xs={12}>
+                                    <ModalMessageChatGridItemGrid container spacing={2}>
+                                        <Grid item md={10} sm={10} xs={12}>
+                                            <ModalMessagePaper elevation={3}>
+                                                <p>Hey, how're you?</p>
+                                            </ModalMessagePaper>
+                                        </Grid>
+                                        <Grid item md={2} sm={2} xs={12}>
+                                            <ModalMessageChatGridIconButton aria-controls='basic-msg-menu' aria-haspopup="true" aria-expanded='true'>
+                                                <MoreVertIcon fontSize="medium" />
+                                            </ModalMessageChatGridIconButton>
+                                            <Menu id="basic-update-msg-menu" open={true} MenuListProps={{ 'aria-labelledby': 'basic-icon-button' }}>
+                                                <MenuItem>
+                                                    <Typography variant="body2">
+                                                        Delete Message
+                                                    </Typography>
+                                                </MenuItem>
+                                            </Menu>
+                                        </Grid>
+                                    </ModalMessageChatGridItemGrid>
+                                </Grid>
+                                <Grid item md={1} sm={1} xs={12}>
+                                    <ProfileLogo name="Ivdad Ahmed" imageUrl="images/ivdad-ahmed.jpeg" />
+                                </Grid>
+                                </ModalMessageChatGrid>
+                                <br />
+                                <Grid container spacing={2}>
+                                    <Grid item md={1} sm={1} xs={12}>
+                                        <ProfileLogo name="Saif Kamal" imageUrl="images/saif.jpeg" />
+                                    </Grid>
+                                    <Grid item md={10} sm={10} xs={12}>
+                                        <ModalMessageChatFormTextField title="Enter Your Message" placeholder="Type Your Message Here" name="message" />
+                                    </Grid>
+                                    <Grid item md={1} sm={1} xs={12}>
+                                        <ModalMessageChatButton variant="contained">
+                                            Send
+                                        </ModalMessageChatButton>
+                                    </Grid>
+                                </Grid>
+                            </ModalMessageChatCardContent>
+                        </ModalMessageChatCard>
+                    </Box>
+                </Fade>
+            </Modal>
+        </>
+    )
+}
 
 const ModalMessageChats = (props: any) => {
     const { user } = props;

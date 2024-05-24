@@ -6,9 +6,9 @@ import { Backdrop, Box, Button, Fade, FormControlLabel, Grid, MenuItem, Modal, R
 import createGroup from "./createGroup";
 import Swal from "sweetalert2";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { VisuallyHiddenInput } from "@/app/home/@postInput/style";
-import fetchUsers from "@/app/auth/login/fetchUsers";
-import fetchUser from "@/app/profile/@profileCoverHeading/fetchUser";
+import { VisuallyHiddenInput } from "../../home/@postInput/style";
+import fetchUsers from "../../auth/login/fetchUsers";
+import fetchUser from "../../profile/@profileCoverHeading/fetchUser";
 
 const GroupInputModalForm = () => {
     const [open,setOpen] = useState(false);

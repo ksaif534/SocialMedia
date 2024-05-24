@@ -12,6 +12,26 @@ import GroupInputModalForm from "./modal"
 import fetchAllGroups from "./fetchAllGroups"
 import searchGroup from "./searchGroup"
 
+export const SidebarGroupsForUnitTesting = () => {
+    return (
+        <SidebarContentGrid container spacing={2}>
+            <SidebarContentGridItem item md={2} sm={2} xs={12}>
+                <Box>
+                    <GroupAvatar alt="All about Business" src="images/Data Collection & Analytics.png" />
+                </Box>
+            </SidebarContentGridItem>
+            <SidebarContentGridItem item md={8} sm={8} xs={12}>
+                <Typography><strong>All about Business</strong></Typography>
+            </SidebarContentGridItem>
+            <SidebarContentGridItem item md={2} sm={2} xs={12}>
+                <GroupIconButton>
+                    <KeyboardArrowDownIcon fontSize="medium" />
+                </GroupIconButton>
+            </SidebarContentGridItem>
+        </SidebarContentGrid>
+    )
+}
+
 interface SearchGroupContextProps{
     srchGrp: Array<any>,
     setSrchGrp: (newSrchGrp: any) => void,
@@ -47,8 +67,10 @@ const RootComp = () => {
 
     const handleSrchGrp = async (event: any) => {
         setSrchGrpKey(event.target.value);
-        const srchGroup = await searchGroup(event.target.value);
-        setSrchGrp(srchGroup);
+        if (event.target.value !== '') {
+            const srchGroup = await searchGroup(event.target.value);
+            setSrchGrp(srchGroup);   
+        }
     }
 
     return (
@@ -191,36 +213,6 @@ const RootComp = () => {
                                 </>
                             )
                         }
-                        {/* <SidebarContentGrid container spacing={2} onClick={handleGroupClick}>
-                            <SidebarContentGridItem item md={2} sm={2} xs={12}>
-                                <Box>
-                                    <GroupAvatar alt="DevOps Engineers Bangladesh" src="/images/devops-bd.jpeg" />
-                                </Box>
-                            </SidebarContentGridItem>
-                            <SidebarContentGridItem item md={8} sm={8} xs={12}>
-                                <Typography><strong>DevOps Engineers BD</strong></Typography>
-                            </SidebarContentGridItem>
-                            <SidebarContentGridItem item md={2} sm={2} xs={12}>
-                                <GroupIconButton>
-                                    <KeyboardArrowDownIcon fontSize="medium" />
-                                </GroupIconButton>
-                            </SidebarContentGridItem>
-                        </SidebarContentGrid>
-                        <SidebarContentGrid container spacing={2} onClick={handleGroupClick}>
-                            <SidebarContentGridItem item md={2} sm={2} xs={12}>
-                                <Box>
-                                    <GroupAvatar alt="SubcriptionPro" src="/images/subscription-pro.jpeg" />
-                                </Box>
-                            </SidebarContentGridItem>
-                            <SidebarContentGridItem item md={8} sm={8} xs={12}>
-                                <Typography><strong>Subcription Pro</strong></Typography>
-                            </SidebarContentGridItem>
-                            <SidebarContentGridItem item md={2} sm={2} xs={12}>
-                                <GroupIconButton>
-                                    <KeyboardArrowDownIcon fontSize="medium" />
-                                </GroupIconButton>
-                            </SidebarContentGridItem>
-                        </SidebarContentGrid> */}
                     </SidebarWrapper>
                 </Grid>
                 <Grid item md={9} sm={6} xs={12}>

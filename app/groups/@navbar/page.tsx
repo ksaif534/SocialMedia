@@ -1,5 +1,5 @@
 'use client'
-import NavBar from "@/app/profile/@navbar/page";
+import NavBar from "../../profile/@navbar/page";
 import { createContext } from "react";
 
 interface SearchGroupPostProps {

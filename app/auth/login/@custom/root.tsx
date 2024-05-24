@@ -3,11 +3,51 @@ import { CardContent, CardHeader, CardMedia, Grid, IconButton, InputAdornment, T
 import { AuthLoginFormBox, AuthLoginInputFieldsGrid, AuthLoginInputTextField, AuthLoginSubmissionStyle, LoginCard, SubmitButton } from "./style"
 import AccountCircleIcon  from '@mui/icons-material/AccountCircle';
 import { useState, useEffect } from "react";
+import React from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import checkLoginData from '../checkLoginData';
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import fetchUsers from "../fetchUsers";
+
+export const LoginCardForUnitTesting = () => {
+    return (
+        <LoginCard>
+            <CardHeader 
+            title={
+                <Typography variant="h5" align="center"><strong>Authentication Form</strong></Typography>
+            }
+            />
+            <CardMedia component='img' height='194' image="/images/user-reg-form.jpg" />
+            <CardContent>
+                <Typography variant="h6" align="center">
+                    <strong>Login to the User/Admin Account</strong>
+                </Typography>
+                <AuthLoginFormBox>
+                    <AuthLoginInputFieldsGrid container spacing={2}>
+                        <Grid item md={3} sm={3} xs={12}>
+                            <Typography variant="h6" align="center"><strong>Username/Email:</strong></Typography>
+                        </Grid>
+                        <Grid item md={9} sm={9} xs={12}>
+                            <AuthLoginInputTextField title="Your Username/Email" placeholder="Enter your Username/Email" name="login" InputProps={{ startAdornment: <InputAdornment position="start"><IconButton aria-label="get-username"><AccountCircleIcon /></IconButton></InputAdornment> }} />
+                        </Grid>
+                    </AuthLoginInputFieldsGrid>
+                    <AuthLoginInputFieldsGrid container spacing={2}>
+                        <Grid item md={3} sm={3} xs={12}>
+                            <Typography variant="h6" align="center"><strong>Password:</strong></Typography>
+                        </Grid>
+                        <Grid item md={9} sm={9} xs={12}>
+                            <AuthLoginInputTextField title="Your Password" placeholder="Enter your Password" name="password" type="password" InputProps={{ startAdornment: <InputAdornment position='start'><IconButton aria-label="get-user-pass"><VisibilityOff /></IconButton></InputAdornment> }} />
+                        </Grid>
+                    </AuthLoginInputFieldsGrid>
+                    <AuthLoginSubmissionStyle>
+                        <SubmitButton variant="contained" color="success" type="submit" id="submit">Login to Account</SubmitButton>
+                    </AuthLoginSubmissionStyle>
+                </AuthLoginFormBox>
+            </CardContent>
+        </LoginCard>
+    )
+}
 
 const RootComp = () => {
     const router = useRouter();

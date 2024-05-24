@@ -253,24 +253,6 @@ const RootComp = () => {
                                                     })
                                                 }
                                             </span>
-                                            {/* <span style={{ display:'flex', justifyContent: 'center'}}>
-                                                {
-                                                    otherProfiles.map((otherProfile: any,index: number) => {
-                                                        if (index < 4) {
-                                                            return (
-                                                                <RoundedFirstSmallAvatar alt="Profile Image" src={`images/${otherProfile.user.image}`} onClick={() => handleOtherProfiles(otherProfile)} key={otherProfile.id}>
-    
-                                                                </RoundedFirstSmallAvatar>
-                                                            )   
-                                                        }
-                                                        if (index == 4) {
-                                                            return (
-                                                                <ArrowRightIcon fontSize="large" key={otherProfile.id} onClick={handleAllFriendsGeneration} />
-                                                            )
-                                                        }       
-                                                    })
-                                                }
-                                            </span> */}
                                         </Grid>
                                         <Grid item md={2} sm={2} xs={12}>
                                             {

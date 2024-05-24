@@ -10,6 +10,52 @@ import { useEffect, useState } from 'react';
 import fetchChatSettings from './fetchChatSettings';
 import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import updateShowContacts from './updateShowContacts';
+import React from 'react';
+
+export const ChatSettingsForUnitTesting = () => {
+    return (
+        <>
+            <ChatMenu anchorOrigin={{vertical: 'top', horizontal: 'right'}} id='chat-settings-menu' keepMounted transformOrigin={{ vertical: 'top', horizontal: 'right' }} open={true}>
+                <ChatMenuGridHeader container spacing={2}>
+                    <Grid item md={12} sm={12} xs={12}>
+                        <Typography variant="h6">Chat Settings</Typography>
+                    </Grid>
+                    <Grid item md={12} sm={12} xs={12}>
+                        <Typography variant="body2">Customize your chat experience</Typography>
+                    </Grid>
+                </ChatMenuGridHeader>
+                <ChatMenuDivider />
+                <ChatMenuItem>
+                    <ChatMenuItemGrid container spacing={2}>
+                        <Grid item md={2} sm={2} xs={12}>
+                            <ContactMailIcon fontSize="large" />
+                        </Grid>
+                        <Grid item md={8} sm={8} xs={12}>
+                            <Typography variant="h6">Show Contacts</Typography>
+                        </Grid>
+                        <Grid item md={2} sm={2} xs={12}>
+                            <ToggleOffIcon fontSize="large" />
+                        </Grid>
+                    </ChatMenuItemGrid>
+                </ChatMenuItem>
+                <Divider />
+                <ChatMenuItem>
+                    <ChatMenuItemGrid container spacing={2}>
+                        <Grid item md={2} sm={2} xs={12}>
+                            <CircleNotificationsIcon fontSize="large" />
+                        </Grid>
+                        <Grid item md={8} sm={8} xs={12}>
+                            <Typography variant="h6">Active Status:</Typography>
+                        </Grid>
+                        <Grid item md={2} sm={2} xs={12}>
+                            <Typography variant="h6"><strong>OFF</strong></Typography>
+                        </Grid>
+                    </ChatMenuItemGrid>
+                </ChatMenuItem>
+            </ChatMenu>
+        </>
+    )
+}
 
 const ChatSettings = (props: any) => {
     const { anchorChatEl, setAnchorChatEl } = props;

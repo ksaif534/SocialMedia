@@ -2,13 +2,31 @@
 import { CardContent, CardMedia, Grid, Typography } from "@mui/material"
 import { FriendCard, FriendCardButton, FriendGrid } from "./style";
 import { useState,useEffect } from "react";
-import fetchOtherProfiles from "@/app/profile/@profileCoverHeading/fetchOtherProfiles";
-import fetchAllProfileNetworks from "@/app/profile/@profileCoverHeading/fetchAllProfileNetworks";
-import fetchProfileNetworks from "@/app/profile/@profileCoverHeading/fetchProfileNetworks";
+import React from "react";
+import fetchOtherProfiles from "../../profile/@profileCoverHeading/fetchOtherProfiles";
+import fetchAllProfileNetworks from "../../profile/@profileCoverHeading/fetchAllProfileNetworks";
+import fetchProfileNetworks from "../../profile/@profileCoverHeading/fetchProfileNetworks";
 import fetchTotalNetworks from './fetchTotalNetworks'
 import Swal from "sweetalert2";
-import postNetworkStatus from "@/app/profile/@profileCoverHeading/postNetworkStatus";
-import updatePendingNetwork from "@/app/profile/@profileCoverHeading/updatePendingNetwork";
+import postNetworkStatus from "../../profile/@profileCoverHeading/postNetworkStatus";
+import updatePendingNetwork from "../../profile/@profileCoverHeading/updatePendingNetwork";
+
+export const FriendCardButtonForUnitTesting = () => {
+    return (
+        <>
+            <FriendCardButton variant="contained" color="success">
+                <Typography variant="body2" align="center">
+                    Add Friend
+                </Typography>
+            </FriendCardButton>
+            <FriendCardButton variant="contained" color="warning">
+                <Typography variant="body2" align="center">
+                    Remove
+                </Typography>
+            </FriendCardButton>
+        </>
+    )
+}
 
 const RootComp = () => {
     const [otherProfiles,setOtherProfiles] = useState([]);
@@ -175,7 +193,7 @@ const RootComp = () => {
                                                                                             }else{
                                                                                                 return (
                                                                                                     <div key={allProfileNetwork.id}>
-                                                                                                        <FriendCardButton variant="contained" color="success" onClick={() => handleAddFriendClick(allProfileNetwork.user)}>
+                                                                                                        <FriendCardButton variant="contained" color="success" onClick={() => handleAddFriendClick(otherProfile.user)}>
                                                                                                             <Typography variant="body2" align="center">
                                                                                                                 Add Friend
                                                                                                             </Typography>
@@ -227,7 +245,7 @@ const RootComp = () => {
                                                                                         if (indexCounterArr.length == 0) {
                                                                                             return (
                                                                                                 <div key={allProfileNetwork.id}>
-                                                                                                    <FriendCardButton variant="contained" color="success" onClick={() => handleAddFriendClick(allProfileNetwork.user)}>
+                                                                                                    <FriendCardButton variant="contained" color="success" onClick={() => handleAddFriendClick(otherProfile.user)}>
                                                                                                         <Typography variant="body2" align="center">
                                                                                                             Add Friend
                                                                                                         </Typography>
@@ -305,7 +323,7 @@ const RootComp = () => {
                                                                                     }else{
                                                                                         return (
                                                                                             <div key={acceptedNetwork.id}>
-                                                                                                <FriendCardButton variant="contained" color="success" onClick={() => handleAddFriendClick(acceptedNetwork.user)}>
+                                                                                                <FriendCardButton variant="contained" color="success" onClick={() => handleAddFriendClick(otherProfile.user)}>
                                                                                                     <Typography variant="body2" align="center">
                                                                                                         Add Friend
                                                                                                     </Typography>
@@ -334,7 +352,7 @@ const RootComp = () => {
                                                                                     }else{
                                                                                         return (
                                                                                             <div key={acceptedNetwork.id}>
-                                                                                                <FriendCardButton variant="contained" color="success" onClick={() => handleAddFriendClick(acceptedNetwork.user)}>
+                                                                                                <FriendCardButton variant="contained" color="success" onClick={() => handleAddFriendClick(otherProfile.user)}>
                                                                                                     <Typography variant="body2" align="center">
                                                                                                         Add Friend
                                                                                                     </Typography>
@@ -357,7 +375,7 @@ const RootComp = () => {
                                                                         if (indexCounterArr.length < 2) {
                                                                             return (
                                                                                 <div key={profileNetwork.id}>
-                                                                                    <FriendCardButton variant="contained" color="success">
+                                                                                    <FriendCardButton variant="contained" color="success" onClick={() => handleAddFriendClick(otherProfile.user)}>
                                                                                         <Typography variant="body2" align="center">
                                                                                             Add Friend
                                                                                         </Typography>
