@@ -50,19 +50,6 @@ export const ContactGridHeader = styled(Grid)(({theme}) => ({
     display: 'flex',
 }))
 
-export const ContactGridContent = styled(Grid)(({theme}) => ({
-    marginTop: theme.spacing(2),
-    justifyContent: 'center',
-    alignItems: 'center',
-    display: 'flex',
-    [theme.breakpoints.down('md')]: {
-        display: 'none'
-    },
-    [theme.breakpoints.down('sm')]: {
-        display: 'none'
-    }
-}))
-
 export const SearchContactTextField = styled(TextField)(() => ({
     width: '100%',
     backgroundColor: '#ffffff',
@@ -87,6 +74,25 @@ export const ContactModalGridContent = styled(Grid)(({theme}) => ({
         backgroundColor: 'rgba(51,51,51,0.7)'
     },
     borderRadius: '20px'
+}))
+
+export const ContactModalStyling = styled('div')(({theme}) => ({
+    marginTop: theme.spacing(2),
+    width: '100%',
+    borderRadius: theme.spacing(2),
+    backgroundColor: 'rgba(51,51,51,0.9)',
+    '&:hover': {
+        backgroundColor: 'rgba(51,51,51,0.7)'
+    },
+    justifyContent: 'center',
+    alignItems: 'center',
+    display: 'flex',
+}))
+
+export const ContactStyling = styled('div')(({theme}) => ({
+    marginTop: theme.spacing(1),
+    borderRadius: theme.spacing(2),
+    width: '100%'
 }))
 
 export const ContactModalGridContentItem = styled(Grid)(({theme}) => ({

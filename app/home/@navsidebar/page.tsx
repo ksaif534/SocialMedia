@@ -2,12 +2,13 @@ import * as React from 'react';
 import { Box, CssBaseline } from '@mui/material';
 import RootComp from './root';
 
-const NavSideBar = () => {
-  
+const NavSideBar = (props: any) => {
+  const { page } = props;
+
   return (
     <Box sx={{ flexGrow: 1, display: 'flex' }}>
       <CssBaseline />
-      <RootComp />
+      <RootComp page={page} />
     </Box>
   );
 }

@@ -1,9 +1,19 @@
 'use client'
-import { useState } from 'react'
-import { IconButton, Menu, MenuItem, Badge } from '@mui/material'
+import { useEffect, useState } from 'react'
+import { IconButton, Menu, MenuItem, Badge, Avatar, Typography } from '@mui/material'
 import { AccountCircle } from '@mui/icons-material'
 import MailIcon from '@mui/icons-material/Mail'
 import NotificationsIcon from '@mui/icons-material/Notifications'
+import LogoutIcon from '@mui/icons-material/Logout';
+import { useRouter } from 'next/navigation';
+import fetchUser from '../../profile/@profileCoverHeading/fetchUser'
+import ModalMessageChats from './msgModal'
+import fetchUsers from '../../auth/login/fetchUsers'
+import fetchNewNotificationsFromDB from './fetchNewNotificationsFromDB'
+import fetchNewMsgNotificationsFromDB from './fetchNewMsgNotificationsFromDB'
+import makeNotificationRead from './makeNotificationRead'
+import Swal from 'sweetalert2'
+import makeMsgNotificationAsRead from './makeMsgNotificationAsRead'
 
 export const menuId = 'primary-search-account-menu';
 export const mobileMenuId = 'primary-search-account-menu-mobile';
@@ -13,6 +23,13 @@ export const notifMenuId = "notification-dropdown-menu";
 export const RenderMenu = (props: any) => {
     const { anchorEl, setAnchorEl } = props;
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
+    const [currentUser,setCurrentUser] = useState({ id: 0, email: '', password: '', image: null, is_active: 0, name: '', phone: 0 })
+
+    useEffect(() => {
+        fetchUser(sessionStorage.getItem("authUserId")).then((currentUser: any) => setCurrentUser(currentUser));
+    },[])
+
+    const router = useRouter();
 
     const isMenuOpen = Boolean(anchorEl);
 
@@ -21,9 +38,20 @@ export const RenderMenu = (props: any) => {
         handleMobileMenuClose();
     };
 
+    const goToProfilePage = () => {
+        router.push(`/profile`);
+    }
+
     const handleMobileMenuClose = () => {
         setMobileMoreAnchorEl(null);
     };
+
+    const handleLogout = () => {
+        sessionStorage.setItem("sessionToken","");
+        sessionStorage.setItem("authUser","");
+        sessionStorage.setItem("authUserId","");
+        router.push(`/auth/login`);
+    }
 
     return (
         <Menu
@@ -41,8 +69,29 @@ export const RenderMenu = (props: any) => {
         open={isMenuOpen}
         onClose={handleMenuClose}
         >
-            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-            <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+            <MenuItem onClick={goToProfilePage}>
+                <IconButton
+                size="small"
+                aria-label="logout from current user"
+                aria-haspopup="true"
+                color="inherit"
+                >
+                    <Avatar src={`images/${currentUser?.image}`} />
+                    My Profile
+                </IconButton>
+            </MenuItem>
+            <MenuItem onClick={handleLogout}>
+                <IconButton
+                size="small"
+                aria-label="logout from current user"
+                aria-controls="logout-menu"
+                aria-haspopup="true"
+                color="inherit"
+                >
+                    <LogoutIcon />
+                    Logout
+                </IconButton>
+            </MenuItem> 
         </Menu>
     )
 }
@@ -50,6 +99,13 @@ export const RenderMenu = (props: any) => {
 export const RenderMobileMenu = () => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
+    const [newNotif,setNewNotif] = useState([]);
+    const [newMsgNotif,setNewMsgNotif] = useState([]);
+
+    useEffect(() => {
+        fetchNewNotificationsFromDB(sessionStorage.getItem("authUserId")).then((notif: any) => setNewNotif(notif));
+        fetchNewMsgNotificationsFromDB(sessionStorage.getItem("authUserId")).then((msgNotif: any) => setNewMsgNotif(msgNotif));
+    },[])
 
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
@@ -78,8 +134,8 @@ export const RenderMobileMenu = () => {
         onClose={handleMobileMenuClose}
         >
             <MenuItem>
-                <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-                <Badge badgeContent={4} color="error">
+                <IconButton size="large" aria-label={`show ${Number(newMsgNotif?.length)} new mails`} color="inherit">
+                <Badge badgeContent={Number(newMsgNotif?.length)} color="error">
                     <MailIcon />
                 </Badge>
                 </IconButton>
@@ -88,10 +144,10 @@ export const RenderMobileMenu = () => {
             <MenuItem>
                 <IconButton
                 size="large"
-                aria-label="show 17 new notifications"
+                aria-label={`show ${newNotif?.length} new notifications`}
                 color="inherit"
                 >
-                <Badge badgeContent={17} color="error">
+                <Badge badgeContent={newNotif?.length} color="error">
                     <NotificationsIcon />
                 </Badge>
                 </IconButton>
@@ -105,7 +161,7 @@ export const RenderMobileMenu = () => {
                 aria-haspopup="true"
                 color="inherit"
                 >
-                <AccountCircle />
+                    <AccountCircle />
                 </IconButton>
                 <p>Profile</p>
             </MenuItem>
@@ -115,6 +171,15 @@ export const RenderMobileMenu = () => {
 
 export const RenderMsgMenu = (props: any) => {
     const { msgAnchorEl, setMsgAnchorEl } = props;
+    const [user,setUser] = useState({ id: 0, name: '', email: '', password: '', image: null, phone: 0, is_active: 0 });
+    const [newMsgNotif,setNewMsgNotif] = useState([]);
+    const [users,setUsers] = useState([]);
+
+    useEffect(() => {
+        fetchUser(sessionStorage.getItem("authUserId")).then((user: any) => setUser(user));
+        fetchUsers().then((users: any) => setUsers(users));
+        fetchNewMsgNotificationsFromDB(sessionStorage.getItem("authUserId")).then((newMsgNotif: any) => setNewMsgNotif(newMsgNotif));
+    },[])
 
     const isMsgMenuOpen = Boolean(msgAnchorEl);
 
@@ -122,20 +187,61 @@ export const RenderMsgMenu = (props: any) => {
         setMsgAnchorEl(null);
     }
 
+    const makeMsgNotifRead = async (msgNotif: any) => {
+        const updateMsgNotifAsRead = await makeMsgNotificationAsRead(sessionStorage.getItem("authUserId"),msgNotif);
+    }
+
     return (
         <Menu anchorEl={msgAnchorEl} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} id={msgMenuId} keepMounted transformOrigin={{ vertical: 'top', horizontal: 'right' }} open={isMsgMenuOpen} onClose={handleMsgMenuClose}>
-            <MenuItem onClick={handleMsgMenuClose}>
-                Message 1
-            </MenuItem>
-            <MenuItem onClick={handleMsgMenuClose}>
-                Message 2
-            </MenuItem>
+            {
+                users.map((user: any) => {
+                    if (user.id != sessionStorage.getItem("authUserId")) {
+                        let counter = 0;
+                        if (newMsgNotif.length > 0) {
+                            return newMsgNotif.map((msgNotif: any) => {
+                                if (user.id == msgNotif.message.user_id) {
+                                    counter++;
+                                    return (
+                                        <div key={user.id}>
+                                            <MenuItem sx={{ backgroundColor: 'rgba(123,123,123,0.5)' }} onClick={() => makeMsgNotifRead(msgNotif)}>
+                                                <ModalMessageChats user={user} />
+                                            </MenuItem>
+                                        </div>
+                                    )
+                                }
+                                if (counter == 0) {
+                                    return (
+                                        <div key={user.id}>
+                                            <MenuItem>
+                                                <ModalMessageChats user={user} />
+                                            </MenuItem>
+                                        </div>
+                                    )
+                                }
+                            })   
+                        }else{
+                            return (
+                                <div key={user.id}>
+                                    <MenuItem>
+                                        <ModalMessageChats user={user} />
+                                    </MenuItem>
+                                </div>
+                            )
+                        }   
+                    }
+                })
+            }
         </Menu>
     )
 }
 
 export const RenderNotifMenu = (props : any) => {
     const { notifAnchorEl, setNotifAnchorEl } = props;
+    const [newNotif,setNewNotif] = useState([]);
+
+    useEffect(() => {
+        fetchNewNotificationsFromDB(sessionStorage.getItem("authUserId")).then((notif: any) => setNewNotif(notif));
+    },[])
 
     const isNotifMenuOpen = Boolean(notifAnchorEl);
 
@@ -143,14 +249,38 @@ export const RenderNotifMenu = (props : any) => {
         setNotifAnchorEl(null);
     }
 
+    const handleNotificationMenuItemClick = (notif: any) => {
+        const notifUpdate = makeNotificationRead(sessionStorage.getItem("authUserId"),notif);
+        if (Boolean(notifUpdate)) {
+            Swal.fire({
+                title: `Success`,
+                text: `Marked Notification as read`,
+                icon: `success`
+            });
+        }else{
+            Swal.fire({
+                title: `Failure`,
+                text: `Sorry, couldn't mark notification as read`,
+                icon: `error`
+            });
+        }
+    }
+
     return (
         <Menu anchorEl={notifAnchorEl} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} id={notifMenuId} keepMounted transformOrigin={{ vertical: 'top', horizontal: 'right'}} open={isNotifMenuOpen} onClose={handleNotifMenuClose}>
-            <MenuItem onClick={handleNotifMenuClose}>
-                Notification 1
-            </MenuItem>
-            <MenuItem onClick={handleNotifMenuClose}>
-                Notification 2
-            </MenuItem>
+            {
+                newNotif?.map((notif: any) => {
+                    return (
+                        <div key={notif.id}>
+                            <MenuItem onClick={() => handleNotificationMenuItemClick(notif)}>
+                                <Typography variant="body2">
+                                    {notif.data}
+                                </Typography>
+                            </MenuItem>
+                        </div>
+                    )
+                })
+            }
         </Menu>
     )
 }
@@ -168,4 +298,14 @@ export const getMsgAnchorState: any = (initValue: any) => {
 export const getNotifAnchorState: any = (initValue: any) => {
     const [notifAnchorEl,setNotifAnchorEl] = useState<null | HTMLElement>(initValue);
     return [notifAnchorEl,setNotifAnchorEl];
+}
+
+export const getUsersState: any = (initValue: any) => {
+    const [users,setUsers] = useState(initValue);
+    return [users,setUsers];
+}
+
+export const getAuthUserState: any = (initValue: any) => {
+    const [authUser,setAuthUser] = useState(initValue);
+    return [authUser,setAuthUser];
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { Grid } from '@mui/material'
+import RootGroupLayout from './root'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -21,14 +22,7 @@ const GroupsLayout = ({
     return (
         <>
             { children }
-            <Grid container spacing={2}>
-                <Grid item md={12} sm={12} xs={12}>
-                    <div style={{ justifyContent: 'center' }}>
-                        {navbar}
-                        {sidebar}
-                    </div>
-                </Grid>
-            </Grid>
+            <RootGroupLayout navbar={navbar} sidebar={sidebar} />
         </>
     )
 }

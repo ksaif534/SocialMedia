@@ -2,7 +2,7 @@
 import { styled, alpha, useTheme, Theme, CSSObject } from '@mui/material/styles';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import MuiDrawer from '@mui/material/Drawer';
-import { InputBase } from '@mui/material';
+import { Button, ButtonBase, Card, CardContent, Grid, IconButton, InputBase, Paper, TextField } from '@mui/material';
 
 const drawerWidth = 240;
 
@@ -116,3 +116,85 @@ export const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
   },
 }));
+
+export const ModalMessageChatsButtonBase = styled(ButtonBase)(({theme}) => ({
+  marginTop: theme.spacing(1),
+  marginBottom: theme.spacing(1),
+  borderRadius: theme.spacing(2),
+  justifyContent: 'center',
+  alignItems: 'center',
+  display: 'flex',
+  [theme.breakpoints.down('md')]: {
+      display: 'none'
+  },
+  [theme.breakpoints.down('sm')]: {
+      display: 'none'
+  },
+  width: '100%'
+}));
+
+export const ModalMessageStyle = {
+  position: 'absolute' as 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+
+export const ModalMessageChatCard = styled(Card)(({theme}) => ({
+  marginTop: theme.spacing(5),
+  backgroundColor: 'inherit',
+  justifyContent: 'center',
+  alignItems: 'center',
+  display: 'flex',
+}));
+
+export const ModalMessageChatCardContent = styled(CardContent)(({theme}) => ({
+  backgroundColor: 'rgba(32,32,32,1)',
+  color: 'rgba(255,255,255,1)',
+  borderRadius: theme.spacing(2),
+  width: '50%',
+  height: 'auto',
+  overflow: 'auto',
+  maxHeight: '600px'
+}));
+
+export const ModalMessageChatFormTextField = styled(TextField)(({ theme }) => ({
+  width: '100%',
+  backgroundColor: 'rgba(255,255,255,1)',
+  borderRadius: theme.spacing(2)
+}))
+
+export const ModalMessageChatButton = styled(Button)(({theme}) => ({
+  borderRadius: theme.spacing(1),
+  width: '100%'
+}))
+
+export const ModalMessageChatGrid = styled(Grid)(({ theme }) => ({
+  marginTop: theme.spacing(1)
+}))
+
+export const ModalMessageChatGridItemGrid = styled(Grid)(({ theme }) => ({
+  justifyContent: 'center',
+  alignItems: 'center', 
+  display: 'flex'
+}))
+
+export const ModalMessageChatGridIconButton = styled(IconButton)(({ theme }) => ({
+  backgroundColor: 'rgba(123,123,123,0.7)', 
+  '&:hover': { 
+    backgroundColor: 'rgba(123,123,123,0.5)' 
+  }
+}))
+
+export const ModalMessagePaper = styled(Paper)(({ theme}) => ({
+  backgroundColor: 'rgba(255, 255, 255, 1)',
+  borderRadius: theme.spacing(2),
+  justifyContent: 'center',
+  alignItems: 'center',
+  display: 'flex'
+}))

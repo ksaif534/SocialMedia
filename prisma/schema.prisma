@@ -1,0 +1,167 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model users {
+  id                Int    @id @default(autoincrement())
+  name              String @unique @db.VarChar(255)
+  email             String @unique @db.VarChar(255)
+  password          String @db.VarChar(255)
+  image             String @db.VarChar(255)
+  phone             String @db.VarChar(255)
+  is_active         Int
+  comments          comments[]
+  posts             posts[]
+  profile           profiles?
+  networks          networks[]
+  groups            groups[]
+  groupModerators   groupModerators[]
+  groupMembers      groupMembers[]
+  messages          messages[]
+  notifications     notifications[]
+  likes             likes[]
+  shares            shares[]
+  chat_settings     chat_settings?
+}
+
+model posts {
+  id              Int @id @default(autoincrement())
+  user_id         Int
+  group_id        Int
+  title           String @db.VarChar(255)
+  sub_title       String @db.VarChar(255)
+  description     String @db.VarChar(255)
+  type            Int
+  tags            String @db.VarChar(255)
+  is_share        Int
+  figure          String @db.VarChar(255)
+  thumbnail       String @db.VarChar(255)
+  video_post_url  String @db.VarChar(255)
+  is_group        Int @default(0)
+  comments        comments[]
+  user            users @relation(fields: [user_id], references: [id])
+  likes           likes[]
+  shares          shares[]
+}
+
+model comments {
+  id            Int @id @default(autoincrement())
+  user_id       Int
+  post_id       Int
+  description   String @db.VarChar(255)
+  is_allow      Int
+  post          posts @relation(fields: [post_id], references: [id])
+  user          users @relation(fields: [user_id], references: [id])
+}
+
+model profiles {
+  id              Int @id @default(autoincrement())
+  user_id         Int @unique
+  firstname       String @db.VarChar(255)
+  lastname        String @db.VarChar(255)
+  marital_status  Int
+  gender          Int
+  birthdate       DateTime
+  education_level Int
+  occupation      Int
+  country         Int
+  city            Int
+  address         String @db.VarChar(255)
+  profile_photo   String @db.VarChar(255)
+  user            users @relation(fields: [user_id], references: [id])
+  networks        networks[]
+}
+
+model networks {
+  id              Int @id @default(autoincrement())
+  user_id_from    Int
+  user_id_to      Int
+  profile_id      Int @default(0)
+  status          Int
+  user            users @relation(fields: [user_id_to], references: [id])
+  profile         profiles @relation(fields: [profile_id], references: [id])
+}
+
+model groups {
+  id              Int @id @default(autoincrement())
+  user_id         Int
+  name            String @db.VarChar(255)
+  description     String @db.VarChar(255)
+  status          Int
+  group_photo     String @db.VarChar(255) @default("")
+  group_mods      String @db.VarChar(255) @default("")
+  user            users @relation(fields: [user_id], references: [id])
+  groupModerators groupModerators[]
+  groupMembers    groupMembers[]
+}
+
+model groupModerators {
+  id              Int @id @default(autoincrement())
+  user_id         Int
+  group_id        Int
+  user            users @relation(fields: [user_id], references: [id])
+  groups          groups[]
+}
+
+model groupMembers {
+  id              Int @id @default(autoincrement())
+  user_id         Int
+  group_id        Int
+  name            String @db.VarChar(255)
+  user            users @relation(fields: [user_id], references: [id])
+  groups          groups[]
+}
+
+model messages {
+  id              Int @id @default(autoincrement())
+  user_id         Int
+  target_user_id  Int
+  message         String @db.VarChar(255)
+  is_allow        Int
+  user            users @relation(fields: [user_id], references: [id])
+  notification    notifications?
+}
+
+model notifications {
+  id              Int @id @default(autoincrement())
+  user_id         Int
+  type            Int
+  notifiable_type Int
+  notifiable_id   Int @unique
+  data            String @db.VarChar(255)
+  read_at         DateTime? 
+  user            users @relation(fields: [user_id], references: [id])
+  message         messages @relation(fields: [notifiable_id], references: [id], onDelete: Cascade)
+}
+
+model likes {
+  id              Int @id @default(autoincrement())
+  user_id         Int
+  post_id         Int
+  is_count        Int
+  user            users @relation(fields: [user_id], references: [id])
+  post            posts @relation(fields: [post_id], references: [id])
+}
+
+model shares {
+  id              Int @id @default(autoincrement())
+  user_id         Int
+  post_id         Int
+  is_count        Int
+  shared          Int
+  user            users @relation(fields: [user_id], references: [id])
+  post            posts @relation(fields: [post_id], references: [id])
+}
+
+model chat_settings {
+  id              Int @id @default(autoincrement())
+  user_id         Int @unique
+  is_active       Int
+  is_shown        Int
+  user            users @relation(fields: [user_id], references: [id])
+}

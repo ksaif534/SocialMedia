@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Badge, Box, IconButton, Toolbar, Typography } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import MailIcon from '@mui/icons-material/Mail'
@@ -9,9 +9,21 @@ import LogoDevIcon from '@mui/icons-material/LogoDev'
 import { AccountCircle } from '@mui/icons-material'
 import { menuId, msgMenuId, notifMenuId } from './menu'
 import { AppBar, Search, SearchIconWrapper, StyledInputBase } from './style'
+import fetchNewNotificationsFromDB from './fetchNewNotificationsFromDB'
+import fetchNewMsgNotificationsFromDB from './fetchNewMsgNotificationsFromDB'
+import searchPosts from './searchPosts'
+import { SearchContext } from './root'
 
 export const AppBarComp = (props: any) => {
-    const { anchorEl, setAnchorEl, msgAnchorEl, setMsgAnchorEl, notifAnchorEl, setNotifAnchorEl, open, setOpen, auth, setAuth } = props;
+    const { setAnchorEl, setMsgAnchorEl, setNotifAnchorEl, open, setOpen, auth } = props;
+    const { srchPosts,setSrchPosts, srchKey, setSrchKey } = useContext(SearchContext);
+    const [newNotif,setNewNotif] = useState([]);
+    const [newMsgNotif,setNewMsgNotif] = useState([]);
+
+    useEffect(() => {
+        fetchNewNotificationsFromDB(sessionStorage.getItem("authUserId")).then((notif: any) => setNewNotif(notif));
+        fetchNewMsgNotificationsFromDB(sessionStorage.getItem("authUserId")).then((msgNotif: any) => setNewMsgNotif(msgNotif));
+    },[])
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -27,6 +39,14 @@ export const AppBarComp = (props: any) => {
     
     const handleNotifOnClick = (event: React.MouseEvent<HTMLElement>) => {
         setNotifAnchorEl(event.currentTarget);
+    }
+
+    const searchResults = async (event: any) => {
+        setSrchKey(event.target.value);
+        if (event.target.value !== '') {
+            const searchedPosts = await searchPosts(event.target.value);
+            setSrchPosts(searchedPosts);   
+        }
     }
     
     return (
@@ -63,6 +83,8 @@ export const AppBarComp = (props: any) => {
                     <StyledInputBase
                     placeholder="Search…"
                     inputProps={{ 'aria-label': 'search' }}
+                    name="search"
+                    onChange={searchResults}
                     />
                 </Search>
             {
@@ -70,13 +92,13 @@ export const AppBarComp = (props: any) => {
                 <>
                     <div>
                         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                            <IconButton size="large" aria-label="show 4 new mails" aria-controls={msgMenuId} aria-haspopup="true" color="inherit" onClick={handleMsgIconClick}>
-                                <Badge badgeContent={4} color="error">
+                            <IconButton size="large" aria-label={`show ${newMsgNotif?.length} new mails`} aria-controls={msgMenuId} aria-haspopup="true" color="inherit" onClick={handleMsgIconClick}>
+                                <Badge badgeContent={Number(newMsgNotif?.length)} color="error">
                                     <MailIcon />
                                 </Badge>
                             </IconButton>
-                            <IconButton size="large" aria-label="show 17 new notifications" aria-controls={notifMenuId} aria-haspopup="true" color="inherit" onClick={handleNotifOnClick}>
-                                <Badge badgeContent={17} color="error">
+                            <IconButton size="large" aria-label={`show ${newNotif?.length} new notifications`} aria-controls={notifMenuId} aria-haspopup="true" color="inherit" onClick={handleNotifOnClick}>
+                                <Badge badgeContent={Number(newNotif?.length)} color="error">
                                     <NotificationsIcon />
                                 </Badge>
                             </IconButton>
