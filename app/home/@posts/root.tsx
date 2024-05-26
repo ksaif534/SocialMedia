@@ -1,6 +1,6 @@
 'use client'
 import React, { useContext } from "react"
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { CardHeader, CardMedia, CardContent, CardActions, Collapse, Avatar, IconButton, Typography } from '@mui/material';
 import fetchPosts from "./fetchPosts";
 import fetchComments from "../@posts/@commentInput/fetchComments";
@@ -140,8 +140,8 @@ const RootComp = (props: any) => {
         fetchUsers().then((users: any) => setUsers(users));
         fetchLikes().then((likes: any) => setLikes(likes));
         fetchShares().then((shares: any) => setShares(shares));
-        const user = users.find((user: any) => user.email == sessionStorage.getItem("authUser"));
-    },[users])
+        // const user = users.find((user: any) => user.email == sessionStorage.getItem("authUser")); 
+    },[])
 
     const [expandedPosts, setExpandedPosts] = useState([]);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);

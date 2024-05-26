@@ -154,6 +154,8 @@ const RootComp = (props: any) => {
                                             src={`${item.img}?w=164&h=164&fit=crop&auto=format`}
                                             alt={item.title}
                                             loading="lazy"
+                                            width={80}
+                                            height={150}
                                         />
                                         </ImageListItem>
                                     ))}
@@ -202,6 +204,8 @@ const RootComp = (props: any) => {
                                                                             src={`images/${acceptedProfileNetwork?.user?.image}`}
                                                                             alt={acceptedProfileNetwork?.user?.image}
                                                                             loading="lazy"
+                                                                            width={80}
+                                                                            height={150}
                                                                         />
                                                                     </ImageListItem>
                                                                 )    
@@ -217,6 +221,8 @@ const RootComp = (props: any) => {
                                                                                         src={`images/${recipientUser?.image}`}
                                                                                         alt={acceptedProfileNetwork?.user?.image}
                                                                                         loading="lazy"
+                                                                                        width={80}
+                                                                                        height={150}
                                                                                     />
                                                                                 </ImageListItem>
                                                                             )

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import React from "react";
 import { ModalMessageChatButton, ModalMessageChatCard, ModalMessageChatCardContent, ModalMessageChatFormTextField, ModalMessageChatGrid, ModalMessageChatGridIconButton, ModalMessageChatGridItemGrid, ModalMessageChatsButtonBase, ModalMessagePaper, ModalMessageStyle } from "./style"
 import { Backdrop, Box, Fade, Grid, IconButton, Menu, MenuItem, Modal, Typography } from "@mui/material";
@@ -84,35 +84,35 @@ const ModalMessageChats = (props: any) => {
     const [open,setOpen] = useState(false);
     const [sender,setSender] = useState({ id: 0, name: '', email: '', password: '', image: null, phone: 0, is_active: 0 });
     const [chats,setChats] = useState([]);
-    let chatsArr: any = [...chats];
+    let chatsArr: any = useMemo(() => chats.map(chat => chat),[...chats]);
     const [messageToSend,setMessageToSend] = useState("");
     const [removeMsgMenuAnchorEl,setRemoveMsgMenuAnchorEl] = useState<null | HTMLElement>(null);
     const removeMsgMenuOpen = Boolean(removeMsgMenuAnchorEl);
 
     useEffect(() => {
         fetchUser(sessionStorage.getItem("authUserId")).then((user: any) => setSender(user));
-        const pusher = new Pusher(`${process.env.NEXT_PUBLIC_KEY}`,{
-            cluster: "ap2",
-            authEndpoint: `api/home/pusher/auth`,
-            auth: {
-                params: {
-                    user_info: sender
-                }
-            }
-        });
-        const channel = pusher.subscribe("ksaif-chat-sm-nextjs");
-        channel.bind("send-msg-event", (data: any) => {
-            chatsArr.push({
-                sender: data.sender,
-                senderImage: data.sender.image,
-                message: data.message
-            });
-            setChats(chatsArr);
-        })
-        return () => {
-            pusher.unsubscribe("ksaif-chat-sm-nextjs");
-        }
-    },[chatsArr,sender])
+        // const pusher = new Pusher(`${process.env.NEXT_PUBLIC_KEY}`,{
+        //     cluster: "ap2",
+        //     authEndpoint: `api/home/pusher/auth`,
+        //     auth: {
+        //         params: {
+        //             user_info: sender
+        //         }
+        //     }
+        // });
+        // const channel = pusher.subscribe("ksaif-chat-sm-nextjs");
+        // channel.bind("send-msg-event", (data: any) => {
+        //     chatsArr.push({
+        //         sender: data.sender,
+        //         senderImage: data.sender.image,
+        //         message: data.message
+        //     });
+        //     setChats(chatsArr);
+        // })
+        // return () => {
+        //     pusher.unsubscribe("ksaif-chat-sm-nextjs");
+        // }
+    },[])
 
     const handleOpen = () => {
         setOpen(true);
