@@ -35,7 +35,7 @@ export const ModalMessageChatForUnitTesting = () => {
                                     <ModalMessageChatGridItemGrid container spacing={2}>
                                         <Grid item md={10} sm={10} xs={12}>
                                             <ModalMessagePaper elevation={3}>
-                                                <p>Hey, how're you?</p>
+                                                <p>Hey, how are you?</p>
                                             </ModalMessagePaper>
                                         </Grid>
                                         <Grid item md={2} sm={2} xs={12}>

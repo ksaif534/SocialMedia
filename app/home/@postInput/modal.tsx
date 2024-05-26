@@ -85,7 +85,7 @@ const PostInputModalForm = (props: any) => {
     return (
         <>
             <PostInputModalButtonBase onClick={handleOpen}>
-                <Typography variant="h6">What's on your mind?</Typography>
+                <Typography variant="h6">Whats on your mind?</Typography>
             </PostInputModalButtonBase>
             <Modal open={open} onClose={handleClose} closeAfterTransition slots={{ backdrop: Backdrop }} slotProps={{ backdrop: { timeout: 500 } }}>
                 <Fade in={open}>

@@ -285,27 +285,27 @@ export const RenderNotifMenu = (props : any) => {
     )
 }
 
-export const getAnchorState: any = (initValue: any) => {
+export const useAnchorState: any = (initValue: any) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(initValue);
     return [anchorEl,setAnchorEl];
 }
 
-export const getMsgAnchorState: any = (initValue: any) => {
+export const useMsgAnchorState: any = (initValue: any) => {
     const [msgAnchorEl, setMsgAnchorEl] = useState<null | HTMLElement>(initValue);
     return [msgAnchorEl,setMsgAnchorEl];
 }
 
-export const getNotifAnchorState: any = (initValue: any) => {
+export const useNotifAnchorState: any = (initValue: any) => {
     const [notifAnchorEl,setNotifAnchorEl] = useState<null | HTMLElement>(initValue);
     return [notifAnchorEl,setNotifAnchorEl];
 }
 
-export const getUsersState: any = (initValue: any) => {
+export const useUsersState: any = (initValue: any) => {
     const [users,setUsers] = useState(initValue);
     return [users,setUsers];
 }
 
-export const getAuthUserState: any = (initValue: any) => {
+export const useAuthUserState: any = (initValue: any) => {
     const [authUser,setAuthUser] = useState(initValue);
     return [authUser,setAuthUser];
 }

@@ -1,8 +1,8 @@
 'use client'
 import React, { useEffect, useState, createContext } from 'react'
-import { RenderMenu, RenderMobileMenu, RenderMsgMenu, RenderNotifMenu, getAuthUserState, getUsersState } from './menu';
-import { getAnchorState, getMsgAnchorState, getNotifAnchorState } from './menu';
-import { initOpenState, authState, useThemeHook } from './misc';
+import { RenderMenu, RenderMobileMenu, RenderMsgMenu, RenderNotifMenu, useAuthUserState, useUsersState } from './menu';
+import { useAnchorState, useMsgAnchorState, useNotifAnchorState } from './menu';
+import { useInitOpenState, useAuthState, useThemeHook } from './misc';
 import AppBarComp from './appbar';
 import DrawerComp from './drawer';
 import { useRouter } from 'next/navigation';
@@ -25,11 +25,11 @@ const RootComp = (props: any) => {
     const { page } = props;
     const router = useRouter();
     const theme = useThemeHook();
-    const [anchorEl, setAnchorEl] = getAnchorState(null);
-    const [msgAnchorEl, setMsgAnchorEl] = getMsgAnchorState(null);
-    const [notifAnchorEl,setNotifAnchorEl] = getNotifAnchorState(null);
-    const [open, setOpen] = initOpenState(false);
-    const [auth,setAuth] = authState(true);
+    const [anchorEl, setAnchorEl] = useAnchorState(null);
+    const [msgAnchorEl, setMsgAnchorEl] = useMsgAnchorState(null);
+    const [notifAnchorEl,setNotifAnchorEl] = useNotifAnchorState(null);
+    const [open, setOpen] = useInitOpenState(false);
+    const [auth,setAuth] = useAuthState(true);
 
     useEffect(() => {
         if (sessionStorage.length > 0) {
