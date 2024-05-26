@@ -141,7 +141,7 @@ const RootComp = (props: any) => {
         fetchLikes().then((likes: any) => setLikes(likes));
         fetchShares().then((shares: any) => setShares(shares));
         const user = users.find((user: any) => user.email == sessionStorage.getItem("authUser"));
-    },[])
+    },[users])
 
     const [expandedPosts, setExpandedPosts] = useState([]);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);

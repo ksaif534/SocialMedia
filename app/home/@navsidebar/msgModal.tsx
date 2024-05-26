@@ -112,7 +112,7 @@ const ModalMessageChats = (props: any) => {
         return () => {
             pusher.unsubscribe("ksaif-chat-sm-nextjs");
         }
-    },[])
+    },[chatsArr,sender])
 
     const handleOpen = () => {
         setOpen(true);

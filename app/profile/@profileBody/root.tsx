@@ -10,6 +10,7 @@ import fetchUser from "../@profileCoverHeading/fetchUser";
 import PostInput from "../../home/@postInput/page";
 import Posts from "../../home/@posts/page";
 import { useRouter } from "next/navigation";
+import Image from 'next/image'
 
 export const IntroBoxForUnitTesting = () => {
     return (
@@ -149,9 +150,8 @@ const RootComp = (props: any) => {
                                     <ImageList cols={3} rowHeight={164}>
                                         {itemData.map((item) => (
                                         <ImageListItem key={item.img}>
-                                        <img
+                                        <Image
                                             src={`${item.img}?w=164&h=164&fit=crop&auto=format`}
-                                            srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
                                             alt={item.title}
                                             loading="lazy"
                                         />
@@ -198,7 +198,7 @@ const RootComp = (props: any) => {
                                                             if (acceptedProfileNetwork.user_id_from == profile?.user_id) {
                                                                 return (
                                                                     <ImageListItem key={acceptedProfileNetwork.id}>
-                                                                        <img
+                                                                        <Image
                                                                             src={`images/${acceptedProfileNetwork?.user?.image}`}
                                                                             alt={acceptedProfileNetwork?.user?.image}
                                                                             loading="lazy"
@@ -213,7 +213,7 @@ const RootComp = (props: any) => {
                                                                         if (recipientUser?.id == acceptedProfileNetwork.user_id_from) {
                                                                             return (
                                                                                 <ImageListItem key={acceptedProfileNetwork.id}>
-                                                                                    <img
+                                                                                    <Image
                                                                                         src={`images/${recipientUser?.image}`}
                                                                                         alt={acceptedProfileNetwork?.user?.image}
                                                                                         loading="lazy"

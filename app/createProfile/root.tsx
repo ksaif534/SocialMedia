@@ -24,7 +24,7 @@ const RootComp = () => {
         }else{
             router.push(`/auth/login`);
         }
-    },[])
+    },[router])
 
     const handleInputChange = (event: any) => {
         const { name, value } = event.target;

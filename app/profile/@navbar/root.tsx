@@ -136,7 +136,7 @@ const RootComp = () => {
         }
         fetchNewMsgNotificationsFromDB(sessionStorage.getItem("authUserId")).then((newMsgNotif: any) => setNewMsgNotif(newMsgNotif));
         fetchNewNotificationsFromDB(sessionStorage.getItem("authUserId")).then((newNotif: any) => setNewNotif(newNotif));
-    },[])
+    },[router])
 
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);

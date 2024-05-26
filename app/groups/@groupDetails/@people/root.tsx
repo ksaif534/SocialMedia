@@ -104,8 +104,8 @@ const RootComp = (props: any) => {
     useEffect(() => {
         fetchProfile(group?.user_id).then((profile: any) => setProfile(profile));
         fetchProfiles().then((profiles: any) => setProfiles(profiles));
-        fetchSpecificGroupModerators(group.id).then((specificGroupMods: any) => setSpecificGroupMods(specificGroupMods));
-    },[])
+        fetchSpecificGroupModerators(group?.id).then((specificGroupMods: any) => setSpecificGroupMods(specificGroupMods));
+    },[group])
 
     const changeModView = () => {
         setToggleModView(!toggleModView);

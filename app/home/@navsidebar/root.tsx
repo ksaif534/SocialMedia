@@ -41,7 +41,7 @@ const RootComp = (props: any) => {
             //Session Expired
             router.push(`/auth/login`);
         }
-    },[])
+    },[router])
 
     return (
         <>

@@ -9,12 +9,14 @@ export const metadata: Metadata = {
     description: 'Social Media App',
 }
 
-const ProfileCreateLayout = ({
-    children,
-    profileCreate
-} : {
+interface ProfileCreateLayoutProps {
     children: React.ReactNode,
     profileCreate: React.ReactNode
+}
+
+const ProfileCreateLayout: React.FC<ProfileCreateLayoutProps> = ({
+    children,
+    profileCreate
 }) => {
     return (
         <div>
