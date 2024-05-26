@@ -10,11 +10,9 @@ export const metadata: Metadata = {
 }
 
 const ProfileCreateLayout = ({
-    children,
-    profileCreate
+    children
 }: {
-    children: React.ReactNode,
-    profileCreate: React.ReactNode
+    children: React.ReactNode
 }) => {
     return (
         <div>
@@ -24,7 +22,7 @@ const ProfileCreateLayout = ({
 
                 </Grid>
                 <Grid item md={8} sm={8} xs={12}>
-                    { profileCreate }
+                    
                 </Grid>
                 <Grid item md={2} sm={2} xs={12}>
                     
