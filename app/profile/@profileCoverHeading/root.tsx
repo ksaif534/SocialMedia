@@ -72,20 +72,21 @@ const RootComp = () => {
     const [initProfileState,setInitProfileState] = useState(true);
     const [value, setValue] = useState(0);
     const [recipientUser,setRecipientUser] = useState({ id: 0, email: '', password: '', image: null, is_active: 0, name: '', phone: 0, profile: null });
+    const sessionStorageValue: string | null = (typeof window !== undefined) ? sessionStorage.getItem("authUserId") : '';
     let indexCounterArr: any = [];
     let indexCounterArr2: any = [];
     let profileCounterArr: any = [];
 
     useEffect(() => {
-        fetchProfile(sessionStorage.getItem("authUserId")).then((profile: any) => setProfile(profile)); 
-        fetchUser(sessionStorage.getItem("authUserId")).then((user: any) => setUser(user));
-        fetchOtherProfiles(sessionStorage.getItem("authUserId")).then((otherProfiles: any) => setOtherProfiles(otherProfiles));
-        fetchProfilePosts(sessionStorage.getItem("authUserId")).then((posts: any) => setProfilePosts(posts));
-        fetchProfileVideoPosts(sessionStorage.getItem("authUserId")).then((posts: any) => setProfileVideoPosts(posts));
-        fetchPendingNetworks(sessionStorage.getItem("authUserId")).then((pendingNetworks: any) => setPendingNetworks(pendingNetworks));
-        fetchProfileNetworks(sessionStorage.getItem("authUserId")).then((profileNetworks: any) => setProfileNetworks(profileNetworks));
-        fetchAllProfileNetworks(sessionStorage.getItem("authUserId")).then((allProfileNetworks: any) => setAllProfileNetworks(allProfileNetworks));
-        fetchAcceptedProfileNetworks(sessionStorage.getItem("authUserId")).then((result: any) => {
+        fetchProfile(sessionStorageValue).then((profile: any) => setProfile(profile)); 
+        fetchUser(sessionStorageValue).then((user: any) => setUser(user));
+        fetchOtherProfiles(sessionStorageValue).then((otherProfiles: any) => setOtherProfiles(otherProfiles));
+        fetchProfilePosts(sessionStorageValue).then((posts: any) => setProfilePosts(posts));
+        fetchProfileVideoPosts(sessionStorageValue).then((posts: any) => setProfileVideoPosts(posts));
+        fetchPendingNetworks(sessionStorageValue).then((pendingNetworks: any) => setPendingNetworks(pendingNetworks));
+        fetchProfileNetworks(sessionStorageValue).then((profileNetworks: any) => setProfileNetworks(profileNetworks));
+        fetchAllProfileNetworks(sessionStorageValue).then((allProfileNetworks: any) => setAllProfileNetworks(allProfileNetworks));
+        fetchAcceptedProfileNetworks(sessionStorageValue).then((result: any) => {
             setAcceptedProfileNetworks(result.acceptedNetworks);
             setRecipientUser(result.recipientUser);
         });
@@ -104,7 +105,7 @@ const RootComp = () => {
     }
 
     const handleAddFriendClick = async (otherProfileUserId: any) => {
-        const networkStatus = await postNetworkStatus(sessionStorage.getItem("authUserId"),otherProfileUserId);
+        const networkStatus = await postNetworkStatus(sessionStorageValue,otherProfileUserId);
         if (Boolean(networkStatus)) {
             Swal.fire({
                 title: `Success`,
@@ -148,7 +149,7 @@ const RootComp = () => {
             denyButtonText: `No`
         }).then(async (result) => {
             if (result.isConfirmed) {
-                const updatedNetwork = await updatePendingNetwork(sessionStorage.getItem("authUserId"),pendingNetwork);
+                const updatedNetwork = await updatePendingNetwork(sessionStorageValue,pendingNetwork);
                 if (Boolean(updatedNetwork)) {
                     Swal.fire(`Friend Network Updated Successfully`);
                 }else{
@@ -256,7 +257,7 @@ const RootComp = () => {
                                         </Grid>
                                         <Grid item md={2} sm={2} xs={12}>
                                             {
-                                                (Number(profile?.user_id) == Number(sessionStorage.getItem("authUserId"))) ? (
+                                                (Number(profile?.user_id) == Number(sessionStorageValue)) ? (
                                                     <>
                                                         <ProfileEditIconButton aria-label="Edit Profile" title="Edit Profile (Heading)" onClick={handleProfileUpdate}>
                                                             <Typography variant="h6">
@@ -444,10 +445,10 @@ const RootComp = () => {
                                                     <>
                                                         {
                                                             allProfileNetworks?.map((allProfileNetwork: any,index: number) => {
-                                                                if ((allProfileNetwork.user_id_from == sessionStorage.getItem("authUserId") || allProfileNetwork.user_id_from == profile.user_id) && (allProfileNetwork.user_id_to == sessionStorage.getItem("authUserId") || allProfileNetwork.user_id_to == profile.user_id)) {
+                                                                if ((allProfileNetwork.user_id_from == sessionStorageValue || allProfileNetwork.user_id_from == profile.user_id) && (allProfileNetwork.user_id_to == sessionStorageValue || allProfileNetwork.user_id_to == profile.user_id)) {
                                                                     indexCounterArr.push(index);
                                                                     if (allProfileNetwork.status == 2) {
-                                                                        if (allProfileNetwork.user_id_from == sessionStorage.getItem("authUserId")) {
+                                                                        if (allProfileNetwork.user_id_from == sessionStorageValue) {
                                                                             return (
                                                                                 <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" key={allProfileNetwork.id}>
                                                                                     <Typography variant="h6">
@@ -457,7 +458,7 @@ const RootComp = () => {
                                                                                 </ProfileEditIconButton>
                                                                             )
                                                                         }else{
-                                                                            if (allProfileNetwork.user_id_to == sessionStorage.getItem("authUserId")) {
+                                                                            if (allProfileNetwork.user_id_to == sessionStorageValue) {
                                                                                 return (
                                                                                     <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" key={allProfileNetwork.id} onClick={() => handleFriendRequestAcceptance(allProfileNetwork)}>
                                                                                         <Typography variant="h6">
@@ -479,7 +480,7 @@ const RootComp = () => {
                                                                         }
                                                                     }else{
                                                                         if (allProfileNetwork.status == 1) {
-                                                                            if (allProfileNetwork.user_id_from == sessionStorage.getItem("authUserId") || allProfileNetwork.user_id_to == sessionStorage.getItem("authUserId")) {
+                                                                            if (allProfileNetwork.user_id_from == sessionStorageValue || allProfileNetwork.user_id_to == sessionStorageValue) {
                                                                                 return (
                                                                                     <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" key={allProfileNetwork.id}>
                                                                                         <Typography variant="h6">
@@ -522,11 +523,11 @@ const RootComp = () => {
                                                     <>
                                                         {
                                                             profileNetworks?.map((profileNetwork: any,index: number) => {
-                                                                const acceptedNetworks = allProfileNetworks.filter((allProfileNetwork: any) => ((allProfileNetwork.user_id_from == sessionStorage.getItem("authUserId") || allProfileNetwork.user_id_from == profile.user_id) && (allProfileNetwork.user_id_to == sessionStorage.getItem("authUserId") || allProfileNetwork.user_id_to == profile.user_id)));
+                                                                const acceptedNetworks = allProfileNetworks.filter((allProfileNetwork: any) => ((allProfileNetwork.user_id_from == sessionStorageValue || allProfileNetwork.user_id_from == profile.user_id) && (allProfileNetwork.user_id_to == sessionStorageValue || allProfileNetwork.user_id_to == profile.user_id)));
                                                                 if (acceptedNetworks.length > 0) {
                                                                     return acceptedNetworks?.map((allProfileNetwork: any) => {
                                                                         if (allProfileNetwork.status == 2) {
-                                                                            if (allProfileNetwork.user_id_from == sessionStorage.getItem("authUserId")) {
+                                                                            if (allProfileNetwork.user_id_from == sessionStorageValue) {
                                                                                 return (
                                                                                     <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" key={allProfileNetwork.id}>
                                                                                         <Typography variant="h6">
@@ -536,7 +537,7 @@ const RootComp = () => {
                                                                                     </ProfileEditIconButton>
                                                                                 )
                                                                             }
-                                                                            if (allProfileNetwork.user_id_to == sessionStorage.getItem("authUserId")) {
+                                                                            if (allProfileNetwork.user_id_to == sessionStorageValue) {
                                                                                 return (
                                                                                     <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" key={allProfileNetwork.id} onClick={() => handleFriendRequestAcceptance(allProfileNetwork)}>
                                                                                         <Typography variant="h6">
@@ -557,7 +558,7 @@ const RootComp = () => {
                                                                             }
                                                                         }else{
                                                                             if (allProfileNetwork.status == 1) {
-                                                                                if (allProfileNetwork.user_id_from == sessionStorage.getItem("authUserId") || allProfileNetwork.user_id_to == sessionStorage.getItem("authUserId")) {
+                                                                                if (allProfileNetwork.user_id_from == sessionStorageValue || allProfileNetwork.user_id_to == sessionStorageValue) {
                                                                                     return (
                                                                                         <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" key={allProfileNetwork.id}>
                                                                                             <Typography variant="h6">
