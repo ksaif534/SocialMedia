@@ -71,9 +71,9 @@ const RootComp = () => {
 
     const handleLoginFormSubmit = async () => {
         const response = await checkLoginData(loginFormData,users);
-        sessionStorage.setItem("sessionToken",response.data.sessionToken);
-        sessionStorage.setItem("authUser",response.data.authenticatedUser);
-        sessionStorage.setItem("authUserId",response.data.authUserId);
+        localStorage.setItem("sessionToken",response.data.sessionToken);
+        localStorage.setItem("authUser",response.data.authenticatedUser);
+        localStorage.setItem("authUserId",response.data.authUserId);
         if(Boolean(response.data.isUserLoggedIn)){
             //Authenticated Successfully
             router.push(`/home`);

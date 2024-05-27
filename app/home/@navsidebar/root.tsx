@@ -32,8 +32,8 @@ const RootComp = (props: any) => {
     const [auth,setAuth] = useAuthState(true);
 
     useEffect(() => {
-        if (sessionStorage.length > 0) {
-            if (sessionStorage.getItem("authUser") == '' || sessionStorage.getItem("sessionToken") == '') {
+        if (localStorage.length > 0) {
+            if (localStorage.getItem("authUser") == '' || localStorage.getItem("sessionToken") == '') {
                 //Session Expired
                 router.push(`/auth/login`);
             }    

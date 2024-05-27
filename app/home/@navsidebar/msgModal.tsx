@@ -90,7 +90,7 @@ const ModalMessageChats = (props: any) => {
     const removeMsgMenuOpen = Boolean(removeMsgMenuAnchorEl);
 
     useEffect(() => {
-        fetchUser(sessionStorage.getItem("authUserId")).then((user: any) => setSender(user));
+        fetchUser(localStorage.getItem("authUserId")).then((user: any) => setSender(user));
         // const pusher = new Pusher(`${process.env.NEXT_PUBLIC_KEY}`,{
         //     cluster: "ap2",
         //     authEndpoint: `api/home/pusher/auth`,
@@ -116,7 +116,7 @@ const ModalMessageChats = (props: any) => {
 
     const handleOpen = () => {
         setOpen(true);
-        fetchUserMessages(sessionStorage.getItem("authUserId"),user?.id).then((messages: any) => {
+        fetchUserMessages(localStorage.getItem("authUserId"),user?.id).then((messages: any) => {
             chatsArr = messages;
             setChats(messages);
         });
@@ -202,7 +202,7 @@ const ModalMessageChats = (props: any) => {
                                         return (
                                             <ModalMessageChatGrid container spacing={2} key={index}>
                                                 {
-                                                    (chat?.user_id == sessionStorage.getItem("authUserId") || chat?.recipientUserId == sessionStorage.getItem("authUserId")) ? (
+                                                    (chat?.user_id == localStorage.getItem("authUserId") || chat?.recipientUserId == localStorage.getItem("authUserId")) ? (
                                                         <>
                                                             <Grid item md={11} sm={11} xs={12}>
                                                                 <ModalMessageChatGridItemGrid container spacing={2}>
@@ -213,7 +213,7 @@ const ModalMessageChats = (props: any) => {
                                                                     </Grid>
                                                                     <Grid item md={2} sm={2} xs={12}>
                                                                         {
-                                                                            (chat?.user_id == sessionStorage.getItem("authUserId")) && (
+                                                                            (chat?.user_id == localStorage.getItem("authUserId")) && (
                                                                                 <ModalMessageChatGridIconButton onClick={handleMsgMenuRemoveClick} aria-controls={ removeMsgMenuOpen ? 'basic-msg-menu': undefined } aria-haspopup="true" aria-expanded={ removeMsgMenuOpen ? 'true' : undefined }>
                                                                                     <MoreVertIcon fontSize="medium" />
                                                                                 </ModalMessageChatGridIconButton>
@@ -254,7 +254,7 @@ const ModalMessageChats = (props: any) => {
                                                                 <ModalMessageChatGridItemGrid container spacing={2} sx={{ justifyContent: 'center', alignItems: 'center', display: 'flex' }}> 
                                                                     <Grid item md={2} sm={2} xs={12}>
                                                                         {
-                                                                            (chat?.user_id == sessionStorage.getItem("authUserId")) && (
+                                                                            (chat?.user_id == localStorage.getItem("authUserId")) && (
                                                                                 <ModalMessageChatGridIconButton onClick={handleMsgMenuRemoveClick} id="basic-icon-button" aria-controls={ removeMsgMenuOpen ? 'basic-msg-menu': undefined } aria-haspopup="true" aria-expanded={ removeMsgMenuOpen ? 'true' : undefined }>
                                                                                     <MoreVertIcon fontSize="medium" />
                                                                                 </ModalMessageChatGridIconButton>

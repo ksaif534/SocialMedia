@@ -127,15 +127,15 @@ const RootComp = () => {
     const [newNotif,setNewNotif] = useState([]);
 
     useEffect(() => {
-        if (sessionStorage.length > 0) {
-            if (sessionStorage.getItem("authUser") == "" || sessionStorage.getItem("sessionToken") == "") {
+        if (localStorage.length > 0) {
+            if (localStorage.getItem("authUser") == "" || localStorage.getItem("sessionToken") == "") {
                 router.push(`/auth/login`);
             }
         }else{
             router.push(`/auth/login`);
         }
-        fetchNewMsgNotificationsFromDB(sessionStorage.getItem("authUserId")).then((newMsgNotif: any) => setNewMsgNotif(newMsgNotif));
-        fetchNewNotificationsFromDB(sessionStorage.getItem("authUserId")).then((newNotif: any) => setNewNotif(newNotif));
+        fetchNewMsgNotificationsFromDB(localStorage.getItem("authUserId")).then((newMsgNotif: any) => setNewMsgNotif(newMsgNotif));
+        fetchNewNotificationsFromDB(localStorage.getItem("authUserId")).then((newNotif: any) => setNewNotif(newNotif));
     },[router])
 
     const isMenuOpen = Boolean(anchorEl);
@@ -172,7 +172,7 @@ const RootComp = () => {
         if (currentUrl == 'http://localhost:3000/profile') {
             setSrchProfileKey(event.target.value);
             if (event.target.value !== '') {
-                const searchProfilePosts = await fetchProfileUserPosts(sessionStorage.getItem("authUserId"),event.target.value);
+                const searchProfilePosts = await fetchProfileUserPosts(localStorage.getItem("authUserId"),event.target.value);
                 setSrchProfilePosts(searchProfilePosts);   
             }    
         }

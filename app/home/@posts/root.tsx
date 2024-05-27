@@ -149,7 +149,7 @@ const RootComp = (props: any) => {
 
     const handleExpandClick = (postId: any) => {
         users.map((user: any) => {
-            if(user.email == sessionStorage.getItem("authUser")){
+            if(user.email == localStorage.getItem("authUser")){
                 setAuthUser((prevAuthUser) => ({
                     ...prevAuthUser,
                     id: user.id,
@@ -231,7 +231,7 @@ const RootComp = (props: any) => {
 
     const addLike = async (post: any) => {
         const addData = {
-            userId: sessionStorage.getItem("authUserId"),
+            userId: localStorage.getItem("authUserId"),
             postId: post?.id,
             isCount: 1
         }
@@ -254,7 +254,7 @@ const RootComp = (props: any) => {
 
     const addShare = async (post: any) => {
         const shareData = {
-            user_id: sessionStorage.getItem("authUserId"),
+            user_id: localStorage.getItem("authUserId"),
             post_id: post.id,
             is_count: 1,
             shared: 1
@@ -295,7 +295,7 @@ const RootComp = (props: any) => {
                                                         action={
                                                         <div>
                                                             {
-                                                                (srchPost.user_id == sessionStorage.getItem("authUserId")) && (
+                                                                (srchPost.user_id == localStorage.getItem("authUserId")) && (
                                                                     <>
                                                                         <IconButton aria-label="settings" onClick={handleVertIconClick}>
                                                                             <MoreVertIcon />
@@ -500,7 +500,7 @@ const RootComp = (props: any) => {
                                                     action={
                                                     <div>
                                                         {
-                                                            (post.user_id == sessionStorage.getItem("authUserId")) && (
+                                                            (post.user_id == localStorage.getItem("authUserId")) && (
                                                                 <>
                                                                     <IconButton aria-label="settings" onClick={handleVertIconClick}>
                                                                         <MoreVertIcon />
@@ -690,7 +690,7 @@ const RootComp = (props: any) => {
                                                                             action={
                                                                             <div>
                                                                                 {
-                                                                                    (srchProfilePost.user_id == sessionStorage.getItem("authUserId")) && (
+                                                                                    (srchProfilePost.user_id == localStorage.getItem("authUserId")) && (
                                                                                         <>
                                                                                             <IconButton aria-label="settings" onClick={handleVertIconClick}>
                                                                                                 <MoreVertIcon />

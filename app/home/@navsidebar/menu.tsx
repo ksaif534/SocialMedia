@@ -26,7 +26,7 @@ export const RenderMenu = (props: any) => {
     const [currentUser,setCurrentUser] = useState({ id: 0, email: '', password: '', image: null, is_active: 0, name: '', phone: 0 })
 
     useEffect(() => {
-        fetchUser(sessionStorage.getItem("authUserId")).then((currentUser: any) => setCurrentUser(currentUser));
+        fetchUser(localStorage.getItem("authUserId")).then((currentUser: any) => setCurrentUser(currentUser));
     },[])
 
     const router = useRouter();
@@ -47,9 +47,9 @@ export const RenderMenu = (props: any) => {
     };
 
     const handleLogout = () => {
-        sessionStorage.setItem("sessionToken","");
-        sessionStorage.setItem("authUser","");
-        sessionStorage.setItem("authUserId","");
+        localStorage.setItem("sessionToken","");
+        localStorage.setItem("authUser","");
+        localStorage.setItem("authUserId","");
         router.push(`/auth/login`);
     }
 
@@ -103,8 +103,8 @@ export const RenderMobileMenu = () => {
     const [newMsgNotif,setNewMsgNotif] = useState([]);
 
     useEffect(() => {
-        fetchNewNotificationsFromDB(sessionStorage.getItem("authUserId")).then((notif: any) => setNewNotif(notif));
-        fetchNewMsgNotificationsFromDB(sessionStorage.getItem("authUserId")).then((msgNotif: any) => setNewMsgNotif(msgNotif));
+        fetchNewNotificationsFromDB(localStorage.getItem("authUserId")).then((notif: any) => setNewNotif(notif));
+        fetchNewMsgNotificationsFromDB(localStorage.getItem("authUserId")).then((msgNotif: any) => setNewMsgNotif(msgNotif));
     },[])
 
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -176,9 +176,9 @@ export const RenderMsgMenu = (props: any) => {
     const [users,setUsers] = useState([]);
 
     useEffect(() => {
-        fetchUser(sessionStorage.getItem("authUserId")).then((user: any) => setUser(user));
+        fetchUser(localStorage.getItem("authUserId")).then((user: any) => setUser(user));
         fetchUsers().then((users: any) => setUsers(users));
-        fetchNewMsgNotificationsFromDB(sessionStorage.getItem("authUserId")).then((newMsgNotif: any) => setNewMsgNotif(newMsgNotif));
+        fetchNewMsgNotificationsFromDB(localStorage.getItem("authUserId")).then((newMsgNotif: any) => setNewMsgNotif(newMsgNotif));
     },[])
 
     const isMsgMenuOpen = Boolean(msgAnchorEl);
@@ -188,14 +188,14 @@ export const RenderMsgMenu = (props: any) => {
     }
 
     const makeMsgNotifRead = async (msgNotif: any) => {
-        const updateMsgNotifAsRead = await makeMsgNotificationAsRead(sessionStorage.getItem("authUserId"),msgNotif);
+        const updateMsgNotifAsRead = await makeMsgNotificationAsRead(localStorage.getItem("authUserId"),msgNotif);
     }
 
     return (
         <Menu anchorEl={msgAnchorEl} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} id={msgMenuId} keepMounted transformOrigin={{ vertical: 'top', horizontal: 'right' }} open={isMsgMenuOpen} onClose={handleMsgMenuClose}>
             {
                 users.map((user: any) => {
-                    if (user.id != sessionStorage.getItem("authUserId")) {
+                    if (user.id != localStorage.getItem("authUserId")) {
                         let counter = 0;
                         if (newMsgNotif.length > 0) {
                             return newMsgNotif.map((msgNotif: any) => {
@@ -240,7 +240,7 @@ export const RenderNotifMenu = (props : any) => {
     const [newNotif,setNewNotif] = useState([]);
 
     useEffect(() => {
-        fetchNewNotificationsFromDB(sessionStorage.getItem("authUserId")).then((notif: any) => setNewNotif(notif));
+        fetchNewNotificationsFromDB(localStorage.getItem("authUserId")).then((notif: any) => setNewNotif(notif));
     },[])
 
     const isNotifMenuOpen = Boolean(notifAnchorEl);
@@ -250,7 +250,7 @@ export const RenderNotifMenu = (props : any) => {
     }
 
     const handleNotificationMenuItemClick = (notif: any) => {
-        const notifUpdate = makeNotificationRead(sessionStorage.getItem("authUserId"),notif);
+        const notifUpdate = makeNotificationRead(localStorage.getItem("authUserId"),notif);
         if (Boolean(notifUpdate)) {
             Swal.fire({
                 title: `Success`,

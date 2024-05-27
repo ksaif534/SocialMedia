@@ -15,7 +15,7 @@ export const RenderMenu = (props: any) => {
     const [currentUser,setCurrentUser] = useState({ id: 0, email: '', password: '', image: null, is_active: 0, name: '', phone: 0 })
 
     useEffect(() => {
-        fetchUser(sessionStorage.getItem("authUserId")).then((currentUser: any) => setCurrentUser(currentUser));
+        fetchUser(localStorage.getItem("authUserId")).then((currentUser: any) => setCurrentUser(currentUser));
     },[])
 
     const handleMenuClose = () => {
@@ -33,9 +33,9 @@ export const RenderMenu = (props: any) => {
     }
 
     const handleLogout = () => {
-        sessionStorage.setItem("authUserId","");
-        sessionStorage.setItem("authUser","");
-        sessionStorage.setItem("sessionToken","");
+        localStorage.setItem("authUserId","");
+        localStorage.setItem("authUser","");
+        localStorage.setItem("sessionToken","");
         router.push(`/auth/login`);
     }
 

@@ -65,7 +65,7 @@ const ChatSettings = (props: any) => {
     const [isShown,setIsShown] = useState(false);
 
     useEffect(() => {
-        fetchChatSettings(sessionStorage.getItem("authUserId")).then((chatSettings: any) => setChatSettings(chatSettings));
+        fetchChatSettings(localStorage.getItem("authUserId")).then((chatSettings: any) => setChatSettings(chatSettings));
     },[])
 
     const handleChatSettingsMenuClose = () => {
@@ -77,7 +77,7 @@ const ChatSettings = (props: any) => {
     const handleActiveStatus = async () => {
         setIsActive(!isActive);
         const isActiveBool = !isActive;
-        const updateOrCreate = await updateChatSettings(sessionStorage.getItem("authUserId"),isActiveBool);
+        const updateOrCreate = await updateChatSettings(localStorage.getItem("authUserId"),isActiveBool);
         if (Boolean(updateOrCreate)) {
             Swal.fire({
                 title: `Success`,
@@ -96,7 +96,7 @@ const ChatSettings = (props: any) => {
     const handleShowStatus = async () => {
         setIsShown(!isShown);
         const isShownBool = !isShown;
-        const updateIsShown = await updateShowContacts(sessionStorage.getItem("authUserId"),isShownBool);
+        const updateIsShown = await updateShowContacts(localStorage.getItem("authUserId"),isShownBool);
         if (Boolean(updateIsShown)) {
             Swal.fire({
                 title: `Success`,

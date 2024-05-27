@@ -34,7 +34,7 @@ const RootComp = (props: any) => {
 
     useEffect(() => {
         fetchGroupPosts().then((groupPosts: any) => setGroupPosts(groupPosts));
-        fetchUser(sessionStorage.getItem("authUserId")).then((user: any) => setAuthUser(user));
+        fetchUser(localStorage.getItem("authUserId")).then((user: any) => setAuthUser(user));
         fetchComments().then((comments: any) => setGroupComments(comments));
     },[])
 

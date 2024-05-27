@@ -58,7 +58,7 @@ export const RootComp = (props: any) => {
     let counter = 0;
 
     useEffect(() => {
-        fetchUser(sessionStorage.getItem("authUserId")).then((user: any) => setUser(user));
+        fetchUser(localStorage.getItem("authUserId")).then((user: any) => setUser(user));
         fetchGroupMembers().then((groupMembers: any) => setGroupMembers(groupMembers));
     },[])
 
@@ -163,7 +163,7 @@ export const RootComp = (props: any) => {
                         </InviteButton> */}
                         {
                             groupMembers.map((groupMember: any, index: number) => {
-                                if (groupMember.group_id == group.id && groupMember.user_id == sessionStorage.getItem("authUserId")) {
+                                if (groupMember.group_id == group.id && groupMember.user_id == localStorage.getItem("authUserId")) {
                                     counter++;
                                 }
                                 if (counter > 0 && index == groupMembers.length - 1) {

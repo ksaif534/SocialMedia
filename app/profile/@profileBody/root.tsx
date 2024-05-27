@@ -87,7 +87,7 @@ const RootComp = (props: any) => {
     }
 
     useEffect(() => {
-        fetchUser(sessionStorage.getItem("authUserId")).then((user: any) => setUser(user));
+        fetchUser(localStorage.getItem("authUserId")).then((user: any) => setUser(user));
     },[])
 
     return (

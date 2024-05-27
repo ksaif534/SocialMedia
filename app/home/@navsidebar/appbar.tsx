@@ -21,8 +21,8 @@ export const AppBarComp = (props: any) => {
     const [newMsgNotif,setNewMsgNotif] = useState([]);
 
     useEffect(() => {
-        fetchNewNotificationsFromDB(sessionStorage.getItem("authUserId")).then((notif: any) => setNewNotif(notif));
-        fetchNewMsgNotificationsFromDB(sessionStorage.getItem("authUserId")).then((msgNotif: any) => setNewMsgNotif(msgNotif));
+        fetchNewNotificationsFromDB(localStorage.getItem("authUserId")).then((notif: any) => setNewNotif(notif));
+        fetchNewMsgNotificationsFromDB(localStorage.getItem("authUserId")).then((msgNotif: any) => setNewMsgNotif(msgNotif));
     },[])
 
     const handleDrawerOpen = () => {

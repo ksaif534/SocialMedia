@@ -74,7 +74,7 @@ const RootComp = () => {
 
     useEffect(() => {
         fetchUsers().then((users: any) => setUsers(users));
-        fetchPendingRecipientUserNetworks(sessionStorage.getItem("authUserId")).then((pendingRecipientUserNetworks: any) => setPendingRecipientUserNetworks(pendingRecipientUserNetworks));
+        fetchPendingRecipientUserNetworks(localStorage.getItem("authUserId")).then((pendingRecipientUserNetworks: any) => setPendingRecipientUserNetworks(pendingRecipientUserNetworks));
     },[])
 
     const handleOpenSearchModal = () => setOpenSearchModal(true);
