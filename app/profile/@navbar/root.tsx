@@ -18,6 +18,7 @@ import { SearchGroupPostContext } from "../../groups/@navbar/page";
 import fetchGroupPosts from "./fetchGroupPosts";
 import fetchNewMsgNotificationsFromDB from "../../home/@navsidebar/fetchNewMsgNotificationsFromDB";
 import fetchNewNotificationsFromDB from "../../home/@navsidebar/fetchNewNotificationsFromDB";
+import { SessionDataContext } from "@/app/auth/login/@custom/root";
 
 export const AppBarForUnitTesting = () => {
     return (
@@ -119,6 +120,7 @@ const RootComp = () => {
     const router = useRouter();
     const { setSrchProfilePosts, setSrchProfileKey } = useContext(ProfileSearchContext);
     const {  setSrchGrpPosts, setSrchGrpPostKey } = useContext(SearchGroupPostContext);
+    const { authUser, authUserId, sessionToken } = useContext(SessionDataContext);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
     const [anchorMsgEl,setAnchorMsgEl] = useState<null | HTMLElement>(null);
@@ -127,15 +129,11 @@ const RootComp = () => {
     const [newNotif,setNewNotif] = useState([]);
 
     useEffect(() => {
-        if (localStorage.length > 0) {
-            if (localStorage.getItem("authUser") == "" || localStorage.getItem("sessionToken") == "") {
-                router.push(`/auth/login`);
-            }
-        }else{
+        if (authUser == "" || sessionToken == "") {
             router.push(`/auth/login`);
         }
-        fetchNewMsgNotificationsFromDB(localStorage.getItem("authUserId")).then((newMsgNotif: any) => setNewMsgNotif(newMsgNotif));
-        fetchNewNotificationsFromDB(localStorage.getItem("authUserId")).then((newNotif: any) => setNewNotif(newNotif));
+        fetchNewMsgNotificationsFromDB(authUserId).then((newMsgNotif: any) => setNewMsgNotif(newMsgNotif));
+        fetchNewNotificationsFromDB(authUserId).then((newNotif: any) => setNewNotif(newNotif));
     },[router])
 
     const isMenuOpen = Boolean(anchorEl);
@@ -172,7 +170,7 @@ const RootComp = () => {
         if (currentUrl == 'http://localhost:3000/profile') {
             setSrchProfileKey(event.target.value);
             if (event.target.value !== '') {
-                const searchProfilePosts = await fetchProfileUserPosts(localStorage.getItem("authUserId"),event.target.value);
+                const searchProfilePosts = await fetchProfileUserPosts(authUserId,event.target.value);
                 setSrchProfilePosts(searchProfilePosts);   
             }    
         }

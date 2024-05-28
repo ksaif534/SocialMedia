@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Box, CardMedia, Divider, Grid, Tab, Typography } from "@mui/material"
 import { MoreIconButtons, ProfileCoverHeadingCard, ProfileCoverHeadingGrid, ProfileEditIconButton, ProfileGrid, ProfileHeadersGrid, ProfileImageGridItem, ProfileSubTitleTG, ProfileTabBox, ProfileTabs, ProfileTitleGrid, ProfileTitleTG, RoundedAvatar, RoundedFirstSmallAvatar, RoundedSmallAvatar } from "./style"
 import EditIcon from '@mui/icons-material/Edit';
@@ -28,6 +28,7 @@ import ProfileFriends from "../@profileFriends/page";
 import fetchAllProfileNetworks from "./fetchAllProfileNetworks";
 import fetchAcceptedProfileNetworks from "./fetchAcceptedProfileNetworks";
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import { SessionDataContext } from "@/app/auth/login/@custom/root";
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -59,6 +60,7 @@ const a11yProps = (index: number) => {
 
 const RootComp = () => {
     const router = useRouter();
+    const { authUserId } = useContext(SessionDataContext);
     const [user,setUser] = useState({ id: 0, email: '', password: '', image: null, is_active: 0, name: '', phone: 0 });
     const [profile,setProfile] = useState({ id: 0, user_id: 0, firstname: '', lastname: '', marital_status: 1, gender: 1, birthDate: null, education_level: 1, occupation: 0, country: '', city: '', address: '', profile_photo: null, user: null })
     const [otherProfiles,setOtherProfiles] = useState([]);
@@ -72,7 +74,7 @@ const RootComp = () => {
     const [initProfileState,setInitProfileState] = useState(true);
     const [value, setValue] = useState(0);
     const [recipientUser,setRecipientUser] = useState({ id: 0, email: '', password: '', image: null, is_active: 0, name: '', phone: 0, profile: null });
-    const localStorageValue: string | null = (typeof window !== undefined) ? localStorage.getItem("authUserId") : '';
+    const localStorageValue: any = (typeof window !== undefined) ? authUserId : '';
     let indexCounterArr: any = [];
     let indexCounterArr2: any = [];
     let profileCounterArr: any = [];

@@ -1,11 +1,12 @@
 'use client'
-import React, { useEffect, useState, createContext } from 'react'
+import React, { useEffect, useState, createContext, useContext } from 'react'
 import { RenderMenu, RenderMobileMenu, RenderMsgMenu, RenderNotifMenu, useAuthUserState, useUsersState } from './menu';
 import { useAnchorState, useMsgAnchorState, useNotifAnchorState } from './menu';
 import { useInitOpenState, useAuthState, useThemeHook } from './misc';
 import AppBarComp from './appbar';
 import DrawerComp from './drawer';
 import { useRouter } from 'next/navigation';
+import { SessionDataContext } from '@/app/auth/login/@custom/root';
 
 interface SearchContextProps {
     srchPosts: Array<any>,
@@ -23,6 +24,7 @@ export const SearchContext = createContext<SearchContextProps>({
 
 const RootComp = (props: any) => {
     const { page } = props;
+    const { authUser, authUserId, sessionToken } = useContext(SessionDataContext);
     const router = useRouter();
     const theme = useThemeHook();
     const [anchorEl, setAnchorEl] = useAnchorState(null);
@@ -32,14 +34,9 @@ const RootComp = (props: any) => {
     const [auth,setAuth] = useAuthState(true);
 
     useEffect(() => {
-        if (localStorage.length > 0) {
-            if (localStorage.getItem("authUser") == '' || localStorage.getItem("sessionToken") == '') {
-                //Session Expired
-                router.push(`/auth/login`);
-            }    
-        }else{
+        if (authUser === '' && authUserId === '' && sessionToken === '') {
             //Session Expired
-            router.push(`/auth/login`);
+            router.push(`/auth/login`);    
         }
     },[router])
 

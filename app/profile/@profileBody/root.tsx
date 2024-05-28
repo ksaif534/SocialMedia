@@ -1,7 +1,7 @@
 'use client'
 import { Grid, CardContent, Typography, Button, ImageList, ImageListItem, CardHeader } from "@mui/material";
 import { FriendListCard, IntroBox, IntroBoxCard, IntroGrid, IntroTG, ProfilePhotosCard, SeeAllFriends, SeeAllPhotos } from "./style";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import React from "react";
 import HomeIcon from '@mui/icons-material/Home';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
@@ -11,6 +11,7 @@ import PostInput from "../../home/@postInput/page";
 import Posts from "../../home/@posts/page";
 import { useRouter } from "next/navigation";
 import Image from 'next/image'
+import { SessionDataContext } from "@/app/auth/login/@custom/root";
 
 export const IntroBoxForUnitTesting = () => {
     return (
@@ -78,6 +79,7 @@ const itemData = [
 
 const RootComp = (props: any) => {
     const { profilePosts, profile , otherProfile , videoPosts, acceptedProfileNetworks, recipientUser } = props;
+    const { authUserId } = useContext(SessionDataContext)
     const router = useRouter();
     const [user,setUser] = useState({ id: 0, email: '', password: '', image: null, is_active: 0, name: '', phone: 0 });
     let lengthMeasureArr: any = [];
@@ -87,7 +89,7 @@ const RootComp = (props: any) => {
     }
 
     useEffect(() => {
-        fetchUser(localStorage.getItem("authUserId")).then((user: any) => setUser(user));
+        fetchUser(authUserId).then((user: any) => setUser(user));
     },[])
 
     return (

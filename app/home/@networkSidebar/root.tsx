@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import React from 'react'
 import ProfileLogo from "../@profileLogo/page";
 import SearchIcon from '@mui/icons-material/Search';
@@ -10,6 +10,7 @@ import ChatSettings, { ChatSettingsForUnitTesting } from "./chatSettings";
 import fetchUsers from "../../auth/login/fetchUsers";
 import MessageModalChats, { ModalMessageChatForUnitTesting } from '../@navsidebar/msgModal';
 import fetchPendingRecipientUserNetworks from "./fetchPendingRecipientUserNetworks";
+import { SessionDataContext } from "@/app/auth/login/@custom/root";
 
 export const ContactCardForUnitTesting = () => {
     return (
@@ -67,6 +68,7 @@ export const ContactCardForUnitTesting = () => {
 }
 
 const RootComp = () => {
+    const { authUserId } = useContext(SessionDataContext)
     const [openSearchModal,setOpenSearchModal] = useState(false);
     const [anchorChatEl,setAnchorChatEl] = useState<null | HTMLElement>(null);
     const [users,setUsers] = useState([]);
@@ -74,7 +76,7 @@ const RootComp = () => {
 
     useEffect(() => {
         fetchUsers().then((users: any) => setUsers(users));
-        fetchPendingRecipientUserNetworks(localStorage.getItem("authUserId")).then((pendingRecipientUserNetworks: any) => setPendingRecipientUserNetworks(pendingRecipientUserNetworks));
+        fetchPendingRecipientUserNetworks(authUserId).then((pendingRecipientUserNetworks: any) => setPendingRecipientUserNetworks(pendingRecipientUserNetworks));
     },[])
 
     const handleOpenSearchModal = () => setOpenSearchModal(true);

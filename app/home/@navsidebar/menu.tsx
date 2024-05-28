@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { IconButton, Menu, MenuItem, Badge, Avatar, Typography } from '@mui/material'
 import { AccountCircle } from '@mui/icons-material'
 import MailIcon from '@mui/icons-material/Mail'
@@ -14,6 +14,7 @@ import fetchNewMsgNotificationsFromDB from './fetchNewMsgNotificationsFromDB'
 import makeNotificationRead from './makeNotificationRead'
 import Swal from 'sweetalert2'
 import makeMsgNotificationAsRead from './makeMsgNotificationAsRead'
+import { SessionDataContext } from '@/app/auth/login/@custom/root'
 
 export const menuId = 'primary-search-account-menu';
 export const mobileMenuId = 'primary-search-account-menu-mobile';
@@ -22,11 +23,12 @@ export const notifMenuId = "notification-dropdown-menu";
 
 export const RenderMenu = (props: any) => {
     const { anchorEl, setAnchorEl } = props;
+    const { authUserId, setAuthUserId, setAuthUser, setSessionToken } = useContext(SessionDataContext);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
     const [currentUser,setCurrentUser] = useState({ id: 0, email: '', password: '', image: null, is_active: 0, name: '', phone: 0 })
 
     useEffect(() => {
-        fetchUser(localStorage.getItem("authUserId")).then((currentUser: any) => setCurrentUser(currentUser));
+        fetchUser(authUserId).then((currentUser: any) => setCurrentUser(currentUser));
     },[])
 
     const router = useRouter();
@@ -47,9 +49,9 @@ export const RenderMenu = (props: any) => {
     };
 
     const handleLogout = () => {
-        localStorage.setItem("sessionToken","");
-        localStorage.setItem("authUser","");
-        localStorage.setItem("authUserId","");
+        setSessionToken("");
+        setAuthUser("");
+        setAuthUserId("");
         router.push(`/auth/login`);
     }
 
@@ -97,14 +99,15 @@ export const RenderMenu = (props: any) => {
 }
 
 export const RenderMobileMenu = () => {
+    const { authUserId } = useContext(SessionDataContext);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
     const [newNotif,setNewNotif] = useState([]);
     const [newMsgNotif,setNewMsgNotif] = useState([]);
 
     useEffect(() => {
-        fetchNewNotificationsFromDB(localStorage.getItem("authUserId")).then((notif: any) => setNewNotif(notif));
-        fetchNewMsgNotificationsFromDB(localStorage.getItem("authUserId")).then((msgNotif: any) => setNewMsgNotif(msgNotif));
+        fetchNewNotificationsFromDB(authUserId).then((notif: any) => setNewNotif(notif));
+        fetchNewMsgNotificationsFromDB(authUserId).then((msgNotif: any) => setNewMsgNotif(msgNotif));
     },[])
 
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -171,14 +174,15 @@ export const RenderMobileMenu = () => {
 
 export const RenderMsgMenu = (props: any) => {
     const { msgAnchorEl, setMsgAnchorEl } = props;
+    const { authUserId } = useContext(SessionDataContext);
     const [user,setUser] = useState({ id: 0, name: '', email: '', password: '', image: null, phone: 0, is_active: 0 });
     const [newMsgNotif,setNewMsgNotif] = useState([]);
     const [users,setUsers] = useState([]);
 
     useEffect(() => {
-        fetchUser(localStorage.getItem("authUserId")).then((user: any) => setUser(user));
+        fetchUser(authUserId).then((user: any) => setUser(user));
         fetchUsers().then((users: any) => setUsers(users));
-        fetchNewMsgNotificationsFromDB(localStorage.getItem("authUserId")).then((newMsgNotif: any) => setNewMsgNotif(newMsgNotif));
+        fetchNewMsgNotificationsFromDB(authUserId).then((newMsgNotif: any) => setNewMsgNotif(newMsgNotif));
     },[])
 
     const isMsgMenuOpen = Boolean(msgAnchorEl);
@@ -188,14 +192,14 @@ export const RenderMsgMenu = (props: any) => {
     }
 
     const makeMsgNotifRead = async (msgNotif: any) => {
-        const updateMsgNotifAsRead = await makeMsgNotificationAsRead(localStorage.getItem("authUserId"),msgNotif);
+        const updateMsgNotifAsRead = await makeMsgNotificationAsRead(authUserId,msgNotif);
     }
 
     return (
         <Menu anchorEl={msgAnchorEl} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} id={msgMenuId} keepMounted transformOrigin={{ vertical: 'top', horizontal: 'right' }} open={isMsgMenuOpen} onClose={handleMsgMenuClose}>
             {
                 users.map((user: any) => {
-                    if (user.id != localStorage.getItem("authUserId")) {
+                    if (user.id != authUserId) {
                         let counter = 0;
                         if (newMsgNotif.length > 0) {
                             return newMsgNotif.map((msgNotif: any) => {
@@ -237,10 +241,11 @@ export const RenderMsgMenu = (props: any) => {
 
 export const RenderNotifMenu = (props : any) => {
     const { notifAnchorEl, setNotifAnchorEl } = props;
+    const { authUserId } = useContext(SessionDataContext)
     const [newNotif,setNewNotif] = useState([]);
 
     useEffect(() => {
-        fetchNewNotificationsFromDB(localStorage.getItem("authUserId")).then((notif: any) => setNewNotif(notif));
+        fetchNewNotificationsFromDB(authUserId).then((notif: any) => setNewNotif(notif));
     },[])
 
     const isNotifMenuOpen = Boolean(notifAnchorEl);
@@ -250,7 +255,7 @@ export const RenderNotifMenu = (props : any) => {
     }
 
     const handleNotificationMenuItemClick = (notif: any) => {
-        const notifUpdate = makeNotificationRead(localStorage.getItem("authUserId"),notif);
+        const notifUpdate = makeNotificationRead(authUserId,notif);
         if (Boolean(notifUpdate)) {
             Swal.fire({
                 title: `Success`,

@@ -19,10 +19,12 @@ import fetchGroupPosts from "./fetchGroupPosts";
 import fetchUser from "../../../profile/@profileCoverHeading/fetchUser";
 import fetchComments from "../../../home/@posts/@commentInput/fetchComments";
 import { SearchGroupPostContext } from "../../@navbar/page";
+import { SessionDataContext } from "@/app/auth/login/@custom/root";
 
 
 const RootComp = (props: any) => {
     const { group } = props;
+    const { authUserId } = useContext(SessionDataContext);
     const { srchGrpPosts, srchGrpPostKey } = useContext(SearchGroupPostContext);
     const [anchorGPCIconElement,setAnchorGPCIconElement] = useState<null | HTMLElement>(null);
     const [expanded,setExpanded] = useState(false);
@@ -34,7 +36,7 @@ const RootComp = (props: any) => {
 
     useEffect(() => {
         fetchGroupPosts().then((groupPosts: any) => setGroupPosts(groupPosts));
-        fetchUser(localStorage.getItem("authUserId")).then((user: any) => setAuthUser(user));
+        fetchUser(authUserId).then((user: any) => setAuthUser(user));
         fetchComments().then((comments: any) => setGroupComments(comments));
     },[])
 

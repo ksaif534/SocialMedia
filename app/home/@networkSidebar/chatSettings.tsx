@@ -6,11 +6,12 @@ import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 import CircleNotificationsIcon from '@mui/icons-material/CircleNotifications';
 import updateChatSettings from './updateChatSettings';
 import Swal from 'sweetalert2';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import fetchChatSettings from './fetchChatSettings';
 import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import updateShowContacts from './updateShowContacts';
 import React from 'react';
+import { SessionDataContext } from '@/app/auth/login/@custom/root';
 
 export const ChatSettingsForUnitTesting = () => {
     return (
@@ -59,13 +60,14 @@ export const ChatSettingsForUnitTesting = () => {
 
 const ChatSettings = (props: any) => {
     const { anchorChatEl, setAnchorChatEl } = props;
+    const { authUserId } = useContext(SessionDataContext)
     const isChatSettingsMenuOpen = Boolean(anchorChatEl);
     const [chatSettings,setChatSettings] = useState([]);
     const [isActive,setIsActive] = useState(false);
     const [isShown,setIsShown] = useState(false);
 
     useEffect(() => {
-        fetchChatSettings(localStorage.getItem("authUserId")).then((chatSettings: any) => setChatSettings(chatSettings));
+        fetchChatSettings(authUserId).then((chatSettings: any) => setChatSettings(chatSettings));
     },[])
 
     const handleChatSettingsMenuClose = () => {
@@ -77,7 +79,7 @@ const ChatSettings = (props: any) => {
     const handleActiveStatus = async () => {
         setIsActive(!isActive);
         const isActiveBool = !isActive;
-        const updateOrCreate = await updateChatSettings(localStorage.getItem("authUserId"),isActiveBool);
+        const updateOrCreate = await updateChatSettings(authUserId,isActiveBool);
         if (Boolean(updateOrCreate)) {
             Swal.fire({
                 title: `Success`,
@@ -96,7 +98,7 @@ const ChatSettings = (props: any) => {
     const handleShowStatus = async () => {
         setIsShown(!isShown);
         const isShownBool = !isShown;
-        const updateIsShown = await updateShowContacts(localStorage.getItem("authUserId"),isShownBool);
+        const updateIsShown = await updateShowContacts(authUserId,isShownBool);
         if (Boolean(updateIsShown)) {
             Swal.fire({
                 title: `Success`,

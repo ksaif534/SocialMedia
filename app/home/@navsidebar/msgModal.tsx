@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useContext } from "react";
 import React from "react";
 import { ModalMessageChatButton, ModalMessageChatCard, ModalMessageChatCardContent, ModalMessageChatFormTextField, ModalMessageChatGrid, ModalMessageChatGridIconButton, ModalMessageChatGridItemGrid, ModalMessageChatsButtonBase, ModalMessagePaper, ModalMessageStyle } from "./style"
 import { Backdrop, Box, Fade, Grid, IconButton, Menu, MenuItem, Modal, Typography } from "@mui/material";
@@ -11,6 +11,7 @@ import sendMsgNotification from "./sendMsgNotification";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import removeMsg from "./removeMsg";
 import Swal from "sweetalert2";
+import { SessionDataContext } from "@/app/auth/login/@custom/root";
 
 export const ModalMessageChatForUnitTesting = () => {
     return (
@@ -81,6 +82,7 @@ export const ModalMessageChatForUnitTesting = () => {
 
 const ModalMessageChats = (props: any) => {
     const { user } = props;
+    const { authUserId } = useContext(SessionDataContext);
     const [open,setOpen] = useState(false);
     const [sender,setSender] = useState({ id: 0, name: '', email: '', password: '', image: null, phone: 0, is_active: 0 });
     const [chats,setChats] = useState([]);
@@ -90,7 +92,7 @@ const ModalMessageChats = (props: any) => {
     const removeMsgMenuOpen = Boolean(removeMsgMenuAnchorEl);
 
     useEffect(() => {
-        fetchUser(localStorage.getItem("authUserId")).then((user: any) => setSender(user));
+        fetchUser(authUserId).then((user: any) => setSender(user));
         // const pusher = new Pusher(`${process.env.NEXT_PUBLIC_KEY}`,{
         //     cluster: "ap2",
         //     authEndpoint: `api/home/pusher/auth`,
@@ -116,7 +118,7 @@ const ModalMessageChats = (props: any) => {
 
     const handleOpen = () => {
         setOpen(true);
-        fetchUserMessages(localStorage.getItem("authUserId"),user?.id).then((messages: any) => {
+        fetchUserMessages(authUserId,user?.id).then((messages: any) => {
             chatsArr = messages;
             setChats(messages);
         });
@@ -202,7 +204,7 @@ const ModalMessageChats = (props: any) => {
                                         return (
                                             <ModalMessageChatGrid container spacing={2} key={index}>
                                                 {
-                                                    (chat?.user_id == localStorage.getItem("authUserId") || chat?.recipientUserId == localStorage.getItem("authUserId")) ? (
+                                                    (chat?.user_id == authUserId || chat?.recipientUserId == authUserId) ? (
                                                         <>
                                                             <Grid item md={11} sm={11} xs={12}>
                                                                 <ModalMessageChatGridItemGrid container spacing={2}>
@@ -213,7 +215,7 @@ const ModalMessageChats = (props: any) => {
                                                                     </Grid>
                                                                     <Grid item md={2} sm={2} xs={12}>
                                                                         {
-                                                                            (chat?.user_id == localStorage.getItem("authUserId")) && (
+                                                                            (chat?.user_id == authUserId) && (
                                                                                 <ModalMessageChatGridIconButton onClick={handleMsgMenuRemoveClick} aria-controls={ removeMsgMenuOpen ? 'basic-msg-menu': undefined } aria-haspopup="true" aria-expanded={ removeMsgMenuOpen ? 'true' : undefined }>
                                                                                     <MoreVertIcon fontSize="medium" />
                                                                                 </ModalMessageChatGridIconButton>
@@ -254,7 +256,7 @@ const ModalMessageChats = (props: any) => {
                                                                 <ModalMessageChatGridItemGrid container spacing={2} sx={{ justifyContent: 'center', alignItems: 'center', display: 'flex' }}> 
                                                                     <Grid item md={2} sm={2} xs={12}>
                                                                         {
-                                                                            (chat?.user_id == localStorage.getItem("authUserId")) && (
+                                                                            (chat?.user_id == authUserId) && (
                                                                                 <ModalMessageChatGridIconButton onClick={handleMsgMenuRemoveClick} id="basic-icon-button" aria-controls={ removeMsgMenuOpen ? 'basic-msg-menu': undefined } aria-haspopup="true" aria-expanded={ removeMsgMenuOpen ? 'true' : undefined }>
                                                                                     <MoreVertIcon fontSize="medium" />
                                                                                 </ModalMessageChatGridIconButton>

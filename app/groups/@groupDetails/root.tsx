@@ -1,7 +1,7 @@
 'use client'
 import { Box, CardMedia, Menu, MenuItem, Tab, Typography } from "@mui/material"
 import { DownIconButton, GroupCoverHeadingCard, GroupCoverHeadingDivider, GroupCoverHeadingEndDiv, GroupCoverHeadingStartDiv, GroupCoverHeadingTabWrapperDiv, GroupCoverHeadingTabs, GroupCoverHeadingWrapper, GroupCoverHeadingWrapperDiv, InviteButton, JoinButton } from "./style"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import Discussion from "./@discussion/page"
 import Featured from "./@featured/page"
 import People from "./@people/page"
@@ -15,6 +15,7 @@ import storeGroupMember from "./storeGroupMember"
 import Swal from "sweetalert2"
 import fetchGroupMembers from "./fetchGroupMembers"
 import leaveGroup from "./leaveGroup"
+import { SessionDataContext } from "@/app/auth/login/@custom/root"
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -50,6 +51,7 @@ const a11yProps = (index: number) => {
 
 export const RootComp = (props: any) => {
     const { group } = props;
+    const { authUserId } = useContext(SessionDataContext);
     const [groupHeadingTabValue,setGroupHeadingTabValue] = useState(0);
     const [anchorEl,setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -58,7 +60,7 @@ export const RootComp = (props: any) => {
     let counter = 0;
 
     useEffect(() => {
-        fetchUser(localStorage.getItem("authUserId")).then((user: any) => setUser(user));
+        fetchUser(authUserId).then((user: any) => setUser(user));
         fetchGroupMembers().then((groupMembers: any) => setGroupMembers(groupMembers));
     },[])
 
@@ -163,7 +165,7 @@ export const RootComp = (props: any) => {
                         </InviteButton> */}
                         {
                             groupMembers.map((groupMember: any, index: number) => {
-                                if (groupMember.group_id == group.id && groupMember.user_id == localStorage.getItem("authUserId")) {
+                                if (groupMember.group_id == group.id && groupMember.user_id == authUserId) {
                                     counter++;
                                 }
                                 if (counter > 0 && index == groupMembers.length - 1) {

@@ -28,6 +28,7 @@ import addShares from "./addShares";
 import fetchSharesByPost from "./fetchSharesByPost";
 import { SearchContext } from "../@navsidebar/root";
 import { ProfileSearchContext } from "../../profile/@navbar/root";
+import { SessionDataContext } from "@/app/auth/login/@custom/root";
 
 export const PostCardForUnitTesting = () => {
     return (
@@ -124,8 +125,9 @@ const RootComp = (props: any) => {
     const { profilePosts, videoPosts } = props;
     const { srchPosts, srchKey } = useContext(SearchContext);
     const { srchProfilePosts, srchProfileKey } = useContext(ProfileSearchContext);
+    const { authUser, authUserId } = useContext(SessionDataContext);
     const [users,setUsers] = useState([]);
-    const [authUser,setAuthUser] = useState({ id: 0 ,name: '', email: '', image: null });
+    const [authenticatedUser,setAuthenticatedUser] = useState({ id: 0 ,name: '', email: '', image: null });
     const [posts,setPosts] = useState([]);
     const [comments,setComments] = useState([]);
     const [likes,setLikes] = useState([]);
@@ -149,8 +151,8 @@ const RootComp = (props: any) => {
 
     const handleExpandClick = (postId: any) => {
         users.map((user: any) => {
-            if(user.email == localStorage.getItem("authUser")){
-                setAuthUser((prevAuthUser) => ({
+            if(user.email == authUser){
+                setAuthenticatedUser((prevAuthUser) => ({
                     ...prevAuthUser,
                     id: user.id,
                     name: user.name,
@@ -231,7 +233,7 @@ const RootComp = (props: any) => {
 
     const addLike = async (post: any) => {
         const addData = {
-            userId: localStorage.getItem("authUserId"),
+            userId: authUserId,
             postId: post?.id,
             isCount: 1
         }
@@ -254,7 +256,7 @@ const RootComp = (props: any) => {
 
     const addShare = async (post: any) => {
         const shareData = {
-            user_id: localStorage.getItem("authUserId"),
+            user_id: authUserId,
             post_id: post.id,
             is_count: 1,
             shared: 1
@@ -295,7 +297,7 @@ const RootComp = (props: any) => {
                                                         action={
                                                         <div>
                                                             {
-                                                                (srchPost.user_id == localStorage.getItem("authUserId")) && (
+                                                                (srchPost.user_id == authUserId) && (
                                                                     <>
                                                                         <IconButton aria-label="settings" onClick={handleVertIconClick}>
                                                                             <MoreVertIcon />
@@ -424,7 +426,7 @@ const RootComp = (props: any) => {
                                                                                                     <Grid container spacing={2}>
                                                                                                         <Grid item md={6} sm={6} xs={12}>
                                                                                                             {
-                                                                                                                (authUser.id == comment.user_id) && (
+                                                                                                                (authenticatedUser.id == comment.user_id) && (
                                                                                                                     <>
                                                                                                                         <CommentEditModalForm comment={comment} />
                                                                                                                     </>
@@ -433,7 +435,7 @@ const RootComp = (props: any) => {
                                                                                                         </Grid>
                                                                                                         <Grid item md={6} sm={6} xs={12}>
                                                                                                             {
-                                                                                                                (authUser.id == comment.user_id) && (
+                                                                                                                (authenticatedUser.id == comment.user_id) && (
                                                                                                                     <>
                                                                                                                         <IconButton title="Delete Comment" onClick={() => handleCommentDelete(comment)}>
                                                                                                                             <DeleteIcon />
@@ -455,10 +457,10 @@ const RootComp = (props: any) => {
                                                             }
                                                             <Grid container spacing={2}>
                                                                 <ProfileGrid item md={1}>
-                                                                    <ProfileLogo name={authUser.name} imageUrl={`/images/` + authUser.image} />
+                                                                    <ProfileLogo name={authenticatedUser.name} imageUrl={`/images/` + authenticatedUser.image} />
                                                                 </ProfileGrid>
                                                                 <Grid item md={11}>
-                                                                    <CommentInputModalForm post={srchPost} authUser={authUser} />
+                                                                    <CommentInputModalForm post={srchPost} authUser={authenticatedUser} />
                                                                 </Grid>
                                                             </Grid>
                                                         </CardContent>
@@ -500,7 +502,7 @@ const RootComp = (props: any) => {
                                                     action={
                                                     <div>
                                                         {
-                                                            (post.user_id == localStorage.getItem("authUserId")) && (
+                                                            (post.user_id == authUserId) && (
                                                                 <>
                                                                     <IconButton aria-label="settings" onClick={handleVertIconClick}>
                                                                         <MoreVertIcon />
@@ -629,7 +631,7 @@ const RootComp = (props: any) => {
                                                                                                 <Grid container spacing={2}>
                                                                                                     <Grid item md={6} sm={6} xs={12}>
                                                                                                         {
-                                                                                                            (authUser.id == comment.user_id) && (
+                                                                                                            (authenticatedUser.id == comment.user_id) && (
                                                                                                                 <>
                                                                                                                     <CommentEditModalForm comment={comment} />
                                                                                                                 </>
@@ -638,7 +640,7 @@ const RootComp = (props: any) => {
                                                                                                     </Grid>
                                                                                                     <Grid item md={6} sm={6} xs={12}>
                                                                                                         {
-                                                                                                            (authUser.id == comment.user_id) && (
+                                                                                                            (authenticatedUser.id == comment.user_id) && (
                                                                                                                 <>
                                                                                                                     <IconButton title="Delete Comment" onClick={() => handleCommentDelete(comment)}>
                                                                                                                         <DeleteIcon />
@@ -660,10 +662,10 @@ const RootComp = (props: any) => {
                                                         }
                                                         <Grid container spacing={2}>
                                                             <ProfileGrid item md={1}>
-                                                                <ProfileLogo name={authUser.name} imageUrl={`/images/` + authUser.image} />
+                                                                <ProfileLogo name={authenticatedUser.name} imageUrl={`/images/` + authenticatedUser.image} />
                                                             </ProfileGrid>
                                                             <Grid item md={11}>
-                                                                <CommentInputModalForm post={post} authUser={authUser} />
+                                                                <CommentInputModalForm post={post} authUser={authenticatedUser} />
                                                             </Grid>
                                                         </Grid>
                                                     </CardContent>
@@ -690,7 +692,7 @@ const RootComp = (props: any) => {
                                                                             action={
                                                                             <div>
                                                                                 {
-                                                                                    (srchProfilePost.user_id == localStorage.getItem("authUserId")) && (
+                                                                                    (srchProfilePost.user_id == authUserId) && (
                                                                                         <>
                                                                                             <IconButton aria-label="settings" onClick={handleVertIconClick}>
                                                                                                 <MoreVertIcon />
@@ -819,7 +821,7 @@ const RootComp = (props: any) => {
                                                                                                                         <Grid container spacing={2}>
                                                                                                                             <Grid item md={6} sm={6} xs={12}>
                                                                                                                                 {
-                                                                                                                                    (authUser.id == comment.user_id) && (
+                                                                                                                                    (authenticatedUser.id == comment.user_id) && (
                                                                                                                                         <>
                                                                                                                                             <CommentEditModalForm comment={comment} />
                                                                                                                                         </>
@@ -828,7 +830,7 @@ const RootComp = (props: any) => {
                                                                                                                             </Grid>
                                                                                                                             <Grid item md={6} sm={6} xs={12}>
                                                                                                                                 {
-                                                                                                                                    (authUser.id == comment.user_id) && (
+                                                                                                                                    (authenticatedUser.id == comment.user_id) && (
                                                                                                                                         <>
                                                                                                                                             <IconButton title="Delete Comment" onClick={() => handleCommentDelete(comment)}>
                                                                                                                                                 <DeleteIcon />
@@ -850,10 +852,10 @@ const RootComp = (props: any) => {
                                                                                 }
                                                                                 <Grid container spacing={2}>
                                                                                     <ProfileGrid item md={1}>
-                                                                                        <ProfileLogo name={authUser.name} imageUrl={`/images/` + authUser.image} />
+                                                                                        <ProfileLogo name={authenticatedUser.name} imageUrl={`/images/` + authenticatedUser.image} />
                                                                                     </ProfileGrid>
                                                                                     <Grid item md={11}>
-                                                                                        <CommentInputModalForm post={srchProfilePost} authUser={authUser} />
+                                                                                        <CommentInputModalForm post={srchProfilePost} authUser={authenticatedUser} />
                                                                                     </Grid>
                                                                                 </Grid>
                                                                             </CardContent>
@@ -993,7 +995,7 @@ const RootComp = (props: any) => {
                                                                                                                                     <Grid container spacing={2}>
                                                                                                                                         <Grid item md={6} sm={6} xs={12}>
                                                                                                                                             {
-                                                                                                                                                (authUser.id == comment.user_id) && (
+                                                                                                                                                (authenticatedUser.id == comment.user_id) && (
                                                                                                                                                     <>
                                                                                                                                                         <CommentEditModalForm comment={comment} />
                                                                                                                                                     </>
@@ -1002,7 +1004,7 @@ const RootComp = (props: any) => {
                                                                                                                                         </Grid>
                                                                                                                                         <Grid item md={6} sm={6} xs={12}>
                                                                                                                                             {
-                                                                                                                                                (authUser.id == comment.user_id) && (
+                                                                                                                                                (authenticatedUser.id == comment.user_id) && (
                                                                                                                                                     <>
                                                                                                                                                         <IconButton title="Delete Comment" onClick={() => handleCommentDelete(comment)}>
                                                                                                                                                             <DeleteIcon />
@@ -1024,10 +1026,10 @@ const RootComp = (props: any) => {
                                                                                             }
                                                                                             <Grid container spacing={2}>
                                                                                                 <ProfileGrid item md={1}>
-                                                                                                    <ProfileLogo name={authUser.name} imageUrl={`/images/` + authUser.image} />
+                                                                                                    <ProfileLogo name={authenticatedUser.name} imageUrl={`/images/` + authenticatedUser.image} />
                                                                                                 </ProfileGrid>
                                                                                                 <Grid item md={11}>
-                                                                                                    <CommentInputModalForm post={videoPost} authUser={authUser} />
+                                                                                                    <CommentInputModalForm post={videoPost} authUser={authenticatedUser} />
                                                                                                 </Grid>
                                                                                             </Grid>
                                                                                         </CardContent>
@@ -1174,7 +1176,7 @@ const RootComp = (props: any) => {
                                                                                                                         <Grid container spacing={2}>
                                                                                                                             <Grid item md={6} sm={6} xs={12}>
                                                                                                                                 {
-                                                                                                                                    (authUser.id == comment.user_id) && (
+                                                                                                                                    (authenticatedUser.id == comment.user_id) && (
                                                                                                                                         <>
                                                                                                                                             <CommentEditModalForm comment={comment} />
                                                                                                                                         </>
@@ -1183,7 +1185,7 @@ const RootComp = (props: any) => {
                                                                                                                             </Grid>
                                                                                                                             <Grid item md={6} sm={6} xs={12}>
                                                                                                                                 {
-                                                                                                                                    (authUser.id == comment.user_id) && (
+                                                                                                                                    (authenticatedUser.id == comment.user_id) && (
                                                                                                                                         <>
                                                                                                                                             <IconButton title="Delete Comment" onClick={() => handleCommentDelete(comment)}>
                                                                                                                                                 <DeleteIcon />
@@ -1205,10 +1207,10 @@ const RootComp = (props: any) => {
                                                                                 }
                                                                                 <Grid container spacing={2}>
                                                                                     <ProfileGrid item md={1}>
-                                                                                        <ProfileLogo name={authUser.name} imageUrl={`/images/` + authUser.image} />
+                                                                                        <ProfileLogo name={authenticatedUser.name} imageUrl={`/images/` + authenticatedUser.image} />
                                                                                     </ProfileGrid>
                                                                                     <Grid item md={11}>
-                                                                                        <CommentInputModalForm post={profilePost} authUser={authUser} />
+                                                                                        <CommentInputModalForm post={profilePost} authUser={authenticatedUser} />
                                                                                     </Grid>
                                                                                 </Grid>
                                                                             </CardContent>

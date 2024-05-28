@@ -13,16 +13,19 @@ import fetchNewNotificationsFromDB from './fetchNewNotificationsFromDB'
 import fetchNewMsgNotificationsFromDB from './fetchNewMsgNotificationsFromDB'
 import searchPosts from './searchPosts'
 import { SearchContext } from './root'
+import { SessionDataContext } from '@/app/auth/login/@custom/root'
 
 export const AppBarComp = (props: any) => {
     const { setAnchorEl, setMsgAnchorEl, setNotifAnchorEl, open, setOpen, auth } = props;
     const { srchPosts,setSrchPosts, srchKey, setSrchKey } = useContext(SearchContext);
+    const { authUserId } = useContext(SessionDataContext);
+
     const [newNotif,setNewNotif] = useState([]);
     const [newMsgNotif,setNewMsgNotif] = useState([]);
 
     useEffect(() => {
-        fetchNewNotificationsFromDB(localStorage.getItem("authUserId")).then((notif: any) => setNewNotif(notif));
-        fetchNewMsgNotificationsFromDB(localStorage.getItem("authUserId")).then((msgNotif: any) => setNewMsgNotif(msgNotif));
+        fetchNewNotificationsFromDB(authUserId).then((notif: any) => setNewNotif(notif));
+        fetchNewMsgNotificationsFromDB(authUserId).then((msgNotif: any) => setNewMsgNotif(msgNotif));
     },[])
 
     const handleDrawerOpen = () => {

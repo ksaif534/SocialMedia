@@ -1,7 +1,7 @@
 'use client'
 import { CardContent, CardMedia, Grid, Typography } from "@mui/material"
 import { FriendCard, FriendCardButton, FriendGrid } from "./style";
-import { useState,useEffect } from "react";
+import { useState,useEffect, useContext } from "react";
 import React from "react";
 import fetchOtherProfiles from "../../profile/@profileCoverHeading/fetchOtherProfiles";
 import fetchAllProfileNetworks from "../../profile/@profileCoverHeading/fetchAllProfileNetworks";
@@ -10,6 +10,7 @@ import fetchTotalNetworks from './fetchTotalNetworks'
 import Swal from "sweetalert2";
 import postNetworkStatus from "../../profile/@profileCoverHeading/postNetworkStatus";
 import updatePendingNetwork from "../../profile/@profileCoverHeading/updatePendingNetwork";
+import { SessionDataContext } from "@/app/auth/login/@custom/root";
 
 export const FriendCardButtonForUnitTesting = () => {
     return (
@@ -29,6 +30,7 @@ export const FriendCardButtonForUnitTesting = () => {
 }
 
 const RootComp = () => {
+    const { authUserId } = useContext(SessionDataContext);
     const [otherProfiles,setOtherProfiles] = useState([]);
     const [allProfileNetworks,setAllProfileNetworks] = useState([]);
     const [profileNetworks,setProfileNetworks] = useState([]);
@@ -38,9 +40,9 @@ const RootComp = () => {
     let networksCounterArr: any;
 
     useEffect(() => {
-        fetchOtherProfiles(sessionStorage.getItem("authUserId")).then((otherProfiles: any) => setOtherProfiles(otherProfiles));
-        fetchAllProfileNetworks(sessionStorage.getItem("authUserId")).then((allProfileNetworks: any) => setAllProfileNetworks(allProfileNetworks));
-        fetchProfileNetworks(sessionStorage.getItem("authUserId")).then((profileNetworks: any) => setProfileNetworks(profileNetworks));
+        fetchOtherProfiles(authUserId).then((otherProfiles: any) => setOtherProfiles(otherProfiles));
+        fetchAllProfileNetworks(authUserId).then((allProfileNetworks: any) => setAllProfileNetworks(allProfileNetworks));
+        fetchProfileNetworks(authUserId).then((profileNetworks: any) => setProfileNetworks(profileNetworks));
         fetchTotalNetworks().then((totalNetworks: any) => setTotalNetworks(totalNetworks));
     },[])
 
@@ -53,7 +55,7 @@ const RootComp = () => {
             showDenyButton: true
         }).then(async (result: any) => {
             if (result.isConfirmed) {
-                const networkStatus = await postNetworkStatus(sessionStorage.getItem("authUserId"),user.id);
+                const networkStatus = await postNetworkStatus(authUserId,user.id);
                 if (Boolean(networkStatus)) {
                     Swal.fire({
                         title: `Success`,
@@ -87,7 +89,7 @@ const RootComp = () => {
             denyButtonText: `No`
         }).then(async (result) => {
             if (result.isConfirmed) {
-                const updatedNetwork = await updatePendingNetwork(sessionStorage.getItem("authUserId"),pendingNetwork);
+                const updatedNetwork = await updatePendingNetwork(authUserId,pendingNetwork);
                 if (Boolean(updatedNetwork)) {
                     Swal.fire({
                         title: `Success`,
@@ -156,10 +158,10 @@ const RootComp = () => {
                                                                     <>
                                                                         {
                                                                             allProfileNetworks?.map((allProfileNetwork: any,index: number) => {
-                                                                                if ((allProfileNetwork.user_id_from == sessionStorage.getItem("authUserId") || allProfileNetwork.user_id_from == otherProfile.user_id) && (allProfileNetwork.user_id_to == sessionStorage.getItem("authUserId") || allProfileNetwork.user_id_to == otherProfile.user_id)) {
+                                                                                if ((allProfileNetwork.user_id_from == authUserId || allProfileNetwork.user_id_from == otherProfile.user_id) && (allProfileNetwork.user_id_to == authUserId || allProfileNetwork.user_id_to == otherProfile.user_id)) {
                                                                                     indexCounterArr.push(index);
                                                                                     if (allProfileNetwork.status == 2) {
-                                                                                        if (allProfileNetwork.user_id_from == sessionStorage.getItem("authUserId")) {
+                                                                                        if (allProfileNetwork.user_id_from == authUserId) {
                                                                                             return (
                                                                                                 <div key={allProfileNetwork.id}>
                                                                                                     <FriendCardButton variant="contained" color="success">
@@ -175,7 +177,7 @@ const RootComp = () => {
                                                                                                 </div>
                                                                                             )
                                                                                         }else{
-                                                                                            if (allProfileNetwork.user_id_to == sessionStorage.getItem("authUserId")) {
+                                                                                            if (allProfileNetwork.user_id_to == authUserId) {
                                                                                                 return (
                                                                                                     <div key={allProfileNetwork.id}>
                                                                                                         <FriendCardButton variant="contained" color="success" onClick={() => handleFriendRequestAcceptance(allProfileNetwork)}>
@@ -209,7 +211,7 @@ const RootComp = () => {
                                                                                         }
                                                                                     }else{
                                                                                         if (allProfileNetwork.status == 1) {
-                                                                                            if (allProfileNetwork.user_id_from == sessionStorage.getItem("authUserId") || allProfileNetwork.user_id_to == sessionStorage.getItem("authUserId")) {
+                                                                                            if (allProfileNetwork.user_id_from == authUserId || allProfileNetwork.user_id_to == authUserId) {
                                                                                                 return (
                                                                                                     <div key={allProfileNetwork.id}>
                                                                                                         <FriendCardButton variant="contained" color="success">
@@ -285,11 +287,11 @@ const RootComp = () => {
                                                         <>
                                                             {
                                                                 profileNetworks.map((profileNetwork: any,index: number) => {
-                                                                    const acceptedNetworks = allProfileNetworks.filter((allProfileNetwork: any) => (allProfileNetwork.user_id_from == sessionStorage.getItem("authUserId") || allProfileNetwork.user_id_from == otherProfile.user_id) && (allProfileNetwork.user_id_to == sessionStorage.getItem("authUserId") || allProfileNetwork.user_id_to == otherProfile.user_id));
+                                                                    const acceptedNetworks = allProfileNetworks.filter((allProfileNetwork: any) => (allProfileNetwork.user_id_from == authUserId || allProfileNetwork.user_id_from == otherProfile.user_id) && (allProfileNetwork.user_id_to == authUserId || allProfileNetwork.user_id_to == otherProfile.user_id));
                                                                     if (acceptedNetworks.length > 0) {
                                                                         return acceptedNetworks?.map((acceptedNetwork: any) => {
                                                                             if (acceptedNetwork.status == 2) {
-                                                                                if (acceptedNetwork.user_id_from == sessionStorage.getItem("authUserId")) {
+                                                                                if (acceptedNetwork.user_id_from == authUserId) {
                                                                                     return (
                                                                                         <div key={acceptedNetwork.id}>
                                                                                             <FriendCardButton variant="contained" color="success">
@@ -305,7 +307,7 @@ const RootComp = () => {
                                                                                         </div>
                                                                                     )
                                                                                 }else{
-                                                                                    if (acceptedNetwork.user_id_to == sessionStorage.getItem("authUserId")) {
+                                                                                    if (acceptedNetwork.user_id_to == authUserId) {
                                                                                         return (
                                                                                             <div key={acceptedNetwork.id}>
                                                                                                 <FriendCardButton variant="contained" color="success" onClick={() => handleFriendRequestAcceptance(acceptedNetwork)}>
@@ -339,7 +341,7 @@ const RootComp = () => {
                                                                                 }
                                                                             }else{
                                                                                 if (acceptedNetwork.status == 1) {
-                                                                                    if (acceptedNetwork.user_id_from == sessionStorage.getItem("authUserId") || acceptedNetwork.user_id_to == sessionStorage.getItem("authUserId")) {
+                                                                                    if (acceptedNetwork.user_id_from == authUserId || acceptedNetwork.user_id_to == authUserId) {
                                                                                         return (
                                                                                             <div key={acceptedNetwork.id}>
                                                                                                 <FriendCardButton variant="contained" color="success">

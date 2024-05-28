@@ -1,5 +1,6 @@
 import './globals.css'
 import type { Metadata } from 'next'
+import SessionDataContextLayout from './auth/login/@SessionContextProvider/layout'
 // import { Inter } from 'next/font/google'
 
 // const inter = Inter({ subsets: ['latin'] })
@@ -17,7 +18,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="font-inter">
-        {children}
+        <SessionDataContextLayout>
+          {children}
+        </SessionDataContextLayout>
       </body>
     </html>
   )

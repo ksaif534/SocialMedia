@@ -2,7 +2,7 @@
 import { CardContent, CardHeader, CardMedia, Grid, IconButton, InputAdornment, Typography } from "@mui/material"
 import { AuthLoginFormBox, AuthLoginInputFieldsGrid, AuthLoginInputTextField, AuthLoginSubmissionStyle, LoginCard, SubmitButton } from "./style"
 import AccountCircleIcon  from '@mui/icons-material/AccountCircle';
-import { useState, useEffect } from "react";
+import { useState, useEffect, createContext, useContext } from "react";
 import React from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import checkLoginData from '../checkLoginData';
@@ -49,8 +49,27 @@ export const LoginCardForUnitTesting = () => {
     )
 }
 
+interface SessionDataContextProps {
+    authUser: string,
+    setAuthUser: (newAuthUser: any) => void,
+    authUserId: string | number,
+    setAuthUserId: (newAuthUserId: any) => void,
+    sessionToken: string,
+    setSessionToken: (newSessionToken: any) => void
+}
+
+export const SessionDataContext = createContext<SessionDataContextProps>({
+    authUser: '',
+    setAuthUser: () => {},
+    authUserId: '',
+    setAuthUserId: () => {},
+    sessionToken: '',
+    setSessionToken: () => {}
+})
+
 const RootComp = () => {
     const router = useRouter();
+    const { setAuthUser, setAuthUserId, setSessionToken } = useContext(SessionDataContext);
     const [users,setUsers] = useState([]);
     const [showPassword,setShowPassword] = useState(false);
     const [loginFormData,setLoginFormData] = useState({ login: '', password: ''});
@@ -71,9 +90,9 @@ const RootComp = () => {
 
     const handleLoginFormSubmit = async () => {
         const response = await checkLoginData(loginFormData,users);
-        localStorage.setItem("sessionToken",response.data.sessionToken);
-        localStorage.setItem("authUser",response.data.authenticatedUser);
-        localStorage.setItem("authUserId",response.data.authUserId);
+        setAuthUser(response.data.authenticatedUser);
+        setAuthUserId(response.data.authUserId);
+        setSessionToken(response.data.sessionToken);
         if(Boolean(response.data.isUserLoggedIn)){
             //Authenticated Successfully
             router.push(`/home`);
