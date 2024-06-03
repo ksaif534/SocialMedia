@@ -10,15 +10,17 @@ import AddLocationIcon from '@mui/icons-material/AddLocation';
 import Update from "./update"
 import Swal from "sweetalert2"
 import { useRouter } from "next/navigation"
+import Cookies from "js-cookie"
 
 const RootComp = () => {
     const router = useRouter();
+    const authUserId = Cookies.get("authUserId");
     const [profile,setProfile] = useState({ user_id: 0, firstname: '', lastname: '', marital_status: 1, gender: 1, birthdate: null, education_level: 1, occupation: 0, country: '', city: '', address: '' })
     const [profileFile,setProfileFile] = useState({ profile_photo: null })
     const fData = new FormData();
 
     useEffect(() => {
-        fetchProfile(sessionStorage.getItem("authUserId")).then((profile: any) => setProfile(profile))
+        fetchProfile(authUserId).then((profile: any) => setProfile(profile))
     },[])
 
     const handleProfileUpdateTextInputChange = (event: any) => {
@@ -61,9 +63,9 @@ const RootComp = () => {
         //Append the Form Data
         fData.append("formData",JSON.stringify(profile));
         //Append Session Data
-        fData.append("sessionData",JSON.stringify(sessionStorage.getItem("authUserId")));
+        fData.append("sessionData",JSON.stringify(authUserId));
         //Backend Call
-        const updateProfile = await Update(fData,sessionStorage.getItem("authUserId"));
+        const updateProfile = await Update(fData,authUserId);
         if (Boolean(updateProfile)) {
             Swal.fire(`Profile Updated Successfully`);
             router.push(`/profile`);

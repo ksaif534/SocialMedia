@@ -28,7 +28,10 @@ import addShares from "./addShares";
 import fetchSharesByPost from "./fetchSharesByPost";
 import { SearchContext } from "../@navsidebar/root";
 import { ProfileSearchContext } from "../../profile/@navbar/root";
-import { SessionDataContext } from "@/app/auth/login/@custom/root";
+import Cookies from "js-cookie";
+import fetchTmpDirImages from "../@navsidebar/fetchTmpDirImages";
+import path from "path";
+import fetchUser from "@/app/profile/@profileCoverHeading/fetchUser";
 
 export const PostCardForUnitTesting = () => {
     return (
@@ -122,10 +125,11 @@ export const PostCardForUnitTesting = () => {
 
 const RootComp = (props: any) => {
     const router = useRouter();
-    const { profilePosts, videoPosts } = props;
+    const { profilePosts, videoPosts, videoPostsTmpDirUserImages, videoPostsTmpDirFigures, videoPostsCommentsTmpDirUserImages , profilePostsTmpDirUserImages, profilePostsTmpDirFigures, profilePostsCommentsTmpDirUserImages } = props;
     const { srchPosts, srchKey } = useContext(SearchContext);
     const { srchProfilePosts, srchProfileKey } = useContext(ProfileSearchContext);
-    const { authUser, authUserId } = useContext(SessionDataContext);
+    const authUser = Cookies.get("authUser");
+    const authUserId = Cookies.get("authUserId");
     const [users,setUsers] = useState([]);
     const [authenticatedUser,setAuthenticatedUser] = useState({ id: 0 ,name: '', email: '', image: null });
     const [posts,setPosts] = useState([]);
@@ -134,15 +138,63 @@ const RootComp = (props: any) => {
     const [likesByPost,setLikesByPost] = useState([]);
     const [shares,setShares] = useState([]);
     const [sharesByPost,setSharesByPost] = useState([]);
+    const [tmpDirImage,setTmpDirImage] = useState('');
+    const [postsTmpDirUserImages,setPostsTmpDirUserImages] = useState([]);
+    const postsTmpDirUserImagesArr: any = [...postsTmpDirUserImages];
+    const [postsTmpDirFigures,setPostsTmpDirFigures] = useState([]);
+    const postsTmpDirFiguresArr: any = [...postsTmpDirFigures];
+    const [postsTmpDirCommentImages,setPostsTmpDirCommentImages] = useState<any>([]);
     let newArr: any = [];
 
     useEffect(() => {
-        fetchPosts().then((posts: any) => setPosts(posts));
+        fetchUser(authUserId).then((user: any) => {
+            fetchTmpDirImages(user?.image).then(async (imageBuffer: any) => {
+                const buffer = await imageBuffer.arrayBuffer();
+                const blob = new Blob([buffer], { type: `${path.extname(user?.image).substring(1)}` })
+                setTmpDirImage(URL.createObjectURL(blob));
+            })
+        })
+        fetchPosts().then((posts: any) => {
+            setPosts(posts);
+            posts.map((post: any) => {
+                fetchTmpDirImages(post?.user?.image).then(async (imageBuffer: any) => {
+                    const buffer = await imageBuffer.arrayBuffer();
+                    const blob1 = new Blob([buffer], { type: `${path.extname(post?.user?.image).substring(1)}` });
+                    postsTmpDirUserImagesArr.push(URL.createObjectURL(blob1));
+                })
+                fetchTmpDirImages(post?.figure).then(async (imageBuffer: any) => {
+                    const buffer = await imageBuffer.arrayBuffer();
+                    const blob2 = new Blob([buffer], { type: `${path.extname(post?.figure).substring(1)}` });
+                    postsTmpDirFiguresArr.push(URL.createObjectURL(blob2));
+                })
+            })
+            const tempCommentUserImages: any = [];
+            for(const post of posts){
+                const postImageUrls: any = [];
+                for(const postComment of post.comments){
+                    fetchTmpDirImages(postComment?.user?.image).then(async (imageBuffer: any) => {
+                        const buffer = await imageBuffer.arrayBuffer();
+                        const blob = new Blob([buffer], { type: `${path.extname(postComment?.user?.image).substring(1)}` });
+                        postImageUrls.push({
+                            comment: postComment,
+                            blobUrl: URL.createObjectURL(blob)
+                        });
+                    });
+                }
+                tempCommentUserImages.push({
+                    postId: post?.id,
+                    commentUserImages: postImageUrls
+                });
+            }
+            setPostsTmpDirUserImages(postsTmpDirUserImagesArr);
+            setPostsTmpDirFigures(postsTmpDirFiguresArr);
+            setPostsTmpDirCommentImages(tempCommentUserImages);
+        });
         fetchComments().then((comments: any) => setComments(comments));
         fetchUsers().then((users: any) => setUsers(users));
         fetchLikes().then((likes: any) => setLikes(likes));
         fetchShares().then((shares: any) => setShares(shares));
-        // const user = users.find((user: any) => user.email == sessionStorage.getItem("authUser")); 
+        const user = users.find((user: any) => user.email == authUser);
     },[])
 
     const [expandedPosts, setExpandedPosts] = useState([]);
@@ -497,7 +549,7 @@ const RootComp = (props: any) => {
                                             <PostCard key={`${post.user_id}-${index}`}>
                                                 <CardHeader
                                                     avatar={
-                                                    <Avatar src={`images/${post?.user?.image}`} aria-label="recipe" />
+                                                    <Avatar src={postsTmpDirUserImages[index]} aria-label="recipe" />
                                                     }
                                                     action={
                                                     <div>
@@ -527,7 +579,7 @@ const RootComp = (props: any) => {
                                                     (post.type == 2) ? (
                                                         <div style={{ position: 'relative', paddingBottom: '56.25%' }}>
                                                             <video 
-                                                            src={`/videos/${post.figure}`} 
+                                                            src={postsTmpDirFigures[index]} 
                                                             controls 
                                                             height="200"
                                                             style={{
@@ -544,8 +596,8 @@ const RootComp = (props: any) => {
                                                     ) : (
                                                         <CardMedia
                                                             component="img"
-                                                            height="194"
-                                                            image={`/images/${post.figure}`}
+                                                            height="200"
+                                                            image={postsTmpDirFigures[index]}
                                                             alt=""
                                                         />
                                                     )
@@ -591,78 +643,84 @@ const RootComp = (props: any) => {
                                                             <strong>Relevant Comments:</strong>
                                                         </Typography>
                                                         {
-                                                            post?.comments?.map((comment: any,index: number) => 
-                                                            {
-                                                                if(comment.is_allow == 1){
-                                                                    return (
-                                                                        <RelevantAnswersGrid container spacing={2} key={`${comment.user_id}-${index}`}>
-                                                                            <RelevantAnswersGridItem item md={2} sm={2} xs={12}>
-                                                                                {
-                                                                                    comments.map((commnt: any) => {
-                                                                                        if (commnt.id == comment.id) {
-                                                                                            return (
-                                                                                                <ProfileLogo name={commnt?.user?.name} imageUrl={`/images/` + commnt?.user?.image} key={commnt.id} />
-                                                                                            )           
-                                                                                        }
-                                                                                    })
-                                                                                }
-                                                                            </RelevantAnswersGridItem>
-                                                                            <RelevantAnswersGridItem item md={10} sm={10} xs={12}>
-                                                                                <RelevantAnswersCard elevation={3}>
-                                                                                    <CardContent>
-                                                                                        {
-                                                                                            comments.map((commnt: any) => {
-                                                                                                if (commnt.id == comment.id) {
-                                                                                                    return (
-                                                                                                        <Typography key={commnt.id}>
-                                                                                                            <strong>{ commnt?.user?.name }</strong>
-                                                                                                        </Typography>
-                                                                                                    )
-                                                                                                }
-                                                                                            })
-                                                                                        }
-                                                                                        <Grid container spacing={2}>
-                                                                                            <Grid item md={9} sm={9} xs={12}>
-                                                                                                <RelevantAnswersTG paragraph>
-                                                                                                    { comment.description }
-                                                                                                </RelevantAnswersTG>
-                                                                                            </Grid>
-                                                                                            <Grid item md={3} sm={3} xs={12}>
-                                                                                                <Grid container spacing={2}>
-                                                                                                    <Grid item md={6} sm={6} xs={12}>
-                                                                                                        {
-                                                                                                            (authenticatedUser.id == comment.user_id) && (
-                                                                                                                <>
-                                                                                                                    <CommentEditModalForm comment={comment} />
-                                                                                                                </>
-                                                                                                            )
-                                                                                                        }
+                                                            (postsTmpDirCommentImages[index]?.postId == post?.id) && (
+                                                                <>
+                                                                    {
+                                                                        postsTmpDirCommentImages[index].commentUserImages.map((commentUserImage: any,index: number) => 
+                                                                        {
+                                                                            if(commentUserImage.comment.is_allow == 1){
+                                                                                return (
+                                                                                    <RelevantAnswersGrid container spacing={2} key={`${commentUserImage.comment.user_id}-${index}`}>
+                                                                                        <RelevantAnswersGridItem item md={2} sm={2} xs={12}>
+                                                                                            {
+                                                                                                comments.map((commnt: any) => {
+                                                                                                    if (commnt.id == commentUserImage.comment.id) {
+                                                                                                        return (
+                                                                                                            <ProfileLogo name={commnt?.user?.name} imageUrl={commentUserImage.blobUrl} key={commnt.id} />
+                                                                                                        )           
+                                                                                                    }
+                                                                                                })
+                                                                                            }
+                                                                                        </RelevantAnswersGridItem>
+                                                                                        <RelevantAnswersGridItem item md={10} sm={10} xs={12}>
+                                                                                            <RelevantAnswersCard elevation={3}>
+                                                                                                <CardContent>
+                                                                                                    {
+                                                                                                        comments.map((commnt: any) => {
+                                                                                                            if (commnt.id == commentUserImage.comment.id) {
+                                                                                                                return (
+                                                                                                                    <Typography key={commnt.id}>
+                                                                                                                        <strong>{ commnt?.user?.name }</strong>
+                                                                                                                    </Typography>
+                                                                                                                )
+                                                                                                            }
+                                                                                                        })
+                                                                                                    }
+                                                                                                    <Grid container spacing={2}>
+                                                                                                        <Grid item md={9} sm={9} xs={12}>
+                                                                                                            <RelevantAnswersTG paragraph>
+                                                                                                                { commentUserImage.comment.description }
+                                                                                                            </RelevantAnswersTG>
+                                                                                                        </Grid>
+                                                                                                        <Grid item md={3} sm={3} xs={12}>
+                                                                                                            <Grid container spacing={2}>
+                                                                                                                <Grid item md={6} sm={6} xs={12}>
+                                                                                                                    {
+                                                                                                                        (authenticatedUser.id == commentUserImage.comment.user_id) && (
+                                                                                                                            <>
+                                                                                                                                <CommentEditModalForm comment={commentUserImage.comment} />
+                                                                                                                            </>
+                                                                                                                        )
+                                                                                                                    }
+                                                                                                                </Grid>
+                                                                                                                <Grid item md={6} sm={6} xs={12}>
+                                                                                                                    {
+                                                                                                                        (authenticatedUser.id == commentUserImage.comment.user_id) && (
+                                                                                                                            <>
+                                                                                                                                <IconButton title="Delete Comment" onClick={() => handleCommentDelete(commentUserImage.comment)}>
+                                                                                                                                    <DeleteIcon />
+                                                                                                                                </IconButton>
+                                                                                                                            </>
+                                                                                                                        )
+                                                                                                                    }
+                                                                                                                </Grid>
+                                                                                                            </Grid>
+                                                                                                        </Grid>
                                                                                                     </Grid>
-                                                                                                    <Grid item md={6} sm={6} xs={12}>
-                                                                                                        {
-                                                                                                            (authenticatedUser.id == comment.user_id) && (
-                                                                                                                <>
-                                                                                                                    <IconButton title="Delete Comment" onClick={() => handleCommentDelete(comment)}>
-                                                                                                                        <DeleteIcon />
-                                                                                                                    </IconButton>
-                                                                                                                </>
-                                                                                                            )
-                                                                                                        }
-                                                                                                    </Grid>
-                                                                                                </Grid>
-                                                                                            </Grid>
-                                                                                        </Grid>
-                                                                                    </CardContent>
-                                                                                </RelevantAnswersCard>
-                                                                            </RelevantAnswersGridItem>
-                                                                        </RelevantAnswersGrid>
-                                                                    )
-                                                                }
-                                                            })
+                                                                                                </CardContent>
+                                                                                            </RelevantAnswersCard>
+                                                                                        </RelevantAnswersGridItem>
+                                                                                    </RelevantAnswersGrid>
+                                                                                )
+                                                                            }
+                                                                        })
+                                                                    }
+                                                                </>
+                                                            )
                                                         }
                                                         <Grid container spacing={2}>
                                                             <ProfileGrid item md={1}>
-                                                                <ProfileLogo name={authenticatedUser.name} imageUrl={`/images/` + authenticatedUser.image} />
+                                                                <ProfileLogo name={authenticatedUser.name} imageUrl={tmpDirImage} />
                                                             </ProfileGrid>
                                                             <Grid item md={11}>
                                                                 <CommentInputModalForm post={post} authUser={authenticatedUser} />
@@ -894,7 +952,7 @@ const RootComp = (props: any) => {
                                                                                 <PostCard key={`${videoPost.user_id}-${index}`}>
                                                                                     <CardHeader
                                                                                         avatar={
-                                                                                        <Avatar src={`images/${videoPost?.user?.image}`} aria-label="recipe" />
+                                                                                        <Avatar src={videoPostsTmpDirUserImages[index]} aria-label="recipe" />
                                                                                         }
                                                                                         action={
                                                                                         <div>
@@ -916,7 +974,7 @@ const RootComp = (props: any) => {
                                                                                     />
                                                                                     <div style={{ position: 'relative', paddingBottom: '56.25%' }}>
                                                                                         <video 
-                                                                                        src={`/videos/${videoPost.figure}`} 
+                                                                                        src={videoPostsTmpDirFigures[index]} 
                                                                                         controls 
                                                                                         height="200"
                                                                                         style={{
@@ -971,58 +1029,64 @@ const RootComp = (props: any) => {
                                                                                                 <strong>Relevant Comments:</strong>
                                                                                             </Typography>
                                                                                             {
-                                                                                                videoPosts?.comments?.map((comment: any,index: number) => 
-                                                                                                {
-                                                                                                    if(comment.is_allow == 1){
-                                                                                                        return (
-                                                                                                            <RelevantAnswersGrid container spacing={2} key={`${comment.user_id}-${index}`}>
-                                                                                                                <RelevantAnswersGridItem item md={2} sm={2} xs={12}>
-                                                                                                                    <ProfileLogo name="Nayeem Ahmad" imageUrl={`/images/` + comment.user.image} />
-                                                                                                                </RelevantAnswersGridItem>
-                                                                                                                <RelevantAnswersGridItem item md={10} sm={10} xs={12}>
-                                                                                                                    <RelevantAnswersCard elevation={3}>
-                                                                                                                        <CardContent>
-                                                                                                                            <Typography>
-                                                                                                                                <strong>{ comment.user.name }</strong>
-                                                                                                                            </Typography>
-                                                                                                                            <Grid container spacing={2}>
-                                                                                                                                <Grid item md={9} sm={9} xs={12}>
-                                                                                                                                    <RelevantAnswersTG paragraph>
-                                                                                                                                        { comment.description }
-                                                                                                                                    </RelevantAnswersTG>
-                                                                                                                                </Grid>
-                                                                                                                                <Grid item md={3} sm={3} xs={12}>
-                                                                                                                                    <Grid container spacing={2}>
-                                                                                                                                        <Grid item md={6} sm={6} xs={12}>
-                                                                                                                                            {
-                                                                                                                                                (authenticatedUser.id == comment.user_id) && (
-                                                                                                                                                    <>
-                                                                                                                                                        <CommentEditModalForm comment={comment} />
-                                                                                                                                                    </>
-                                                                                                                                                )
-                                                                                                                                            }
+                                                                                                (videoPostsCommentsTmpDirUserImages[index]?.postId == videoPost?.id) && (
+                                                                                                    <>
+                                                                                                        {
+                                                                                                            videoPostsCommentsTmpDirUserImages[index]?.commentUserImages.map((commentUserImage: any,commentIndex: number) => 
+                                                                                                            {
+                                                                                                                if(commentUserImage.comment.is_allow == 1){
+                                                                                                                    return (
+                                                                                                                        <RelevantAnswersGrid container spacing={2} key={`${commentUserImage.comment.user_id}-${commentIndex}`}>
+                                                                                                                            <RelevantAnswersGridItem item md={2} sm={2} xs={12}>
+                                                                                                                                <ProfileLogo name="Nayeem Ahmad" imageUrl={commentUserImage?.blobUrl} />
+                                                                                                                            </RelevantAnswersGridItem>
+                                                                                                                            <RelevantAnswersGridItem item md={10} sm={10} xs={12}>
+                                                                                                                                <RelevantAnswersCard elevation={3}>
+                                                                                                                                    <CardContent>
+                                                                                                                                        <Typography>
+                                                                                                                                            <strong>{ commentUserImage.comment.user.name }</strong>
+                                                                                                                                        </Typography>
+                                                                                                                                        <Grid container spacing={2}>
+                                                                                                                                            <Grid item md={9} sm={9} xs={12}>
+                                                                                                                                                <RelevantAnswersTG paragraph>
+                                                                                                                                                    { commentUserImage.comment.description }
+                                                                                                                                                </RelevantAnswersTG>
+                                                                                                                                            </Grid>
+                                                                                                                                            <Grid item md={3} sm={3} xs={12}>
+                                                                                                                                                <Grid container spacing={2}>
+                                                                                                                                                    <Grid item md={6} sm={6} xs={12}>
+                                                                                                                                                        {
+                                                                                                                                                            (authenticatedUser.id == commentUserImage.comment.user_id) && (
+                                                                                                                                                                <>
+                                                                                                                                                                    <CommentEditModalForm comment={commentUserImage.comment} />
+                                                                                                                                                                </>
+                                                                                                                                                            )
+                                                                                                                                                        }
+                                                                                                                                                    </Grid>
+                                                                                                                                                    <Grid item md={6} sm={6} xs={12}>
+                                                                                                                                                        {
+                                                                                                                                                            (authenticatedUser.id == commentUserImage.comment.user_id) && (
+                                                                                                                                                                <>
+                                                                                                                                                                    <IconButton title="Delete Comment" onClick={() => handleCommentDelete(commentUserImage.comment)}>
+                                                                                                                                                                        <DeleteIcon />
+                                                                                                                                                                    </IconButton>
+                                                                                                                                                                </>
+                                                                                                                                                            )
+                                                                                                                                                        }
+                                                                                                                                                    </Grid>
+                                                                                                                                                </Grid>
+                                                                                                                                            </Grid>
                                                                                                                                         </Grid>
-                                                                                                                                        <Grid item md={6} sm={6} xs={12}>
-                                                                                                                                            {
-                                                                                                                                                (authenticatedUser.id == comment.user_id) && (
-                                                                                                                                                    <>
-                                                                                                                                                        <IconButton title="Delete Comment" onClick={() => handleCommentDelete(comment)}>
-                                                                                                                                                            <DeleteIcon />
-                                                                                                                                                        </IconButton>
-                                                                                                                                                    </>
-                                                                                                                                                )
-                                                                                                                                            }
-                                                                                                                                        </Grid>
-                                                                                                                                    </Grid>
-                                                                                                                                </Grid>
-                                                                                                                            </Grid>
-                                                                                                                        </CardContent>
-                                                                                                                    </RelevantAnswersCard>
-                                                                                                                </RelevantAnswersGridItem>
-                                                                                                            </RelevantAnswersGrid>
-                                                                                                        )
-                                                                                                    }
-                                                                                                })
+                                                                                                                                    </CardContent>
+                                                                                                                                </RelevantAnswersCard>
+                                                                                                                            </RelevantAnswersGridItem>
+                                                                                                                        </RelevantAnswersGrid>
+                                                                                                                    )
+                                                                                                                }
+                                                                                                            })
+                                                                                                        }
+                                                                                                    </>
+                                                                                                )
                                                                                             }
                                                                                             <Grid container spacing={2}>
                                                                                                 <ProfileGrid item md={1}>
@@ -1048,7 +1112,7 @@ const RootComp = (props: any) => {
                                                                     <PostCard key={`${profilePost.user_id}-${index}`}>
                                                                         <CardHeader
                                                                             avatar={
-                                                                            <Avatar src={`images/${profilePost?.user?.image}`} aria-label="recipe" />
+                                                                            (profilePostsTmpDirUserImages) ? (<Avatar src={profilePostsTmpDirUserImages[index]} aria-label="recipe" />) : (<div>Loading...</div>) 
                                                                             }
                                                                             action={
                                                                             <div>
@@ -1072,7 +1136,7 @@ const RootComp = (props: any) => {
                                                                             (profilePost.type == 2) ? (
                                                                                 <div style={{ position: 'relative', paddingBottom: '56.25%' }}>
                                                                                     <video 
-                                                                                    src={`/videos/${profilePost.figure}`} 
+                                                                                    src={profilePostsTmpDirFigures[index]} 
                                                                                     controls 
                                                                                     height="200"
                                                                                     style={{
@@ -1089,8 +1153,8 @@ const RootComp = (props: any) => {
                                                                             ) : (
                                                                                 <CardMedia
                                                                                     component="img"
-                                                                                    height="194"
-                                                                                    image={`/images/${profilePost.figure}`}
+                                                                                    height="200"
+                                                                                    image={profilePostsTmpDirFigures[index]}
                                                                                     alt=""
                                                                                 />
                                                                             )
@@ -1136,74 +1200,80 @@ const RootComp = (props: any) => {
                                                                                     <strong>Relevant Comments:</strong>
                                                                                 </Typography>
                                                                                 {
-                                                                                    profilePost?.comments?.map((comment: any,index: number) => 
-                                                                                    {
-                                                                                        if(comment.is_allow == 1){
-                                                                                            return (
-                                                                                                <RelevantAnswersGrid container spacing={2} key={`${comment.user_id}-${index}`}>
-                                                                                                    <RelevantAnswersGridItem item md={2} sm={2} xs={12}>
-                                                                                                        {
-                                                                                                            comments?.map((commnt: any) => {
-                                                                                                                if (commnt.id == comment.id) {
-                                                                                                                    return (
-                                                                                                                        <ProfileLogo name={commnt.user?.name} imageUrl={`/images/` + commnt.user?.image} key={commnt.id} />
-                                                                                                                    )
-                                                                                                                }
-                                                                                                            })
-                                                                                                        }
-                                                                                                    </RelevantAnswersGridItem>
-                                                                                                    <RelevantAnswersGridItem item md={10} sm={10} xs={12}>
-                                                                                                        <RelevantAnswersCard elevation={3}>
-                                                                                                            <CardContent>
-                                                                                                                {
-                                                                                                                    comments.map((commnt: any) => {
-                                                                                                                        if (commnt.id == comment.id) {
-                                                                                                                            return (
-                                                                                                                                <Typography key={commnt.id}>
-                                                                                                                                    <strong>{ commnt.user?.name }</strong>
-                                                                                                                                </Typography>
-                                                                                                                            )
-                                                                                                                        }
-                                                                                                                    })
-                                                                                                                }
-                                                                                                                <Grid container spacing={2}>
-                                                                                                                    <Grid item md={9} sm={9} xs={12}>
-                                                                                                                        <RelevantAnswersTG paragraph>
-                                                                                                                            { comment.description }
-                                                                                                                        </RelevantAnswersTG>
-                                                                                                                    </Grid>
-                                                                                                                    <Grid item md={3} sm={3} xs={12}>
-                                                                                                                        <Grid container spacing={2}>
-                                                                                                                            <Grid item md={6} sm={6} xs={12}>
-                                                                                                                                {
-                                                                                                                                    (authenticatedUser.id == comment.user_id) && (
-                                                                                                                                        <>
-                                                                                                                                            <CommentEditModalForm comment={comment} />
-                                                                                                                                        </>
-                                                                                                                                    )
-                                                                                                                                }
+                                                                                    (profilePostsCommentsTmpDirUserImages[index].postId == profilePost?.id) && (
+                                                                                        <>
+                                                                                            {
+                                                                                                profilePostsCommentsTmpDirUserImages[index].commentUserImages.map((commentUserImage: any,commentIndex: number) => 
+                                                                                                {
+                                                                                                    if(commentUserImage.comment.is_allow == 1){
+                                                                                                        return (
+                                                                                                            <RelevantAnswersGrid container spacing={2} key={`${commentUserImage.comment.user_id}-${commentIndex}`}>
+                                                                                                                <RelevantAnswersGridItem item md={2} sm={2} xs={12}>
+                                                                                                                    {
+                                                                                                                        comments?.map((commnt: any) => {
+                                                                                                                            if (commnt.id == commentUserImage.comment.id) {
+                                                                                                                                return (
+                                                                                                                                    <ProfileLogo name={commnt.user?.name} imageUrl={commentUserImage.blobUrl} key={commnt.id} />
+                                                                                                                                )
+                                                                                                                            }
+                                                                                                                        })
+                                                                                                                    }
+                                                                                                                </RelevantAnswersGridItem>
+                                                                                                                <RelevantAnswersGridItem item md={10} sm={10} xs={12}>
+                                                                                                                    <RelevantAnswersCard elevation={3}>
+                                                                                                                        <CardContent>
+                                                                                                                            {
+                                                                                                                                comments.map((commnt: any) => {
+                                                                                                                                    if (commnt.id == commentUserImage.comment.id) {
+                                                                                                                                        return (
+                                                                                                                                            <Typography key={commnt.id}>
+                                                                                                                                                <strong>{ commnt.user?.name }</strong>
+                                                                                                                                            </Typography>
+                                                                                                                                        )
+                                                                                                                                    }
+                                                                                                                                })
+                                                                                                                            }
+                                                                                                                            <Grid container spacing={2}>
+                                                                                                                                <Grid item md={9} sm={9} xs={12}>
+                                                                                                                                    <RelevantAnswersTG paragraph>
+                                                                                                                                        { commentUserImage.comment.description }
+                                                                                                                                    </RelevantAnswersTG>
+                                                                                                                                </Grid>
+                                                                                                                                <Grid item md={3} sm={3} xs={12}>
+                                                                                                                                    <Grid container spacing={2}>
+                                                                                                                                        <Grid item md={6} sm={6} xs={12}>
+                                                                                                                                            {
+                                                                                                                                                (authenticatedUser.id == commentUserImage.comment.user_id) && (
+                                                                                                                                                    <>
+                                                                                                                                                        <CommentEditModalForm comment={commentUserImage.comment} />
+                                                                                                                                                    </>
+                                                                                                                                                )
+                                                                                                                                            }
+                                                                                                                                        </Grid>
+                                                                                                                                        <Grid item md={6} sm={6} xs={12}>
+                                                                                                                                            {
+                                                                                                                                                (authenticatedUser.id == commentUserImage.comment.user_id) && (
+                                                                                                                                                    <>
+                                                                                                                                                        <IconButton title="Delete Comment" onClick={() => handleCommentDelete(commentUserImage.comment)}>
+                                                                                                                                                            <DeleteIcon />
+                                                                                                                                                        </IconButton>
+                                                                                                                                                    </>
+                                                                                                                                                )
+                                                                                                                                            }
+                                                                                                                                        </Grid>
+                                                                                                                                    </Grid>
+                                                                                                                                </Grid>
                                                                                                                             </Grid>
-                                                                                                                            <Grid item md={6} sm={6} xs={12}>
-                                                                                                                                {
-                                                                                                                                    (authenticatedUser.id == comment.user_id) && (
-                                                                                                                                        <>
-                                                                                                                                            <IconButton title="Delete Comment" onClick={() => handleCommentDelete(comment)}>
-                                                                                                                                                <DeleteIcon />
-                                                                                                                                            </IconButton>
-                                                                                                                                        </>
-                                                                                                                                    )
-                                                                                                                                }
-                                                                                                                            </Grid>
-                                                                                                                        </Grid>
-                                                                                                                    </Grid>
-                                                                                                                </Grid>
-                                                                                                            </CardContent>
-                                                                                                        </RelevantAnswersCard>
-                                                                                                    </RelevantAnswersGridItem>
-                                                                                                </RelevantAnswersGrid>
-                                                                                            )
-                                                                                        }
-                                                                                    })
+                                                                                                                        </CardContent>
+                                                                                                                    </RelevantAnswersCard>
+                                                                                                                </RelevantAnswersGridItem>
+                                                                                                            </RelevantAnswersGrid>
+                                                                                                        )
+                                                                                                    }
+                                                                                                })
+                                                                                            }
+                                                                                        </>
+                                                                                    )
                                                                                 }
                                                                                 <Grid container spacing={2}>
                                                                                     <ProfileGrid item md={1}>

@@ -9,21 +9,21 @@ import { useState, useEffect } from "react";
 import storeProfile from "./storeProfile";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
+import Cookies from "js-cookie";
 
 const RootComp = () => {
     const router = useRouter();
+    const authUser = Cookies.get("authUser");
+    const authUserId = Cookies.get("authUserId");
+    const sessionToken = Cookies.get("sessionToken");
     const [profileFormData,setProfileFormData] = useState({ user_id: 0, firstname: '', lastname: '', marital_status: 1, gender: 1, birthDate: null, education_level: 1, occupation: 0, country: '', city: '', address: '' });
     const [profileFileData,setProfileFileData] = useState({ profile_photo: null });
     const fData = new FormData();
 
     useEffect(() => {
-        if (sessionStorage.length > 0) {
-            if (sessionStorage.getItem("authUser") == "" || sessionStorage.getItem("sessionToken") == "") {
-                router.push(`/auth/login`);
-            }   
-        }else{
+        if (authUser === "" || sessionToken == "") {
             router.push(`/auth/login`);
-        }
+        }   
     },[router])
 
     const handleInputChange = (event: any) => {
@@ -65,7 +65,7 @@ const RootComp = () => {
         fData.append("fileObj",JSON.stringify(profileFileData));
         fData.append("formData",JSON.stringify(profileFormData));
         //Append Session Data
-        fData.append("sessionData",JSON.stringify(sessionStorage.getItem("authUserId")));
+        fData.append("sessionData",JSON.stringify(authUserId));
         //Backend Call
         const newProfile = await storeProfile(fData);
         if (Boolean(newProfile)) {

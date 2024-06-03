@@ -10,7 +10,7 @@ import fetchTotalNetworks from './fetchTotalNetworks'
 import Swal from "sweetalert2";
 import postNetworkStatus from "../../profile/@profileCoverHeading/postNetworkStatus";
 import updatePendingNetwork from "../../profile/@profileCoverHeading/updatePendingNetwork";
-import { SessionDataContext } from "@/app/auth/login/@custom/root";
+import Cookies from "js-cookie";
 
 export const FriendCardButtonForUnitTesting = () => {
     return (
@@ -30,7 +30,7 @@ export const FriendCardButtonForUnitTesting = () => {
 }
 
 const RootComp = () => {
-    const { authUserId } = useContext(SessionDataContext);
+    const authUserId = Cookies.get("authUserId");
     const [otherProfiles,setOtherProfiles] = useState([]);
     const [allProfileNetworks,setAllProfileNetworks] = useState([]);
     const [profileNetworks,setProfileNetworks] = useState([]);

@@ -11,6 +11,7 @@ import fetchChatSettings from './fetchChatSettings';
 import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import updateShowContacts from './updateShowContacts';
 import React from 'react';
+import Cookies from 'js-cookie';
 import { SessionDataContext } from '@/app/auth/login/@custom/root';
 
 export const ChatSettingsForUnitTesting = () => {
@@ -60,7 +61,7 @@ export const ChatSettingsForUnitTesting = () => {
 
 const ChatSettings = (props: any) => {
     const { anchorChatEl, setAnchorChatEl } = props;
-    const { authUserId } = useContext(SessionDataContext)
+    const authUserId = Cookies.get("authUserId");
     const isChatSettingsMenuOpen = Boolean(anchorChatEl);
     const [chatSettings,setChatSettings] = useState([]);
     const [isActive,setIsActive] = useState(false);

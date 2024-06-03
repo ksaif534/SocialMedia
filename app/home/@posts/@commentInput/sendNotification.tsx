@@ -6,7 +6,6 @@ const sendNotification = async (authUser: any,post: any) => {
         post: post
     }
     const sendNotif = await axios.post(`api/home/pusher/beams`,dataObj,{ headers: { 'Content-Type': 'application/json'}});
-    console.log(JSON.parse(sendNotif.config.data));
     return JSON.parse(sendNotif.config.data);
 }
 

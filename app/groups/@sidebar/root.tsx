@@ -182,7 +182,7 @@ const RootComp = () => {
                             ) : (
                                 <>
                                     {
-                                        (groups.length < 5) ? (
+                                        (groups.length < 5 && groups.length > 0) ? (
                                             <>
                                                 {
                                                     groups.map((group: any) => {

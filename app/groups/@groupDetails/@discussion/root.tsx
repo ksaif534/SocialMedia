@@ -19,12 +19,12 @@ import fetchGroupPosts from "./fetchGroupPosts";
 import fetchUser from "../../../profile/@profileCoverHeading/fetchUser";
 import fetchComments from "../../../home/@posts/@commentInput/fetchComments";
 import { SearchGroupPostContext } from "../../@navbar/page";
-import { SessionDataContext } from "@/app/auth/login/@custom/root";
+import Cookies from "js-cookie";
 
 
 const RootComp = (props: any) => {
     const { group } = props;
-    const { authUserId } = useContext(SessionDataContext);
+    const authUserId = Cookies.get("authUserId");
     const { srchGrpPosts, srchGrpPostKey } = useContext(SearchGroupPostContext);
     const [anchorGPCIconElement,setAnchorGPCIconElement] = useState<null | HTMLElement>(null);
     const [expanded,setExpanded] = useState(false);

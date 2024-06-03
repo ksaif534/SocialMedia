@@ -11,7 +11,7 @@ export const POST = async (req: NextRequest | any, res: NextResponse | any) => {
     const hashedPassword = await bcrypt.hash(bodyTextData.password,10);
     const bodyFileData = JSON.parse(body.fileData);
     //Fix Image Path
-    const imagePath = path.join(process.cwd(), 'public/images', bodyFileData.image);
+    const imagePath = path.join('/', 'tmp', bodyFileData.image);
     //Create File Streams to Convert to Buffer Chunks
     const imageStream = body.image.stream();
     const imageChunks = [];

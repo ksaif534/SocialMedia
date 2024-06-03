@@ -18,7 +18,7 @@ import { SearchGroupPostContext } from "../../groups/@navbar/page";
 import fetchGroupPosts from "./fetchGroupPosts";
 import fetchNewMsgNotificationsFromDB from "../../home/@navsidebar/fetchNewMsgNotificationsFromDB";
 import fetchNewNotificationsFromDB from "../../home/@navsidebar/fetchNewNotificationsFromDB";
-import { SessionDataContext } from "@/app/auth/login/@custom/root";
+import Cookies from "js-cookie";
 
 export const AppBarForUnitTesting = () => {
     return (
@@ -120,7 +120,9 @@ const RootComp = () => {
     const router = useRouter();
     const { setSrchProfilePosts, setSrchProfileKey } = useContext(ProfileSearchContext);
     const {  setSrchGrpPosts, setSrchGrpPostKey } = useContext(SearchGroupPostContext);
-    const { authUser, authUserId, sessionToken } = useContext(SessionDataContext);
+    const authUser = Cookies.get("authUser");
+    const authUserId = Cookies.get("authUserId");
+    const sessionToken = Cookies.get("sessionToken");
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
     const [anchorMsgEl,setAnchorMsgEl] = useState<null | HTMLElement>(null);
@@ -129,7 +131,7 @@ const RootComp = () => {
     const [newNotif,setNewNotif] = useState([]);
 
     useEffect(() => {
-        if (authUser == "" || sessionToken == "") {
+        if (authUser === "" || sessionToken === "") {
             router.push(`/auth/login`);
         }
         fetchNewMsgNotificationsFromDB(authUserId).then((newMsgNotif: any) => setNewMsgNotif(newMsgNotif));

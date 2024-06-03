@@ -1,5 +1,5 @@
 'use client'
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, CardMedia, Divider, Grid, Tab, Typography } from "@mui/material"
 import { MoreIconButtons, ProfileCoverHeadingCard, ProfileCoverHeadingGrid, ProfileEditIconButton, ProfileGrid, ProfileHeadersGrid, ProfileImageGridItem, ProfileSubTitleTG, ProfileTabBox, ProfileTabs, ProfileTitleGrid, ProfileTitleTG, RoundedAvatar, RoundedFirstSmallAvatar, RoundedSmallAvatar } from "./style"
 import EditIcon from '@mui/icons-material/Edit';
@@ -28,7 +28,9 @@ import ProfileFriends from "../@profileFriends/page";
 import fetchAllProfileNetworks from "./fetchAllProfileNetworks";
 import fetchAcceptedProfileNetworks from "./fetchAcceptedProfileNetworks";
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
-import { SessionDataContext } from "@/app/auth/login/@custom/root";
+import Cookies from "js-cookie";
+import fetchTmpDirImages from "@/app/home/@navsidebar/fetchTmpDirImages";
+import path from "path";
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -60,7 +62,7 @@ const a11yProps = (index: number) => {
 
 const RootComp = () => {
     const router = useRouter();
-    const { authUserId } = useContext(SessionDataContext);
+    const authUserId = Cookies.get("authUserId");
     const [user,setUser] = useState({ id: 0, email: '', password: '', image: null, is_active: 0, name: '', phone: 0 });
     const [profile,setProfile] = useState({ id: 0, user_id: 0, firstname: '', lastname: '', marital_status: 1, gender: 1, birthDate: null, education_level: 1, occupation: 0, country: '', city: '', address: '', profile_photo: null, user: null })
     const [otherProfiles,setOtherProfiles] = useState([]);
@@ -74,23 +76,129 @@ const RootComp = () => {
     const [initProfileState,setInitProfileState] = useState(true);
     const [value, setValue] = useState(0);
     const [recipientUser,setRecipientUser] = useState({ id: 0, email: '', password: '', image: null, is_active: 0, name: '', phone: 0, profile: null });
-    const localStorageValue: any = (typeof window !== undefined) ? authUserId : '';
+    const authUserIdValue: any = (typeof window !== undefined) ? authUserId : '';
+    const [tmpDirProfileImage,setTmpDirProfileImage] = useState('');
+    const [tmpDirUserImage,setTmpDirUserImage] = useState('');
+    const [tmpDirAcceptedProfileNetworkUserImages,setTmpDirAcceptedProfileNetworkUserImages] = useState([]);
+    const tmpDirAcceptedProfileNetworkUserImagesArr: any = [...tmpDirAcceptedProfileNetworkUserImages];
+    const [profilePostsTmpDirUserImages,setProfilePostsTmpDirUserImages] = useState([]);
+    const profilePostsTmpDirUserImagesArr: any = [...profilePostsTmpDirUserImages];
+    const [profilePostsTmpDirFigures,setProfilePostsTmpDirFigures] = useState([]);
+    const profilePostsTmpDirFiguresArr: any = [...profilePostsTmpDirFigures];
+    const [profilePostsCommentsTmpDirUserImages,setProfilePostsCommentsTmpDirUserImages] = useState<any[][]>([]);
+    const [videoPostsTmpDirUserImages,setVideoPostsTmpDirUserImages] = useState([]);
+    const videoPostsTmpDirUserImagesArr: any = [...videoPostsTmpDirUserImages];
+    const [videoPostsTmpDirFigures,setVideoPostsTmpDirFigures] = useState([]);
+    const videoPostsTmpDirFiguresArr: any = [...videoPostsTmpDirFigures];
+    const [videoPostsCommentsTmpDirUserImages,setVideoPostsCommentsTmpDirUserImages] = useState<any[][]>([]);
     let indexCounterArr: any = [];
     let indexCounterArr2: any = [];
     let profileCounterArr: any = [];
 
     useEffect(() => {
-        fetchProfile(localStorageValue).then((profile: any) => setProfile(profile)); 
-        fetchUser(localStorageValue).then((user: any) => setUser(user));
-        fetchOtherProfiles(localStorageValue).then((otherProfiles: any) => setOtherProfiles(otherProfiles));
-        fetchProfilePosts(localStorageValue).then((posts: any) => setProfilePosts(posts));
-        fetchProfileVideoPosts(localStorageValue).then((posts: any) => setProfileVideoPosts(posts));
-        fetchPendingNetworks(localStorageValue).then((pendingNetworks: any) => setPendingNetworks(pendingNetworks));
-        fetchProfileNetworks(localStorageValue).then((profileNetworks: any) => setProfileNetworks(profileNetworks));
-        fetchAllProfileNetworks(localStorageValue).then((allProfileNetworks: any) => setAllProfileNetworks(allProfileNetworks));
-        fetchAcceptedProfileNetworks(localStorageValue).then((result: any) => {
+        fetchProfile(authUserIdValue).then((profile: any) => {
+            setProfile(profile);
+            fetchTmpDirImages(profile?.profile_photo).then(async (imageBuffer: any) => {
+                const buffer = await imageBuffer.arrayBuffer();
+                const blob = new Blob([buffer], { type: `${path.extname(profile?.profile_photo).substring(1)}` });
+                setTmpDirProfileImage(URL.createObjectURL(blob));
+            })
+        }); 
+        fetchUser(authUserIdValue).then((usr: any) => {
+            setUser(usr);
+            fetchTmpDirImages(usr?.image).then(async (imageBuffer: any) => {
+                const buffer = await imageBuffer.arrayBuffer();
+                const blob = new Blob([buffer],{ type: `${path.extname(usr?.image).substring(1)}` })
+                setTmpDirUserImage(URL.createObjectURL(blob));
+            })
+        });
+        fetchOtherProfiles(authUserIdValue).then((otherProfiles: any) => setOtherProfiles(otherProfiles));
+        fetchProfilePosts(authUserIdValue).then((profPosts: any) => {
+            setProfilePosts(profPosts);
+            profPosts.map((profPost: any) => {
+                fetchTmpDirImages(profPost?.user?.image).then(async (imageBuffer: any) => {
+                    const buffer = await imageBuffer.arrayBuffer();
+                    const blob = new Blob([buffer],{ type: `${path.extname(profPost?.user?.image).substring(1)}` })
+                    profilePostsTmpDirUserImagesArr.push(URL.createObjectURL(blob));
+                });
+                fetchTmpDirImages(profPost?.figure).then(async (imageBuffer: any) => {
+                    const buffer = await imageBuffer.arrayBuffer();
+                    const blob = new Blob([buffer],{ type: `${path.extname(profPost?.figure).substring(1)}` })
+                    profilePostsTmpDirFiguresArr.push(URL.createObjectURL(blob));
+                });
+            });
+            const tempCommentUserImages: any = [];
+            for(const profPost of profPosts){
+                const postImageUrls: any = [];
+                for(const profComment of profPost.comments){
+                    fetchTmpDirImages(profComment?.user?.image).then(async (imageBuffer: any) => {
+                        const buffer = await imageBuffer.arrayBuffer();
+                        const blob = new Blob([buffer], { type: `${path.extname(profComment?.user?.image).substring(1)}` });
+                        postImageUrls.push({
+                            comment: profComment,
+                            blobUrl: URL.createObjectURL(blob)
+                        });
+                    });
+                }
+                tempCommentUserImages.push({
+                    postId: profPost?.id,
+                    commentUserImages: postImageUrls
+                });
+            }
+            setProfilePostsTmpDirUserImages(profilePostsTmpDirUserImagesArr);
+            setProfilePostsTmpDirFigures(profilePostsTmpDirFiguresArr);
+            setProfilePostsCommentsTmpDirUserImages(tempCommentUserImages);
+        });
+        fetchProfileVideoPosts(authUserIdValue).then((videoPosts: any) => {
+            setProfileVideoPosts(videoPosts);
+            videoPosts.map((videoPost: any) => {
+                fetchTmpDirImages(videoPost?.user?.image).then(async (imageBuffer: any) => {
+                    const buffer = await imageBuffer.arrayBuffer();
+                    const blob = new Blob([buffer],{ type: `${path.extname(videoPost?.user?.image).substring(1)}` });
+                    videoPostsTmpDirUserImagesArr.push(URL.createObjectURL(blob));
+                });
+                fetchTmpDirImages(videoPost?.figure).then(async (imageBuffer: any) => {
+                    const buffer = await imageBuffer.arrayBuffer();
+                    const blob = new Blob([buffer],{ type: `${path.extname(videoPost?.figure).substring(1)}` });
+                    videoPostsTmpDirFiguresArr.push(URL.createObjectURL(blob));
+                });
+            });
+            const tempCommentUserImages: any = [];
+            for(const videoPost of videoPosts){
+                const postImageUrls: any = [];
+                for(const videoComment of videoPost.comments){
+                    fetchTmpDirImages(videoComment?.user?.image).then(async (imageBuffer: any) => {
+                        const buffer = await imageBuffer.arrayBuffer();
+                        const blob = new Blob([buffer], { type: `${path.extname(videoComment?.user?.image).substring(1)}` });
+                        postImageUrls.push({
+                            comment: videoComment,
+                            blobUrl: URL.createObjectURL(blob)
+                        });
+                    });
+                }
+                tempCommentUserImages.push({
+                    postId: videoPost?.id,
+                    commentUserImages: postImageUrls
+                });
+            }
+            setVideoPostsTmpDirUserImages(videoPostsTmpDirUserImagesArr);
+            setVideoPostsTmpDirFigures(videoPostsTmpDirFiguresArr);
+            setVideoPostsCommentsTmpDirUserImages(tempCommentUserImages);
+        });
+        fetchPendingNetworks(authUserIdValue).then((pendingNetworks: any) => setPendingNetworks(pendingNetworks));
+        fetchProfileNetworks(authUserIdValue).then((profileNetworks: any) => setProfileNetworks(profileNetworks));
+        fetchAllProfileNetworks(authUserIdValue).then((allProfileNetworks: any) => setAllProfileNetworks(allProfileNetworks));
+        fetchAcceptedProfileNetworks(authUserIdValue).then((result: any) => {
             setAcceptedProfileNetworks(result.acceptedNetworks);
             setRecipientUser(result.recipientUser);
+            if (result?.user?.image) {
+                fetchTmpDirImages(result?.user?.image).then(async (imageBuffer: any) => {
+                    const buffer = await imageBuffer.arrayBuffer();
+                    const blob = new Blob([buffer],{ type: `${path.extname(result?.user?.image).substring(1)}` })
+                    tmpDirAcceptedProfileNetworkUserImagesArr.push(URL.createObjectURL(blob));
+                })
+                setTmpDirAcceptedProfileNetworkUserImages(tmpDirAcceptedProfileNetworkUserImagesArr);   
+            }
         });
     },[])
 
@@ -107,7 +215,7 @@ const RootComp = () => {
     }
 
     const handleAddFriendClick = async (otherProfileUserId: any) => {
-        const networkStatus = await postNetworkStatus(localStorageValue,otherProfileUserId);
+        const networkStatus = await postNetworkStatus(authUserIdValue,otherProfileUserId);
         if (Boolean(networkStatus)) {
             Swal.fire({
                 title: `Success`,
@@ -124,16 +232,108 @@ const RootComp = () => {
     }
 
     const handleOtherProfiles = async (otherProfile: any) => {
-        fetchProfile(otherProfile?.user_id).then((otherPfl: any) => setProfile(otherPfl));
-        fetchUser(otherProfile?.user_id).then((otherUser: any) => setUser(otherUser));
+        fetchProfile(otherProfile?.user_id).then((otherPfl: any) => {
+            setProfile(otherPfl);
+            fetchTmpDirImages(otherPfl?.profile_photo).then(async (imageBuffer: any) => {
+                const buffer = await imageBuffer.arrayBuffer();
+                const blob = new Blob([buffer], { type: `${path.extname(otherPfl?.profile_photo).substring(1)}` });
+                setTmpDirProfileImage(URL.createObjectURL(blob));
+            })
+        });
+        fetchUser(otherProfile?.user_id).then((otherUser: any) => {
+            setUser(otherUser);
+            fetchTmpDirImages(otherUser?.image).then(async (imageBuffer: any) => {
+                const buffer = await imageBuffer.arrayBuffer();
+                const blob = new Blob([buffer],{ type: `${path.extname(otherUser?.image).substring(1)}` })
+                setTmpDirUserImage(URL.createObjectURL(blob));
+            })
+        });
         fetchOtherProfiles(otherProfile?.user_id).then((otherProfiles: any) => setOtherProfiles(otherProfiles));
-        fetchProfilePosts(otherProfile?.user_id).then((posts: any) => setProfilePosts(posts));
-        fetchProfileVideoPosts(otherProfile?.user_id).then((videoPosts: any) => setProfileVideoPosts(videoPosts));
+        fetchProfilePosts(otherProfile?.user_id).then((profPosts: any) => {
+            setProfilePosts(profPosts);
+            profPosts.map((profPost: any) => {
+                fetchTmpDirImages(profPost?.user?.image).then(async (imageBuffer: any) => {
+                    const buffer = await imageBuffer.arrayBuffer();
+                    const blob = new Blob([buffer],{ type: `${path.extname(profPost?.user?.image).substring(1)}` })
+                    profilePostsTmpDirUserImagesArr.push(URL.createObjectURL(blob));
+                });
+                fetchTmpDirImages(profPost?.figure).then(async (imageBuffer: any) => {
+                    const buffer = await imageBuffer.arrayBuffer();
+                    const blob = new Blob([buffer],{ type: `${path.extname(profPost?.figure).substring(1)}` })
+                    profilePostsTmpDirFiguresArr.push(URL.createObjectURL(blob));
+                });
+            });
+            const tempCommentUserImages: any = [];
+            for(const profPost of profPosts){
+                const postImageUrls: any = [];
+                for(const profComment of profPost.comments){
+                    fetchTmpDirImages(profComment?.user?.image).then(async (imageBuffer: any) => {
+                        const buffer = await imageBuffer.arrayBuffer();
+                        const blob = new Blob([buffer], { type: `${path.extname(profComment?.user?.image).substring(1)}` });
+                        postImageUrls.push({
+                            comment: profComment,
+                            blobUrl: URL.createObjectURL(blob)
+                        });
+                    });
+                }
+                tempCommentUserImages.push({
+                    postId: profPost?.id,
+                    commentUserImages:  postImageUrls
+                });
+            }
+            setProfilePostsTmpDirUserImages(profilePostsTmpDirUserImagesArr);
+            setProfilePostsTmpDirFigures(profilePostsTmpDirFiguresArr);
+            setProfilePostsCommentsTmpDirUserImages(tempCommentUserImages);
+        });
+        fetchProfileVideoPosts(otherProfile?.user_id).then((videoPosts: any) => {
+            setProfileVideoPosts(videoPosts);
+            videoPosts.map((videoPost: any) => {
+                fetchTmpDirImages(videoPost?.user?.image).then(async (imageBuffer: any) => {
+                    const buffer = await imageBuffer.arrayBuffer();
+                    const blob = new Blob([buffer],{ type: `${path.extname(videoPost?.user?.image).substring(1)}` });
+                    videoPostsTmpDirUserImagesArr.push(URL.createObjectURL(blob));
+                });
+                fetchTmpDirImages(videoPost?.figure).then(async (imageBuffer: any) => {
+                    const buffer = await imageBuffer.arrayBuffer();
+                    const blob = new Blob([buffer],{ type: `${path.extname(videoPost?.figure).substring(1)}` });
+                    videoPostsTmpDirFiguresArr.push(URL.createObjectURL(blob));
+                });
+            });
+            const tempCommentUserImages: any = [];
+            for(const videoPost of videoPosts){
+                const postImageUrls: any = [];
+                for(const videoComment of videoPost.comments){
+                    fetchTmpDirImages(videoComment?.user?.image).then(async (imageBuffer: any) => {
+                        const buffer = await imageBuffer.arrayBuffer();
+                        const blob = new Blob([buffer], { type: `${path.extname(videoComment?.user?.image).substring(1)}` });
+                        postImageUrls.push({
+                            comment: videoComment,
+                            blobUrl: URL.createObjectURL(blob)
+                        });
+                    });
+                }
+                tempCommentUserImages.push({
+                    postId: videoPost?.id,
+                    commentUserImages: postImageUrls
+                });
+            }
+            setVideoPostsTmpDirUserImages(videoPostsTmpDirUserImagesArr);
+            setVideoPostsTmpDirFigures(videoPostsTmpDirFiguresArr);
+            setVideoPostsCommentsTmpDirUserImages(tempCommentUserImages);
+        });
         fetchProfileNetworks(otherProfile?.user_id).then((profileNetworks: any) => setProfileNetworks(profileNetworks));
         fetchAllProfileNetworks(otherProfile?.user_id).then((allProfileNetworks: any) => setAllProfileNetworks(allProfileNetworks));
         fetchAcceptedProfileNetworks(otherProfile?.user_id).then((result: any) => {
             setAcceptedProfileNetworks(result.acceptedNetworks);
             setRecipientUser(result.recipientUser);
+            if (result?.user?.image) {
+                fetchTmpDirImages(result?.user?.image).then(async (imageBuffer: any) => {
+                    const buffer = await imageBuffer.arrayBuffer();
+                    const blob = new Blob([buffer],{ type: `${path.extname(result?.user?.image).substring(1)}` })
+                    tmpDirAcceptedProfileNetworkUserImagesArr.push(URL.createObjectURL(blob));
+                })
+                setTmpDirAcceptedProfileNetworkUserImages(tmpDirAcceptedProfileNetworkUserImagesArr);   
+            }
         });
         setToggleProfile(!toggleProfile);
         setInitProfileState(false);
@@ -151,7 +351,7 @@ const RootComp = () => {
             denyButtonText: `No`
         }).then(async (result) => {
             if (result.isConfirmed) {
-                const updatedNetwork = await updatePendingNetwork(localStorageValue,pendingNetwork);
+                const updatedNetwork = await updatePendingNetwork(authUserIdValue,pendingNetwork);
                 if (Boolean(updatedNetwork)) {
                     Swal.fire(`Friend Network Updated Successfully`);
                 }else{
@@ -165,15 +365,100 @@ const RootComp = () => {
 
     const updateProfile = (newValue: any) => {
         setProfile(newValue);
-        fetchUser(newValue?.user_id).then((otherUser: any) => setUser(otherUser));
+        fetchUser(newValue?.user_id).then((otherUser: any) => {
+            setUser(otherUser);
+            fetchTmpDirImages(otherUser?.image).then(async (imageBuffer: any) => {
+                const buffer = await imageBuffer.arrayBuffer();
+                const blob = new Blob([buffer],{ type: `${path.extname(otherUser?.image).substring(1)}` })
+                setTmpDirUserImage(URL.createObjectURL(blob));
+            })
+        });
         fetchOtherProfiles(newValue?.user_id).then((otherProfiles: any) => setOtherProfiles(otherProfiles));
-        fetchProfilePosts(newValue?.user_id).then((posts: any) => setProfilePosts(posts));
-        fetchProfileVideoPosts(newValue?.user_id).then((videoPosts: any) => setProfileVideoPosts(videoPosts));
+        fetchProfilePosts(newValue?.user_id).then((profPosts: any) => {
+            setProfilePosts(profPosts);
+            profPosts.map((profPost: any) => {
+                fetchTmpDirImages(profPost?.user?.image).then(async (imageBuffer: any) => {
+                    const buffer = await imageBuffer.arrayBuffer();
+                    const blob = new Blob([buffer],{ type: `${path.extname(profPost?.user?.image).substring(1)}` })
+                    profilePostsTmpDirUserImagesArr.push(URL.createObjectURL(blob));
+                });
+                fetchTmpDirImages(profPost?.figure).then(async (imageBuffer: any) => {
+                    const buffer = await imageBuffer.arrayBuffer();
+                    const blob = new Blob([buffer],{ type: `${path.extname(profPost?.figure).substring(1)}` })
+                    profilePostsTmpDirFiguresArr.push(URL.createObjectURL(blob));
+                });
+            });
+            const tempCommentUserImages: any = [];
+            for(const profPost of profPosts){
+                const postImageUrls: any = [];
+                for(const profComment of profPost.comments){
+                    fetchTmpDirImages(profComment?.user?.image).then(async (imageBuffer: any) => {
+                        const buffer = await imageBuffer.arrayBuffer();
+                        const blob = new Blob([buffer], { type: `${path.extname(profComment?.user?.image).substring(1)}` });
+                        postImageUrls.push({
+                            comment: profComment,
+                            blobUrl: URL.createObjectURL(blob)
+                        });
+                    });
+                }
+                tempCommentUserImages.push({
+                    postId: profPost?.id,
+                    commentUserImages: postImageUrls
+                });
+            }
+            setProfilePostsTmpDirUserImages(profilePostsTmpDirUserImagesArr);
+            setProfilePostsTmpDirFigures(profilePostsTmpDirFiguresArr);
+            setProfilePostsCommentsTmpDirUserImages(tempCommentUserImages);
+        });
+        fetchProfileVideoPosts(newValue?.user_id).then((videoPosts: any) => {
+            setProfileVideoPosts(videoPosts);
+            videoPosts.map((videoPost: any) => {
+                fetchTmpDirImages(videoPost?.user?.image).then(async (imageBuffer: any) => {
+                    const buffer = await imageBuffer.arrayBuffer();
+                    const blob = new Blob([buffer],{ type: `${path.extname(videoPost?.user?.image).substring(1)}` });
+                    videoPostsTmpDirUserImagesArr.push(URL.createObjectURL(blob));
+                });
+                fetchTmpDirImages(videoPost?.figure).then(async (imageBuffer: any) => {
+                    const buffer = await imageBuffer.arrayBuffer();
+                    const blob = new Blob([buffer],{ type: `${path.extname(videoPost?.figure).substring(1)}` });
+                    videoPostsTmpDirFiguresArr.push(URL.createObjectURL(blob));
+                });
+            });
+            const tempCommentUserImages: any = [];
+            for(const videoPost of videoPosts){
+                const postImageUrls: any = [];
+                for(const videoComment of videoPost.comments){
+                    fetchTmpDirImages(videoComment?.user?.image).then(async (imageBuffer: any) => {
+                        const buffer = await imageBuffer.arrayBuffer();
+                        const blob = new Blob([buffer], { type: `${path.extname(videoComment?.user?.image).substring(1)}` });
+                        postImageUrls.push({
+                            comment: videoComment,
+                            blobUrl: URL.createObjectURL(blob)
+                        });
+                    });
+                }
+                tempCommentUserImages.push({
+                    postId: videoPost?.id,
+                    commentUserImages: postImageUrls
+                });
+            }
+            setVideoPostsTmpDirUserImages(videoPostsTmpDirUserImagesArr);
+            setVideoPostsTmpDirFigures(videoPostsTmpDirFiguresArr);
+            setVideoPostsCommentsTmpDirUserImages(tempCommentUserImages);
+        });
         fetchProfileNetworks(newValue?.user_id).then((profileNetworks: any) => setProfileNetworks(profileNetworks));
         fetchAllProfileNetworks(newValue?.user_id).then((allProfileNetworks: any) => setAllProfileNetworks(allProfileNetworks));
         fetchAcceptedProfileNetworks(newValue?.user_id).then((result: any) => {
             setAcceptedProfileNetworks(result.acceptedNetworks);
             setRecipientUser(result.recipientUser);
+            if (result?.user?.image) {
+                fetchTmpDirImages(result?.user?.image).then(async (imageBuffer: any) => {
+                    const buffer = await imageBuffer.arrayBuffer();
+                    const blob = new Blob([buffer],{ type: `${path.extname(result?.user?.image).substring(1)}` })
+                    tmpDirAcceptedProfileNetworkUserImagesArr.push(URL.createObjectURL(blob));
+                })
+                setTmpDirAcceptedProfileNetworkUserImages(tmpDirAcceptedProfileNetworkUserImagesArr);   
+            }
         });
         setToggleProfile(!toggleProfile);
         setInitProfileState(false);
@@ -194,12 +479,24 @@ const RootComp = () => {
                     (toggleProfile == false) ? (
                         <Grid item md={10} sm={10} xs={12}>
                             <ProfileCoverHeadingCard>
-                                <CardMedia image={`images/` + profile?.profile_photo} title="Beautiful Background" sx={{ height: 250, objectFit: 'cover' }} />
+                                {
+                                    (tmpDirProfileImage) ? (
+                                        <CardMedia image={tmpDirProfileImage} title="Beautiful Background" sx={{ height: 250, objectFit: 'cover' }} />
+                                    ) : (
+                                        <div>Loading ...</div>
+                                    )
+                                }
                             </ProfileCoverHeadingCard>
                             <ProfileGrid container spacing={2}>
                                 <Grid item md={1} sm={1} xs={12}></Grid>
                                 <ProfileImageGridItem item md={1} sm={1} xs={12}>
-                                    <RoundedAvatar alt="Profile Image" src={`images/`+user?.image} />
+                                    {
+                                        (tmpDirUserImage) ? (
+                                            <RoundedAvatar alt="Profile Image" src={tmpDirUserImage} />
+                                        ) : (
+                                            <div>Loading ...</div>
+                                        )
+                                    }
                                 </ProfileImageGridItem>
                                 <Grid item md={10} sm={10} xs={12}>
                                     <ProfileHeadersGrid container spacing={2}>
@@ -219,11 +516,17 @@ const RootComp = () => {
                                                         if (acceptedProfileNetwork.user_id_from == profile?.user_id) {
                                                             profileCounterArr.push(acceptedProfileNetworkIndex);
                                                             if (profileCounterArr.length < 4) {
-                                                                return (
-                                                                    <RoundedFirstSmallAvatar alt="Profile Image" src={`images/${acceptedProfileNetwork.user?.image}`} onClick={() => handleOtherProfiles(acceptedProfileNetwork.profile)} key={acceptedProfileNetwork.id}>
-        
-                                                                    </RoundedFirstSmallAvatar>
-                                                                )   
+                                                                if (tmpDirAcceptedProfileNetworkUserImages.length > 0 && tmpDirAcceptedProfileNetworkUserImages[acceptedProfileNetworkIndex]) {
+                                                                    return (
+                                                                        <RoundedFirstSmallAvatar alt="Profile Image" src={tmpDirAcceptedProfileNetworkUserImages[acceptedProfileNetworkIndex]} onClick={() => handleOtherProfiles(acceptedProfileNetwork.profile)} key={acceptedProfileNetwork.id}>
+            
+                                                                        </RoundedFirstSmallAvatar>
+                                                                    )   
+                                                                }else{
+                                                                    return (
+                                                                        <div>Loading ...</div>
+                                                                    )
+                                                                }   
                                                             }
                                                             if (profileCounterArr.length == 4) {
                                                                 return (
@@ -238,11 +541,17 @@ const RootComp = () => {
                                                                     if (recipientUser?.id == acceptedProfileNetwork.user_id_from) {
                                                                         profileCounterArr.push(acceptedProfileNetworkIndex);
                                                                         if (profileCounterArr.length < 4) {
-                                                                            return (
-                                                                                <RoundedFirstSmallAvatar alt="Profile Image" src={`images/${recipientUser.image}`} onClick={() => handleOtherProfiles(recipientUser?.profile)} key={acceptedProfileNetwork.id}>
-                    
-                                                                                </RoundedFirstSmallAvatar>
-                                                                            )   
+                                                                            if (tmpDirAcceptedProfileNetworkUserImages.length > 0 &&tmpDirAcceptedProfileNetworkUserImages[acceptedProfileNetworkIndex]) {
+                                                                                return (
+                                                                                    <RoundedFirstSmallAvatar alt="Profile Image" src={tmpDirAcceptedProfileNetworkUserImages[acceptedProfileNetworkIndex]} onClick={() => handleOtherProfiles(recipientUser?.profile)} key={acceptedProfileNetwork.id}>
+                        
+                                                                                    </RoundedFirstSmallAvatar>
+                                                                                )   
+                                                                            }else{
+                                                                                return (
+                                                                                    <div>Loading ...</div>
+                                                                                )
+                                                                            }   
                                                                         }
                                                                         if (profileCounterArr.length == 4) {
                                                                             return (
@@ -259,7 +568,7 @@ const RootComp = () => {
                                         </Grid>
                                         <Grid item md={2} sm={2} xs={12}>
                                             {
-                                                (Number(profile?.user_id) == Number(localStorageValue)) ? (
+                                                (Number(profile?.user_id) == Number(authUserIdValue)) ? (
                                                     <>
                                                         <ProfileEditIconButton aria-label="Edit Profile" title="Edit Profile (Heading)" onClick={handleProfileUpdate}>
                                                             <Typography variant="h6">
@@ -322,7 +631,7 @@ const RootComp = () => {
                                     </ProfileTabs>
                                 </ProfileTabBox>
                                 <CustomProfileTabPanel value={value} index={0}>
-                                    <ProfileBody profilePosts={profilePosts} profile={profile} acceptedProfileNetworks={acceptedProfileNetworks} recipientUser={recipientUser} />
+                                    <ProfileBody profilePosts={profilePosts} profilePostsTmpDirUserImages={profilePostsTmpDirUserImages} profilePostsTmpDirFigures={profilePostsTmpDirFigures} profilePostsCommentsTmpDirUserImages={profilePostsCommentsTmpDirUserImages} profile={profile} acceptedProfileNetworks={acceptedProfileNetworks} recipientUser={recipientUser}  />
                                 </CustomProfileTabPanel>
                                 <CustomProfileTabPanel value={value} index={1}>
                                     <ProfileFriends profileNetworks={profileNetworks} acceptedProfileNetworks={acceptedProfileNetworks} updateProfile={updateProfile} allProfileNetworks={allProfileNetworks} profile={profile} recipientUser={recipientUser} />
@@ -333,7 +642,7 @@ const RootComp = () => {
                                     </Typography>
                                 </CustomProfileTabPanel>
                                 <CustomProfileTabPanel value={value} index={3}>
-                                    <ProfileBody videoPosts={profileVideoPosts} profile={profile} profileNetworks={profileNetworks} />
+                                    <ProfileBody videoPosts={profileVideoPosts} videoPostsTmpDirUserImages={videoPostsTmpDirUserImages} videoPostsTmpDirFigures={videoPostsTmpDirFigures} videoPostsCommentsTmpDirUserImages={videoPostsCommentsTmpDirUserImages} profile={profile} profileNetworks={profileNetworks} />
                                 </CustomProfileTabPanel>
                                 <CustomProfileTabPanel value={value} index={4}>
                                     <Grid container spacing={2}>
@@ -377,12 +686,24 @@ const RootComp = () => {
                     ) : (
                         <Grid item md={10} sm={12} xs={12}>
                             <ProfileCoverHeadingCard>
-                                <CardMedia image={`images/` + profile?.profile_photo} title="Beautiful Background" sx={{ height: 250, objectFit: 'cover' }} />
+                                {
+                                    (tmpDirProfileImage) ? (
+                                        <CardMedia image={tmpDirProfileImage} title="Beautiful Background" sx={{ height: 250, objectFit: 'cover' }} />
+                                    ) : (
+                                        <div>Loading ...</div>
+                                    )
+                                }
                             </ProfileCoverHeadingCard>
                             <ProfileGrid container spacing={2}>
                                 <Grid item md={1} sm={12} xs={12}></Grid>
                                 <ProfileImageGridItem item md={1} sm={12} xs={12}>
-                                    <RoundedAvatar alt="Profile Image" src={`images/`+ user?.image} />
+                                    {
+                                        (tmpDirUserImage) ? (
+                                            <RoundedAvatar alt="Profile Image" src={tmpDirUserImage} />
+                                        ) : (
+                                            <div>Loading ...</div>
+                                        )
+                                    }
                                 </ProfileImageGridItem>
                                 <Grid item md={10} sm={12} xs={12}>
                                     <ProfileHeadersGrid container spacing={2}>
@@ -402,11 +723,17 @@ const RootComp = () => {
                                                         if (acceptedProfileNetwork.user_id_from == profile?.user_id) {
                                                             profileCounterArr.push(acceptedProfileNetworkIndex);
                                                             if (profileCounterArr.length < 4) {
-                                                                return (
-                                                                    <RoundedFirstSmallAvatar alt="Profile Image" src={`images/${acceptedProfileNetwork.user?.image}`} onClick={() => handleOtherProfiles(acceptedProfileNetwork.profile)} key={acceptedProfileNetwork.id}>
-        
-                                                                    </RoundedFirstSmallAvatar>
-                                                                )   
+                                                                if (tmpDirAcceptedProfileNetworkUserImages.length > 0 && tmpDirAcceptedProfileNetworkUserImages[acceptedProfileNetworkIndex]) {
+                                                                    return (
+                                                                        <RoundedFirstSmallAvatar alt="Profile Image" src={tmpDirAcceptedProfileNetworkUserImages[acceptedProfileNetworkIndex]} onClick={() => handleOtherProfiles(acceptedProfileNetwork.profile)} key={acceptedProfileNetwork.id}>
+            
+                                                                        </RoundedFirstSmallAvatar>
+                                                                    )    
+                                                                }else{
+                                                                    return (
+                                                                        <div>Loading ...</div>
+                                                                    )
+                                                                }   
                                                             }
                                                             if (profileCounterArr.length == 4) {
                                                                 return (
@@ -421,11 +748,17 @@ const RootComp = () => {
                                                                     if (recipientUser?.id == acceptedProfileNetwork.user_id_from) {
                                                                         profileCounterArr.push(acceptedProfileNetworkIndex);
                                                                         if (profileCounterArr.length < 4) {
-                                                                            return (
-                                                                                <RoundedFirstSmallAvatar alt="Profile Image" src={`images/${recipientUser.image}`} onClick={() => handleOtherProfiles(recipientUser?.profile)} key={acceptedProfileNetwork.id}>
-                    
-                                                                                </RoundedFirstSmallAvatar>
-                                                                            )   
+                                                                            if (tmpDirAcceptedProfileNetworkUserImages.length > 0 && tmpDirAcceptedProfileNetworkUserImages[acceptedProfileNetworkIndex]) {
+                                                                                return (
+                                                                                    <RoundedFirstSmallAvatar alt="Profile Image" src={tmpDirAcceptedProfileNetworkUserImages[acceptedProfileNetworkIndex]} onClick={() => handleOtherProfiles(recipientUser?.profile)} key={acceptedProfileNetwork.id}>
+                        
+                                                                                    </RoundedFirstSmallAvatar>
+                                                                                )    
+                                                                            }else{
+                                                                                return (
+                                                                                    <div>Loading ...</div>
+                                                                                )
+                                                                            }   
                                                                         }
                                                                         if (profileCounterArr.length == 4) {
                                                                             return (
@@ -447,10 +780,10 @@ const RootComp = () => {
                                                     <>
                                                         {
                                                             allProfileNetworks?.map((allProfileNetwork: any,index: number) => {
-                                                                if ((allProfileNetwork.user_id_from == localStorageValue || allProfileNetwork.user_id_from == profile.user_id) && (allProfileNetwork.user_id_to == localStorageValue || allProfileNetwork.user_id_to == profile.user_id)) {
+                                                                if ((allProfileNetwork.user_id_from == authUserIdValue || allProfileNetwork.user_id_from == profile.user_id) && (allProfileNetwork.user_id_to == authUserIdValue || allProfileNetwork.user_id_to == profile.user_id)) {
                                                                     indexCounterArr.push(index);
                                                                     if (allProfileNetwork.status == 2) {
-                                                                        if (allProfileNetwork.user_id_from == localStorageValue) {
+                                                                        if (allProfileNetwork.user_id_from == authUserIdValue) {
                                                                             return (
                                                                                 <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" key={allProfileNetwork.id}>
                                                                                     <Typography variant="h6">
@@ -460,7 +793,7 @@ const RootComp = () => {
                                                                                 </ProfileEditIconButton>
                                                                             )
                                                                         }else{
-                                                                            if (allProfileNetwork.user_id_to == localStorageValue) {
+                                                                            if (allProfileNetwork.user_id_to == authUserIdValue) {
                                                                                 return (
                                                                                     <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" key={allProfileNetwork.id} onClick={() => handleFriendRequestAcceptance(allProfileNetwork)}>
                                                                                         <Typography variant="h6">
@@ -482,7 +815,7 @@ const RootComp = () => {
                                                                         }
                                                                     }else{
                                                                         if (allProfileNetwork.status == 1) {
-                                                                            if (allProfileNetwork.user_id_from == localStorageValue || allProfileNetwork.user_id_to == localStorageValue) {
+                                                                            if (allProfileNetwork.user_id_from == authUserIdValue || allProfileNetwork.user_id_to == authUserIdValue) {
                                                                                 return (
                                                                                     <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" key={allProfileNetwork.id}>
                                                                                         <Typography variant="h6">
@@ -525,11 +858,11 @@ const RootComp = () => {
                                                     <>
                                                         {
                                                             profileNetworks?.map((profileNetwork: any,index: number) => {
-                                                                const acceptedNetworks = allProfileNetworks.filter((allProfileNetwork: any) => ((allProfileNetwork.user_id_from == localStorageValue || allProfileNetwork.user_id_from == profile.user_id) && (allProfileNetwork.user_id_to == localStorageValue || allProfileNetwork.user_id_to == profile.user_id)));
+                                                                const acceptedNetworks = allProfileNetworks.filter((allProfileNetwork: any) => ((allProfileNetwork.user_id_from == authUserIdValue || allProfileNetwork.user_id_from == profile.user_id) && (allProfileNetwork.user_id_to == authUserIdValue || allProfileNetwork.user_id_to == profile.user_id)));
                                                                 if (acceptedNetworks.length > 0) {
                                                                     return acceptedNetworks?.map((allProfileNetwork: any) => {
                                                                         if (allProfileNetwork.status == 2) {
-                                                                            if (allProfileNetwork.user_id_from == localStorageValue) {
+                                                                            if (allProfileNetwork.user_id_from == authUserIdValue) {
                                                                                 return (
                                                                                     <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" key={allProfileNetwork.id}>
                                                                                         <Typography variant="h6">
@@ -539,7 +872,7 @@ const RootComp = () => {
                                                                                     </ProfileEditIconButton>
                                                                                 )
                                                                             }
-                                                                            if (allProfileNetwork.user_id_to == localStorageValue) {
+                                                                            if (allProfileNetwork.user_id_to == authUserIdValue) {
                                                                                 return (
                                                                                     <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" key={allProfileNetwork.id} onClick={() => handleFriendRequestAcceptance(allProfileNetwork)}>
                                                                                         <Typography variant="h6">
@@ -560,7 +893,7 @@ const RootComp = () => {
                                                                             }
                                                                         }else{
                                                                             if (allProfileNetwork.status == 1) {
-                                                                                if (allProfileNetwork.user_id_from == localStorageValue || allProfileNetwork.user_id_to == localStorageValue) {
+                                                                                if (allProfileNetwork.user_id_from == authUserIdValue || allProfileNetwork.user_id_to == authUserIdValue) {
                                                                                     return (
                                                                                         <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" key={allProfileNetwork.id}>
                                                                                             <Typography variant="h6">
@@ -615,7 +948,7 @@ const RootComp = () => {
                                     </ProfileTabs>
                                 </ProfileTabBox>
                                 <CustomProfileTabPanel value={value} index={0}>
-                                    <ProfileBody profilePosts={profilePosts} otherProfile={profile} acceptedProfileNetworks={acceptedProfileNetworks} recipientUser={recipientUser} />
+                                    <ProfileBody profilePosts={profilePosts} profilePostsTmpDirUserImages={profilePostsTmpDirUserImages} profilePostsTmpDirFigures={profilePostsTmpDirFigures} profilePostsCommentsTmpDirUserImages={profilePostsCommentsTmpDirUserImages} otherProfile={profile} acceptedProfileNetworks={acceptedProfileNetworks} recipientUser={recipientUser} />
                                 </CustomProfileTabPanel>
                                 <CustomProfileTabPanel value={value} index={1}>
                                     <ProfileFriends profileNetworks={profileNetworks} acceptedProfileNetworks={acceptedProfileNetworks} updateProfile={updateProfile} recipientUser={recipientUser} profile={profile} />
@@ -626,7 +959,7 @@ const RootComp = () => {
                                     </Typography>
                                 </CustomProfileTabPanel>
                                 <CustomProfileTabPanel value={value} index={3}>
-                                    <ProfileBody videoPosts={profileVideoPosts} otherProfile={profile} profileNetworks={profileNetworks} />
+                                    <ProfileBody videoPosts={profileVideoPosts} videoPostsTmpDirUserImages={videoPostsTmpDirUserImages} videoPostsTmpDirFigures={videoPostsTmpDirFigures} videoPostsCommentsTmpDirUserImages={videoPostsCommentsTmpDirUserImages} otherProfile={profile} profileNetworks={profileNetworks} />
                                 </CustomProfileTabPanel>
                                 <CustomProfileTabPanel value={value} index={4}>
                                     <Grid container spacing={2}>

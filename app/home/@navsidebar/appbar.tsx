@@ -13,12 +13,12 @@ import fetchNewNotificationsFromDB from './fetchNewNotificationsFromDB'
 import fetchNewMsgNotificationsFromDB from './fetchNewMsgNotificationsFromDB'
 import searchPosts from './searchPosts'
 import { SearchContext } from './root'
-import { SessionDataContext } from '@/app/auth/login/@custom/root'
+import Cookies from 'js-cookie'
 
 export const AppBarComp = (props: any) => {
     const { setAnchorEl, setMsgAnchorEl, setNotifAnchorEl, open, setOpen, auth } = props;
     const { srchPosts,setSrchPosts, srchKey, setSrchKey } = useContext(SearchContext);
-    const { authUserId } = useContext(SessionDataContext);
+    const authUserId = Cookies.get("authUserId");
 
     const [newNotif,setNewNotif] = useState([]);
     const [newMsgNotif,setNewMsgNotif] = useState([]);

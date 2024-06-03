@@ -14,7 +14,10 @@ import fetchNewMsgNotificationsFromDB from './fetchNewMsgNotificationsFromDB'
 import makeNotificationRead from './makeNotificationRead'
 import Swal from 'sweetalert2'
 import makeMsgNotificationAsRead from './makeMsgNotificationAsRead'
-import { SessionDataContext } from '@/app/auth/login/@custom/root'
+import Cookies from 'js-cookie'
+import fetchTmpDirImages from './fetchTmpDirImages'
+import Image from 'next/image'
+import path from 'path'
 
 export const menuId = 'primary-search-account-menu';
 export const mobileMenuId = 'primary-search-account-menu-mobile';
@@ -23,12 +26,20 @@ export const notifMenuId = "notification-dropdown-menu";
 
 export const RenderMenu = (props: any) => {
     const { anchorEl, setAnchorEl } = props;
-    const { authUserId, setAuthUserId, setAuthUser, setSessionToken } = useContext(SessionDataContext);
+    const authUserId = Cookies.get("authUserId");
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
     const [currentUser,setCurrentUser] = useState({ id: 0, email: '', password: '', image: null, is_active: 0, name: '', phone: 0 })
+    const [tmpDirImage,setTmpDirImage] = useState('');
 
     useEffect(() => {
-        fetchUser(authUserId).then((currentUser: any) => setCurrentUser(currentUser));
+        fetchUser(authUserId).then((cUser: any) => {
+            setCurrentUser(cUser);
+            fetchTmpDirImages(cUser?.image).then(async (imageBuffer: any) => {
+                const buffer = await imageBuffer.arrayBuffer();
+                const blob = new Blob([buffer], { type: `${path.extname(cUser?.image).substring(1)}` });
+                setTmpDirImage(URL.createObjectURL(blob));
+            });
+        });
     },[])
 
     const router = useRouter();
@@ -49,9 +60,9 @@ export const RenderMenu = (props: any) => {
     };
 
     const handleLogout = () => {
-        setSessionToken("");
-        setAuthUser("");
-        setAuthUserId("");
+        Cookies.set("sessionToken","");
+        Cookies.set("authUser","");
+        Cookies.set("authUserId","");
         router.push(`/auth/login`);
     }
 
@@ -78,7 +89,7 @@ export const RenderMenu = (props: any) => {
                 aria-haspopup="true"
                 color="inherit"
                 >
-                    <Avatar src={`images/${currentUser?.image}`} />
+                    <Avatar src={tmpDirImage} />
                     My Profile
                 </IconButton>
             </MenuItem>
@@ -99,7 +110,7 @@ export const RenderMenu = (props: any) => {
 }
 
 export const RenderMobileMenu = () => {
-    const { authUserId } = useContext(SessionDataContext);
+    const authUserId = Cookies.get("authUserId");
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
     const [newNotif,setNewNotif] = useState([]);
@@ -174,7 +185,7 @@ export const RenderMobileMenu = () => {
 
 export const RenderMsgMenu = (props: any) => {
     const { msgAnchorEl, setMsgAnchorEl } = props;
-    const { authUserId } = useContext(SessionDataContext);
+    const authUserId = Cookies.get("authUserId");
     const [user,setUser] = useState({ id: 0, name: '', email: '', password: '', image: null, phone: 0, is_active: 0 });
     const [newMsgNotif,setNewMsgNotif] = useState([]);
     const [users,setUsers] = useState([]);
@@ -241,7 +252,7 @@ export const RenderMsgMenu = (props: any) => {
 
 export const RenderNotifMenu = (props : any) => {
     const { notifAnchorEl, setNotifAnchorEl } = props;
-    const { authUserId } = useContext(SessionDataContext)
+    const authUserId = Cookies.get("authUserId");
     const [newNotif,setNewNotif] = useState([]);
 
     useEffect(() => {

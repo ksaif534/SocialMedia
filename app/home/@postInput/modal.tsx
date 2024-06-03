@@ -4,9 +4,11 @@ import { PostInputModalButtonBase, PostInputStyle, PostInputModalFormCard, PostI
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import createPost from "./createPost";
 import Swal from "sweetalert2";
+import Cookies from "js-cookie";
 
 const PostInputModalForm = (props: any) => {
     const { group } = props;
+    const authUserId = Cookies.get("authUserId");
     let groupId: any;
     if (group !== undefined) {
         groupId = group?.id;
@@ -64,7 +66,7 @@ const PostInputModalForm = (props: any) => {
         }
         //Append Text/Other Inputs
         fData.append('text',JSON.stringify(formData));
-        fData.append('sessionData',JSON.stringify(sessionStorage.getItem("authUserId")));
+        fData.append('sessionData',JSON.stringify(authUserId));
         const newPostBool = await createPost(fData);
         if (Boolean(newPostBool)) {
             Swal.fire({

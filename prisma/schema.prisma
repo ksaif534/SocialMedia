@@ -124,7 +124,7 @@ model messages {
   message         String @db.VarChar(255)
   is_allow        Int
   user            users @relation(fields: [user_id], references: [id])
-  notification    notifications?
+  notification    notifications[]
 }
 
 model notifications {
@@ -132,7 +132,7 @@ model notifications {
   user_id         Int
   type            Int
   notifiable_type Int
-  notifiable_id   Int @unique
+  notifiable_id   Int
   data            String @db.VarChar(255)
   read_at         DateTime? 
   user            users @relation(fields: [user_id], references: [id])

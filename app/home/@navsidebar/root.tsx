@@ -6,7 +6,7 @@ import { useInitOpenState, useAuthState, useThemeHook } from './misc';
 import AppBarComp from './appbar';
 import DrawerComp from './drawer';
 import { useRouter } from 'next/navigation';
-import { SessionDataContext } from '@/app/auth/login/@custom/root';
+import Cookies from 'js-cookie';
 
 interface SearchContextProps {
     srchPosts: Array<any>,
@@ -24,7 +24,6 @@ export const SearchContext = createContext<SearchContextProps>({
 
 const RootComp = (props: any) => {
     const { page } = props;
-    const { authUser, authUserId, sessionToken } = useContext(SessionDataContext);
     const router = useRouter();
     const theme = useThemeHook();
     const [anchorEl, setAnchorEl] = useAnchorState(null);
@@ -34,7 +33,7 @@ const RootComp = (props: any) => {
     const [auth,setAuth] = useAuthState(true);
 
     useEffect(() => {
-        if (authUser === '' && authUserId === '' && sessionToken === '') {
+        if (Cookies.get("authUser") === '' || Cookies.get("authUserId") === '' || Cookies.get("sessionToken") === '') {
             //Session Expired
             router.push(`/auth/login`);    
         }

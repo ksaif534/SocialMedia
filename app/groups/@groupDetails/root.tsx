@@ -8,14 +8,13 @@ import People from "./@people/page"
 import AddIcon from '@mui/icons-material/Add';
 import DoneIcon from '@mui/icons-material/Done';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
 import fetchUser from "../../profile/@profileCoverHeading/fetchUser"
 import storeGroupMember from "./storeGroupMember"
 import Swal from "sweetalert2"
 import fetchGroupMembers from "./fetchGroupMembers"
 import leaveGroup from "./leaveGroup"
-import { SessionDataContext } from "@/app/auth/login/@custom/root"
+import Cookies from "js-cookie"
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -51,7 +50,7 @@ const a11yProps = (index: number) => {
 
 export const RootComp = (props: any) => {
     const { group } = props;
-    const { authUserId } = useContext(SessionDataContext);
+    const authUserId = Cookies.get("authUserId");
     const [groupHeadingTabValue,setGroupHeadingTabValue] = useState(0);
     const [anchorEl,setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);

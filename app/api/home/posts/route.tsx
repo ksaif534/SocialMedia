@@ -8,7 +8,11 @@ export const GET = async () => {
     const posts = await prisma.posts.findMany({
         include: {
             user: true,
-            comments: true
+            comments: {
+                include: {
+                    user: true
+                }
+            }
         }
     });
     return new Response(JSON.stringify(posts));
@@ -22,15 +26,11 @@ export const POST = async (req: NextRequest | any, res: NextResponse | any) => {
     //Fix Figure & Thumbnail Paths
     const figureType = body.figure.type.split('/')[0];
     let figurePath: any;
-    if (figureType == 'video') {
-        figurePath = path.join(process.cwd(), 'public/videos', figure);
-    }else{
-        figurePath = path.join(process.cwd(), 'public/images', figure);
-    }
+    figurePath = path.join('/', 'tmp', figure);
     let thumbPath: any;
     const thumbType = body.thumbnail.type.split('/')[0];
     if (thumbType == 'image') {
-        thumbPath = path.join(process.cwd(), 'public/images', thumbnail);   
+        thumbPath = path.join('/', 'tmp', thumbnail);   
     }
     const bodyText = JSON.parse(body.text);
     //Create File streams & convert to buffer chunks

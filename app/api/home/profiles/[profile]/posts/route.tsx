@@ -7,7 +7,11 @@ export const GET = async (req: NextRequest) => {
     const profilePosts = await prisma.posts.findMany({
         include: {
             user: true,
-            comments: true
+            comments: {
+                include: {
+                    user: true
+                }
+            }
         },
         where: {
             user_id: Number(profileUserId),

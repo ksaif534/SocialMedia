@@ -9,8 +9,10 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { VisuallyHiddenInput } from "../../home/@postInput/style";
 import fetchUsers from "../../auth/login/fetchUsers";
 import fetchUser from "../../profile/@profileCoverHeading/fetchUser";
+import Cookies from "js-cookie";
 
 const GroupInputModalForm = () => {
+    const authUserId = Cookies.get("authUserId");
     const [open,setOpen] = useState(false);
     const [formData,setFormData] = useState({ name: '', user_id: 0, description: '', status: 0, group_mods: "" });
     const [fileData,setFileData] = useState({ group_photo: null });
@@ -21,7 +23,7 @@ const GroupInputModalForm = () => {
 
     useEffect(() => {
         fetchUsers().then((users: any) => setUsers(users));
-        fetchUser(sessionStorage.getItem("authUserId")).then((user: any) => setUser(user));
+        fetchUser(authUserId).then((user: any) => setUser(user));
     },[])
 
     const handleOpen = () => setOpen(true);

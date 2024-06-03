@@ -4,7 +4,6 @@ import { useState } from "react";
 import createComment from "./createComment";
 import Swal from "sweetalert2";
 import { useRouter } from 'next/navigation';
-import * as PusherPushNotifications from "@pusher/push-notifications-web";
 import sendNotification from "./sendNotification";
 import React from "react";
 

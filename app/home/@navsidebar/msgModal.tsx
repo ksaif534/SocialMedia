@@ -1,9 +1,8 @@
 import { useState, useEffect, useMemo, useContext } from "react";
 import React from "react";
 import { ModalMessageChatButton, ModalMessageChatCard, ModalMessageChatCardContent, ModalMessageChatFormTextField, ModalMessageChatGrid, ModalMessageChatGridIconButton, ModalMessageChatGridItemGrid, ModalMessageChatsButtonBase, ModalMessagePaper, ModalMessageStyle } from "./style"
-import { Backdrop, Box, Fade, Grid, IconButton, Menu, MenuItem, Modal, Typography } from "@mui/material";
+import { Backdrop, Box, Fade, Grid, Menu, MenuItem, Modal, Typography } from "@mui/material";
 import ProfileLogo from "../@profileLogo/page";
-import Pusher from "pusher-js";
 import fetchUser from "../../profile/@profileCoverHeading/fetchUser";
 import sendMessage from "./sendMessage";
 import fetchUserMessages from "./fetchUserMessages";
@@ -11,7 +10,10 @@ import sendMsgNotification from "./sendMsgNotification";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import removeMsg from "./removeMsg";
 import Swal from "sweetalert2";
-import { SessionDataContext } from "@/app/auth/login/@custom/root";
+import Cookies from "js-cookie";
+import fetchTmpDirImages from "./fetchTmpDirImages";
+import path from "path";
+
 
 export const ModalMessageChatForUnitTesting = () => {
     return (
@@ -82,7 +84,7 @@ export const ModalMessageChatForUnitTesting = () => {
 
 const ModalMessageChats = (props: any) => {
     const { user } = props;
-    const { authUserId } = useContext(SessionDataContext);
+    const authUserId = Cookies.get("authUserId");
     const [open,setOpen] = useState(false);
     const [sender,setSender] = useState({ id: 0, name: '', email: '', password: '', image: null, phone: 0, is_active: 0 });
     const [chats,setChats] = useState([]);
@@ -90,9 +92,17 @@ const ModalMessageChats = (props: any) => {
     const [messageToSend,setMessageToSend] = useState("");
     const [removeMsgMenuAnchorEl,setRemoveMsgMenuAnchorEl] = useState<null | HTMLElement>(null);
     const removeMsgMenuOpen = Boolean(removeMsgMenuAnchorEl);
+    const [tmpDirImage,setTmpDirImage] = useState("");
 
     useEffect(() => {
-        fetchUser(authUserId).then((user: any) => setSender(user));
+        fetchUser(authUserId).then((user: any) => {
+            setSender(user);
+        });
+        fetchTmpDirImages(user?.image).then(async (imageBuffer: any) => {
+            const buffer = await imageBuffer.arrayBuffer();
+            const blob = new Blob([buffer], { type: `${path.extname(user?.image).substring(1)}` })
+            setTmpDirImage(URL.createObjectURL(blob));
+        })
         // const pusher = new Pusher(`${process.env.NEXT_PUBLIC_KEY}`,{
         //     cluster: "ap2",
         //     authEndpoint: `api/home/pusher/auth`,
@@ -187,7 +197,7 @@ const ModalMessageChats = (props: any) => {
             <ModalMessageChatsButtonBase onClick={handleOpen}>
                 <Grid container spacing={2}>
                     <Grid item md={2} sm={2} xs={12}>
-                        <ProfileLogo name={user.name} imageUrl={`images/${user.image}`} />
+                        <ProfileLogo name={user.name} imageUrl={tmpDirImage} />
                     </Grid>
                     <Grid item md={10} sm={10} xs={12}>
                         <Typography variant="h6"><strong>{ user.name }</strong></Typography>    

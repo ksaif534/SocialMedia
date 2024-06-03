@@ -9,6 +9,7 @@ import checkLoginData from '../checkLoginData';
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import fetchUsers from "../fetchUsers";
+import Cookies from 'js-cookie';
 
 export const LoginCardForUnitTesting = () => {
     return (
@@ -69,7 +70,6 @@ export const SessionDataContext = createContext<SessionDataContextProps>({
 
 const RootComp = () => {
     const router = useRouter();
-    const { setAuthUser, setAuthUserId, setSessionToken } = useContext(SessionDataContext);
     const [users,setUsers] = useState([]);
     const [showPassword,setShowPassword] = useState(false);
     const [loginFormData,setLoginFormData] = useState({ login: '', password: ''});
@@ -90,9 +90,9 @@ const RootComp = () => {
 
     const handleLoginFormSubmit = async () => {
         const response = await checkLoginData(loginFormData,users);
-        setAuthUser(response.data.authenticatedUser);
-        setAuthUserId(response.data.authUserId);
-        setSessionToken(response.data.sessionToken);
+        Cookies.set("authUser",response.data.authenticatedUser);
+        Cookies.set("authUserId",response.data.authUserId);
+        Cookies.set("sessionToken",response.data.sessionToken);
         if(Boolean(response.data.isUserLoggedIn)){
             //Authenticated Successfully
             router.push(`/home`);

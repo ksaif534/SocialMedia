@@ -11,7 +11,7 @@ import PostInput from "../../home/@postInput/page";
 import Posts from "../../home/@posts/page";
 import { useRouter } from "next/navigation";
 import Image from 'next/image'
-import { SessionDataContext } from "@/app/auth/login/@custom/root";
+import Cookies from "js-cookie";
 
 export const IntroBoxForUnitTesting = () => {
     return (
@@ -78,8 +78,8 @@ const itemData = [
 ];
 
 const RootComp = (props: any) => {
-    const { profilePosts, profile , otherProfile , videoPosts, acceptedProfileNetworks, recipientUser } = props;
-    const { authUserId } = useContext(SessionDataContext)
+    const { profilePosts, profilePostsTmpDirUserImages, profilePostsTmpDirFigures, profilePostsCommentsTmpDirUserImages , profile , otherProfile , videoPosts, videoPostsTmpDirUserImages, videoPostsTmpDirFigures, videoPostsCommentsTmpDirUserImages , acceptedProfileNetworks, recipientUser } = props;
+    const authUserId = Cookies.get("authUserId");
     const router = useRouter();
     const [user,setUser] = useState({ id: 0, email: '', password: '', image: null, is_active: 0, name: '', phone: 0 });
     let lengthMeasureArr: any = [];
@@ -246,7 +246,7 @@ const RootComp = (props: any) => {
                         </Grid>
                         <Grid item md={8} sm={12} xs={12}>
                             <PostInput />
-                            <Posts posts={profilePosts} videoPosts={videoPosts} />
+                            <Posts posts={profilePosts} profilePostsTmpDirUserImages={profilePostsTmpDirUserImages} profilePostsTmpDirFigures={profilePostsTmpDirFigures} profilePostsCommentsTmpDirUserImages={profilePostsCommentsTmpDirUserImages} videoPosts={videoPosts} videoPostsTmpDirUserImages={videoPostsTmpDirUserImages} videoPostsTmpDirFigures={videoPostsTmpDirFigures} videoPostsCommentsTmpDirUserImages={videoPostsCommentsTmpDirUserImages} />
                         </Grid>
                     </Grid>
                 </Grid>

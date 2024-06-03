@@ -5,14 +5,14 @@ import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { useRouter } from "next/navigation";
 import LogoutIcon from '@mui/icons-material/Logout';
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import fetchUser from "../@profileCoverHeading/fetchUser";
-import { SessionDataContext } from "@/app/auth/login/@custom/root";
+import Cookies from "js-cookie";
 
 export const menuId = 'primary-search-account-menu';
 export const RenderMenu = (props: any) => {
     const router = useRouter();
-    const { authUserId, setAuthUserId, setAuthUser, setSessionToken } = useContext(SessionDataContext);
+    const authUserId = Cookies.get("authUserId");
     const { anchorEl, setAnchorEl, setMobileMoreAnchorEl , isMenuOpen } = props;
     const [currentUser,setCurrentUser] = useState({ id: 0, email: '', password: '', image: null, is_active: 0, name: '', phone: 0 })
 
@@ -35,9 +35,9 @@ export const RenderMenu = (props: any) => {
     }
 
     const handleLogout = () => {
-        setAuthUserId("");
-        setAuthUser("");
-        setSessionToken("");
+        Cookies.set("authUserId","");
+        Cookies.set("authUser","");
+        Cookies.set("sessionToken","");
         router.push(`/auth/login`);
     }
 

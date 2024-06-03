@@ -11,8 +11,8 @@ export const PUT = async (req: NextRequest) => {
     const figure = JSON.parse(body.fileObj).figure.name;
     const thumbnail = JSON.parse(body.fileObj).thumbnail.name;
     //Fix Figure & Thumbnail Paths
-    const figurePath = path.join(process.cwd(),'public/images',figure);
-    const thumbPath = path.join(process.cwd(),'public/images',thumbnail);
+    const figurePath = path.join('/','tmp',figure);
+    const thumbPath = path.join('/','tmp',thumbnail);
     const bodyText = JSON.parse(body.text);
     //Create File streams & convert to buffer chunks
     const figureStream = body.figure.stream();
