@@ -737,7 +737,7 @@ const RootComp = () => {
                                                                     )    
                                                                 }else{
                                                                     return (
-                                                                        <div>Loading ...</div>
+                                                                        <div key={acceptedProfileNetwork.id}>Loading ...</div>
                                                                     )
                                                                 }   
                                                             }
@@ -762,7 +762,7 @@ const RootComp = () => {
                                                                                 )    
                                                                             }else{
                                                                                 return (
-                                                                                    <div>Loading ...</div>
+                                                                                    <div key={acceptedProfileNetwork.id}>Loading ...</div>
                                                                                 )
                                                                             }   
                                                                         }
