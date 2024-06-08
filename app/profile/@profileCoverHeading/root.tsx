@@ -191,14 +191,16 @@ const RootComp = () => {
         fetchAcceptedProfileNetworks(authUserIdValue).then((result: any) => {
             setAcceptedProfileNetworks(result.acceptedNetworks);
             setRecipientUser(result.recipientUser);
-            if (result?.user?.image) {
-                fetchTmpDirImages(result?.user?.image).then(async (imageBuffer: any) => {
-                    const buffer = await imageBuffer.arrayBuffer();
-                    const blob = new Blob([buffer],{ type: `${path.extname(result?.user?.image).substring(1)}` })
-                    tmpDirAcceptedProfileNetworkUserImagesArr.push(URL.createObjectURL(blob));
-                })
-                setTmpDirAcceptedProfileNetworkUserImages(tmpDirAcceptedProfileNetworkUserImagesArr);   
-            }
+            result?.acceptedNetworks.map((acceptedNetwork: any) => {
+                if (acceptedNetwork?.user?.image) {
+                    fetchTmpDirImages(acceptedNetwork?.user?.image).then(async (imageBuffer: any) => {
+                        const buffer = await imageBuffer.arrayBuffer();
+                        const blob = new Blob([buffer],{ type: `${path.extname(acceptedNetwork?.user?.image).substring(1)}` })
+                        tmpDirAcceptedProfileNetworkUserImagesArr.push(URL.createObjectURL(blob));
+                    })
+                }
+            });
+            setTmpDirAcceptedProfileNetworkUserImages(tmpDirAcceptedProfileNetworkUserImagesArr); 
         });
     },[])
 
@@ -326,14 +328,16 @@ const RootComp = () => {
         fetchAcceptedProfileNetworks(otherProfile?.user_id).then((result: any) => {
             setAcceptedProfileNetworks(result.acceptedNetworks);
             setRecipientUser(result.recipientUser);
-            if (result?.user?.image) {
-                fetchTmpDirImages(result?.user?.image).then(async (imageBuffer: any) => {
-                    const buffer = await imageBuffer.arrayBuffer();
-                    const blob = new Blob([buffer],{ type: `${path.extname(result?.user?.image).substring(1)}` })
-                    tmpDirAcceptedProfileNetworkUserImagesArr.push(URL.createObjectURL(blob));
-                })
-                setTmpDirAcceptedProfileNetworkUserImages(tmpDirAcceptedProfileNetworkUserImagesArr);   
-            }
+            result?.acceptedNetworks.map((acceptedNetwork: any) => {
+                if (acceptedNetwork?.user?.image) {
+                    fetchTmpDirImages(acceptedNetwork?.user?.image).then(async (imageBuffer: any) => {
+                        const buffer = await imageBuffer.arrayBuffer();
+                        const blob = new Blob([buffer],{ type: `${path.extname(acceptedNetwork?.user?.image).substring(1)}` })
+                        tmpDirAcceptedProfileNetworkUserImagesArr.push(URL.createObjectURL(blob));
+                    })
+                }
+            });
+            setTmpDirAcceptedProfileNetworkUserImages(tmpDirAcceptedProfileNetworkUserImagesArr); 
         });
         setToggleProfile(!toggleProfile);
         setInitProfileState(false);
@@ -451,14 +455,16 @@ const RootComp = () => {
         fetchAcceptedProfileNetworks(newValue?.user_id).then((result: any) => {
             setAcceptedProfileNetworks(result.acceptedNetworks);
             setRecipientUser(result.recipientUser);
-            if (result?.user?.image) {
-                fetchTmpDirImages(result?.user?.image).then(async (imageBuffer: any) => {
-                    const buffer = await imageBuffer.arrayBuffer();
-                    const blob = new Blob([buffer],{ type: `${path.extname(result?.user?.image).substring(1)}` })
-                    tmpDirAcceptedProfileNetworkUserImagesArr.push(URL.createObjectURL(blob));
-                })
-                setTmpDirAcceptedProfileNetworkUserImages(tmpDirAcceptedProfileNetworkUserImagesArr);   
-            }
+            result?.acceptedNetworks.map((acceptedNetwork: any) => {
+                if (acceptedNetwork?.user?.image) {
+                    fetchTmpDirImages(acceptedNetwork?.user?.image).then(async (imageBuffer: any) => {
+                        const buffer = await imageBuffer.arrayBuffer();
+                        const blob = new Blob([buffer],{ type: `${path.extname(acceptedNetwork?.user?.image).substring(1)}` })
+                        tmpDirAcceptedProfileNetworkUserImagesArr.push(URL.createObjectURL(blob));
+                    })
+                }
+            });
+            setTmpDirAcceptedProfileNetworkUserImages(tmpDirAcceptedProfileNetworkUserImagesArr); 
         });
         setToggleProfile(!toggleProfile);
         setInitProfileState(false);
@@ -524,7 +530,7 @@ const RootComp = () => {
                                                                     )   
                                                                 }else{
                                                                     return (
-                                                                        <div>Loading ...</div>
+                                                                        <div key={acceptedProfileNetwork.id}>Loading ...</div>
                                                                     )
                                                                 }   
                                                             }
@@ -549,7 +555,7 @@ const RootComp = () => {
                                                                                 )   
                                                                             }else{
                                                                                 return (
-                                                                                    <div>Loading ...</div>
+                                                                                    <div key={acceptedProfileNetwork.id}>Loading ...</div>
                                                                                 )
                                                                             }   
                                                                         }
@@ -631,10 +637,10 @@ const RootComp = () => {
                                     </ProfileTabs>
                                 </ProfileTabBox>
                                 <CustomProfileTabPanel value={value} index={0}>
-                                    <ProfileBody profilePosts={profilePosts} profilePostsTmpDirUserImages={profilePostsTmpDirUserImages} profilePostsTmpDirFigures={profilePostsTmpDirFigures} profilePostsCommentsTmpDirUserImages={profilePostsCommentsTmpDirUserImages} profile={profile} acceptedProfileNetworks={acceptedProfileNetworks} recipientUser={recipientUser}  />
+                                    <ProfileBody profilePosts={profilePosts} profilePostsTmpDirUserImages={profilePostsTmpDirUserImages} profilePostsTmpDirFigures={profilePostsTmpDirFigures} profilePostsCommentsTmpDirUserImages={profilePostsCommentsTmpDirUserImages} profile={profile} acceptedProfileNetworks={acceptedProfileNetworks} tmpDirAcceptedProfileNetworkUserImages={tmpDirAcceptedProfileNetworkUserImages} recipientUser={recipientUser}  />
                                 </CustomProfileTabPanel>
                                 <CustomProfileTabPanel value={value} index={1}>
-                                    <ProfileFriends profileNetworks={profileNetworks} acceptedProfileNetworks={acceptedProfileNetworks} updateProfile={updateProfile} allProfileNetworks={allProfileNetworks} profile={profile} recipientUser={recipientUser} />
+                                    <ProfileFriends profileNetworks={profileNetworks} acceptedProfileNetworks={acceptedProfileNetworks} tmpDirAcceptedProfileNetworkUserImages={tmpDirAcceptedProfileNetworkUserImages} updateProfile={updateProfile} allProfileNetworks={allProfileNetworks} profile={profile} recipientUser={recipientUser} />
                                 </CustomProfileTabPanel>
                                 <CustomProfileTabPanel value={value} index={2}>
                                     <Typography variant="h6">
@@ -642,7 +648,7 @@ const RootComp = () => {
                                     </Typography>
                                 </CustomProfileTabPanel>
                                 <CustomProfileTabPanel value={value} index={3}>
-                                    <ProfileBody videoPosts={profileVideoPosts} videoPostsTmpDirUserImages={videoPostsTmpDirUserImages} videoPostsTmpDirFigures={videoPostsTmpDirFigures} videoPostsCommentsTmpDirUserImages={videoPostsCommentsTmpDirUserImages} profile={profile} profileNetworks={profileNetworks} />
+                                    <ProfileBody videoPosts={profileVideoPosts} videoPostsTmpDirUserImages={videoPostsTmpDirUserImages} videoPostsTmpDirFigures={videoPostsTmpDirFigures} videoPostsCommentsTmpDirUserImages={videoPostsCommentsTmpDirUserImages} profile={profile} profileNetworks={profileNetworks} tmpDirAcceptedProfileNetworkUserImages={tmpDirAcceptedProfileNetworkUserImages} />
                                 </CustomProfileTabPanel>
                                 <CustomProfileTabPanel value={value} index={4}>
                                     <Grid container spacing={2}>
@@ -948,10 +954,10 @@ const RootComp = () => {
                                     </ProfileTabs>
                                 </ProfileTabBox>
                                 <CustomProfileTabPanel value={value} index={0}>
-                                    <ProfileBody profilePosts={profilePosts} profilePostsTmpDirUserImages={profilePostsTmpDirUserImages} profilePostsTmpDirFigures={profilePostsTmpDirFigures} profilePostsCommentsTmpDirUserImages={profilePostsCommentsTmpDirUserImages} otherProfile={profile} acceptedProfileNetworks={acceptedProfileNetworks} recipientUser={recipientUser} />
+                                    <ProfileBody profilePosts={profilePosts} profilePostsTmpDirUserImages={profilePostsTmpDirUserImages} profilePostsTmpDirFigures={profilePostsTmpDirFigures} profilePostsCommentsTmpDirUserImages={profilePostsCommentsTmpDirUserImages} otherProfile={profile} acceptedProfileNetworks={acceptedProfileNetworks} tmpDirAcceptedProfileNetworkUserImages={tmpDirAcceptedProfileNetworkUserImages} recipientUser={recipientUser} />
                                 </CustomProfileTabPanel>
                                 <CustomProfileTabPanel value={value} index={1}>
-                                    <ProfileFriends profileNetworks={profileNetworks} acceptedProfileNetworks={acceptedProfileNetworks} updateProfile={updateProfile} recipientUser={recipientUser} profile={profile} />
+                                    <ProfileFriends profileNetworks={profileNetworks} acceptedProfileNetworks={acceptedProfileNetworks} tmpDirAcceptedProfileNetworkUserImages={tmpDirAcceptedProfileNetworkUserImages} updateProfile={updateProfile} recipientUser={recipientUser} profile={profile} />
                                 </CustomProfileTabPanel>
                                 <CustomProfileTabPanel value={value} index={2}>
                                     <Typography variant="h6">
@@ -959,7 +965,7 @@ const RootComp = () => {
                                     </Typography>
                                 </CustomProfileTabPanel>
                                 <CustomProfileTabPanel value={value} index={3}>
-                                    <ProfileBody videoPosts={profileVideoPosts} videoPostsTmpDirUserImages={videoPostsTmpDirUserImages} videoPostsTmpDirFigures={videoPostsTmpDirFigures} videoPostsCommentsTmpDirUserImages={videoPostsCommentsTmpDirUserImages} otherProfile={profile} profileNetworks={profileNetworks} />
+                                    <ProfileBody videoPosts={profileVideoPosts} videoPostsTmpDirUserImages={videoPostsTmpDirUserImages} videoPostsTmpDirFigures={videoPostsTmpDirFigures} videoPostsCommentsTmpDirUserImages={videoPostsCommentsTmpDirUserImages} otherProfile={profile} profileNetworks={profileNetworks} tmpDirAcceptedProfileNetworkUserImages={tmpDirAcceptedProfileNetworkUserImages} />
                                 </CustomProfileTabPanel>
                                 <CustomProfileTabPanel value={value} index={4}>
                                     <Grid container spacing={2}>

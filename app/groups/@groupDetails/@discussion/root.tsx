@@ -1,6 +1,6 @@
 'use client'
-import { Avatar, CardActions, CardContent, CardHeader, CardMedia, Chip, Collapse, Grid, IconButton, InputAdornment, Menu, MenuItem, Typography } from "@mui/material"
-import { ChipStack, CommentInputGrid, CommentTextField, CommentsCard, CommentsGrid, CommentsGridFirstItem, CommentsGridItem, ExpandMore, GPCGridRightItem, GroupPostCard, MediaButtonBase, TopCommentTG } from "./style"
+import { Avatar, CardActions, CardContent, CardHeader, CardMedia, Chip, Collapse, Grid, IconButton, Menu, MenuItem, Typography } from "@mui/material"
+import { ChipStack, CommentInputGrid, CommentsCard, CommentsGrid, CommentsGridFirstItem, CommentsGridItem, ExpandMore, GPCGridRightItem, GroupPostCard, MediaButtonBase, TopCommentTG } from "./style"
 import { useState, useEffect, useContext } from "react";
 import ProfileLogo from "../../../home/@profileLogo/page";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -18,14 +18,19 @@ import PostEditModalForm from "../../../home/@posts/editModal";
 import fetchGroupPosts from "./fetchGroupPosts";
 import fetchUser from "../../../profile/@profileCoverHeading/fetchUser";
 import fetchComments from "../../../home/@posts/@commentInput/fetchComments";
-import { SearchGroupPostContext } from "../../@navbar/page";
+import { SearchGroupPostContext, SearchGroupPostsCommentsTmpDirUserImagesContext, SearchGroupPostsTmpDirFiguresContext, SearchGroupPostsTmpDirThumbnailsContext, SearchGroupPostsTmpDirUserImagesContext } from "../../@navbar/page";
 import Cookies from "js-cookie";
-
+import fetchTmpDirImages from "@/app/home/@navsidebar/fetchTmpDirImages";
+import path from "path";
 
 const RootComp = (props: any) => {
     const { group } = props;
     const authUserId = Cookies.get("authUserId");
     const { srchGrpPosts, srchGrpPostKey } = useContext(SearchGroupPostContext);
+    const { srchGrpPostsTmpDirThumbnails } = useContext(SearchGroupPostsTmpDirThumbnailsContext);
+    const { srchGrpPostsTmpDirFigures } = useContext(SearchGroupPostsTmpDirFiguresContext);
+    const { srchGrpPostsTmpDirUserImages } = useContext(SearchGroupPostsTmpDirUserImagesContext);
+    const { srchGrpPostsCommentsTmpDirUserImages } = useContext(SearchGroupPostsCommentsTmpDirUserImagesContext);
     const [anchorGPCIconElement,setAnchorGPCIconElement] = useState<null | HTMLElement>(null);
     const [expanded,setExpanded] = useState(false);
     const GPCIconOpen = Boolean(anchorGPCIconElement);
@@ -33,9 +38,63 @@ const RootComp = (props: any) => {
     const [groupPosts,setGroupPosts] = useState([]);
     const [groupComments,setGroupComments] = useState([]);
     const [authUser,setAuthUser] = useState({ id: 0 ,name: '', email: '', image: null });
+    const [grpPostsTmpDirThumbnails,setGrpPostsTmpDirThumbnails] = useState([]);
+    const grpPostsTmpDirThumbnailsArr: any = [...grpPostsTmpDirThumbnails];
+    const [grpPostsTmpDirFigures,setGrpPostsTmpDirFigures] = useState([]);
+    const grpPostsTmpDirFiguresArr: any = [...grpPostsTmpDirFigures];
+    const [grpPostsTmpDirUserImages,setGrpPostsTmpDirUserImages] = useState([]);
+    const grpPostsTmpDirUserImagesArr: any = [...grpPostsTmpDirUserImages];
+    const [grpPostsCommentsTmpDirUserImages,setGrpPostsCommentsTmpDirUserImages] = useState<any>([]);
 
     useEffect(() => {
-        fetchGroupPosts().then((groupPosts: any) => setGroupPosts(groupPosts));
+        fetchGroupPosts().then((groupPosts: any) => {
+            setGroupPosts(groupPosts);
+            groupPosts.map((grpPost: any) => {
+                if (grpPost?.thumbnail) {
+                    fetchTmpDirImages(grpPost?.thumbnail).then(async (imageBuffer: any) => {
+                        const buffer = await imageBuffer.arrayBuffer();
+                        const blob = new Blob([buffer],{ type: `${path.extname(grpPost?.thumbnail).substring(1)}` });
+                        grpPostsTmpDirThumbnailsArr.push(URL.createObjectURL(blob));
+                    });
+                }
+                if (grpPost?.figure) {
+                    fetchTmpDirImages(grpPost?.figure).then(async (imageBuffer: any) => {
+                        const buffer = await imageBuffer.arrayBuffer();
+                        const blob = new Blob([buffer],{ type: `${path.extname(grpPost?.figure).substring(1)}` });
+                        grpPostsTmpDirFiguresArr.push(URL.createObjectURL(blob));
+                    })
+                }
+                if (grpPost?.user?.image) {
+                    fetchTmpDirImages(grpPost?.user?.image).then(async (imageBuffer: any) => {
+                        const buffer = await imageBuffer.arrayBuffer();
+                        const blob = new Blob([buffer],{ type: `${path.extname(grpPost?.user?.image).substring(1)}` });
+                        grpPostsTmpDirUserImagesArr.push(URL.createObjectURL(blob));
+                    })
+                }
+            });
+            setGrpPostsTmpDirThumbnails(grpPostsTmpDirThumbnailsArr);
+            setGrpPostsTmpDirFigures(grpPostsTmpDirFiguresArr);
+            setGrpPostsTmpDirUserImages(grpPostsTmpDirUserImagesArr);
+            const tempCommentUserImages: any = [];
+            for(const grpPost of groupPosts){
+                const postImageUrls: any = [];
+                for(const grpComment of grpPost.comments){
+                    fetchTmpDirImages(grpComment?.user?.image).then(async (imageBuffer: any) => {
+                        const buffer = await imageBuffer.arrayBuffer();
+                        const blob = new Blob([buffer], { type: `${path.extname(grpComment?.user?.image).substring(1)}` });
+                        postImageUrls.push({
+                            comment: grpComment,
+                            blobUrl: URL.createObjectURL(blob)
+                        });
+                    });
+                }
+                tempCommentUserImages.push({
+                    postId: grpPost?.id,
+                    commentUserImages: postImageUrls
+                });
+            }
+            setGrpPostsCommentsTmpDirUserImages(tempCommentUserImages);
+        });
         fetchUser(authUserId).then((user: any) => setAuthUser(user));
         fetchComments().then((comments: any) => setGroupComments(comments));
     },[])
@@ -71,38 +130,6 @@ const RootComp = (props: any) => {
 
     return (
         <>
-            {/* <GroupPostInputCard variant="outlined">
-                <CardContent>
-                    <Grid container spacing={2}>
-                        <Grid item md={1} sm={1} xs={12}>
-                            <ProfileLogo name="Saif Kamal" imageUrl="/images/saif.jpeg" />
-                        </Grid>
-                        <Grid item md={11} sm={11} xs={12}>
-                            <GPICTextField placeholder="What's on your mind?" label="Write Something" variant="standard" />
-                        </Grid>
-                    </Grid>
-                    <Grid container spacing={2}>
-                        <GPICIconGridItem item md={4} sm={12} xs={12}>
-                            <GPICIconButton title="Add Photos/Images">
-                                <InsertPhotoIcon fontSize="large" />
-                                <Typography variant="body2"><strong>Photos/Images</strong></Typography>
-                            </GPICIconButton>
-                        </GPICIconGridItem>
-                        <GPICIconGridItem item md={4} sm={12} xs={12}>
-                            <GPICIconButton title="Anonymous Post">
-                                <VerifiedUserIcon fontSize="large" />
-                                <Typography variant="body2"><strong>Anonymous Post</strong></Typography>
-                            </GPICIconButton>
-                        </GPICIconGridItem>
-                        <GPICIconGridItem item md={4} sm={12} xs={12}>
-                            <GPICIconButton>
-                                <EmojiEmotionsIcon fontSize="large" />
-                                <Typography variant="body2"><strong>Reactions</strong></Typography>
-                            </GPICIconButton>
-                        </GPICIconGridItem>
-                    </Grid>
-                </CardContent>
-            </GroupPostInputCard> */}
             <PostInput group={group} />
             {
                 (srchGrpPostKey !== '') ? (
@@ -111,12 +138,12 @@ const RootComp = (props: any) => {
                             (srchGrpPosts.length > 0) ? (
                                 <>
                                     {
-                                        srchGrpPosts.map((srchGrpPost: any) => {
+                                        srchGrpPosts.map((srchGrpPost: any, index: number) => {
                                             if (srchGrpPost.group_id == group.id) {
                                                 return (
                                                     <GroupPostCard key={srchGrpPost.id}>
                                                         <CardHeader 
-                                                            avatar={<Avatar src={`images/${srchGrpPost.thumbnail}`} />} 
+                                                            avatar={<Avatar src={srchGrpPostsTmpDirThumbnails[index]} />} 
                                                             title={
                                                             <>
                                                                 <Grid container spacing={2}>
@@ -155,7 +182,7 @@ const RootComp = (props: any) => {
                                                         } 
                                                         />
                                                         <MediaButtonBase>
-                                                            <CardMedia component="img" height="300" image={`images/${srchGrpPost.figure}`} alt="" />
+                                                            <CardMedia component="img" height="300" image={srchGrpPostsTmpDirFigures[index]} alt="" />
                                                         </MediaButtonBase>
                                                         <CardContent>
                                                             <Typography variant="h6" color="text.secondary">
@@ -183,77 +210,83 @@ const RootComp = (props: any) => {
                                                                 </Typography>
                                                             </CardContent>
                                                             {
-                                                                srchGrpPost.comments?.map((groupComment: any) => {
-                                                                    if (groupComment.is_allow == 1) {
-                                                                        return (
-                                                                            <CommentsGrid container spacing={2} key={groupComment.id}>
-                                                                                <CommentsGridFirstItem item md={1} sm={1} xs={12}>
-                                                                                    {
-                                                                                        groupComments.map((comment: any) => {
-                                                                                            if (comment.id == groupComment.id) {
-                                                                                                return (
-                                                                                                    <ProfileLogo name={comment.name} imageUrl={`images/${comment.user?.image}`} key={comment.id} />
-                                                                                                )
-                                                                                            }
-                                                                                        })
-                                                                                    }
-                                                                                </CommentsGridFirstItem>
-                                                                                <CommentsGridItem item md={11} sm={11} xs={12}>
-                                                                                    <CommentsCard elevation={3}>
-                                                                                        <CardContent>
-                                                                                            {
-                                                                                                groupComments.map((comment: any) => {
-                                                                                                    if (comment.id == groupComment.id) {
-                                                                                                        return (
-                                                                                                            <Typography key={comment.id}>
-                                                                                                                <strong>{ comment.user?.name }</strong>
-                                                                                                            </Typography>
-                                                                                                        )           
-                                                                                                    }
-                                                                                                })
-                                                                                            }
-                                                                                            <Grid container spacing={2}>
-                                                                                                <Grid item md={9} sm={9} xs={3}>
-                                                                                                    <TopCommentTG paragraph>
-                                                                                                        { groupComment.description }
-                                                                                                    </TopCommentTG>
-                                                                                                </Grid>
-                                                                                                <Grid item md={3} sm={3} xs={3}>
-                                                                                                    <Grid container spacing={2}>
-                                                                                                        <Grid item md={6} sm={6} xs={12}>
-                                                                                                            {
-                                                                                                                (authUser.id == groupComment.user_id) && (
-                                                                                                                    <>
-                                                                                                                        <CommentEditModalForm comment={groupComment} />
-                                                                                                                    </>
-                                                                                                                )
-                                                                                                            }
+                                                                (srchGrpPostsCommentsTmpDirUserImages[index]?.postId == srchGrpPost?.id) && (
+                                                                    <>
+                                                                        {
+                                                                            srchGrpPostsCommentsTmpDirUserImages[index]?.commentUserImages?.map((groupCommentUserImage: any,commentIndex: number) => {
+                                                                                if (groupCommentUserImage.comment.is_allow == 1) {
+                                                                                    return (
+                                                                                        <CommentsGrid container spacing={2} key={groupCommentUserImage.comment.id}>
+                                                                                            <CommentsGridFirstItem item md={1} sm={1} xs={12}>
+                                                                                                {
+                                                                                                    groupComments.map((comment: any) => {
+                                                                                                        if (comment.id == groupCommentUserImage.comment.id) {
+                                                                                                            return (
+                                                                                                                <ProfileLogo name={comment.name} imageUrl={groupCommentUserImage?.blobUrl} key={comment.id} />
+                                                                                                            )
+                                                                                                        }
+                                                                                                    })
+                                                                                                }
+                                                                                            </CommentsGridFirstItem>
+                                                                                            <CommentsGridItem item md={11} sm={11} xs={12}>
+                                                                                                <CommentsCard elevation={3}>
+                                                                                                    <CardContent>
+                                                                                                        {
+                                                                                                            groupComments.map((comment: any) => {
+                                                                                                                if (comment.id == groupCommentUserImage.comment.id) {
+                                                                                                                    return (
+                                                                                                                        <Typography key={comment.id}>
+                                                                                                                            <strong>{ comment.user?.name }</strong>
+                                                                                                                        </Typography>
+                                                                                                                    )           
+                                                                                                                }
+                                                                                                            })
+                                                                                                        }
+                                                                                                        <Grid container spacing={2}>
+                                                                                                            <Grid item md={9} sm={9} xs={3}>
+                                                                                                                <TopCommentTG paragraph>
+                                                                                                                    { groupCommentUserImage.comment.description }
+                                                                                                                </TopCommentTG>
+                                                                                                            </Grid>
+                                                                                                            <Grid item md={3} sm={3} xs={3}>
+                                                                                                                <Grid container spacing={2}>
+                                                                                                                    <Grid item md={6} sm={6} xs={12}>
+                                                                                                                        {
+                                                                                                                            (authUser.id == groupCommentUserImage.comment.user_id) && (
+                                                                                                                                <>
+                                                                                                                                    <CommentEditModalForm comment={groupCommentUserImage.comment} />
+                                                                                                                                </>
+                                                                                                                            )
+                                                                                                                        }
+                                                                                                                    </Grid>
+                                                                                                                    <Grid item md={6} sm={6} xs={12}>
+                                                                                                                        {
+                                                                                                                            (authUser.id == groupCommentUserImage.comment.user_id) && (
+                                                                                                                                <>
+                                                                                                                                    <IconButton title="Delete Comment" onClick={() => handleCommentDelete(groupCommentUserImage.comment)}>
+                                                                                                                                        <DeleteIcon />
+                                                                                                                                    </IconButton>
+                                                                                                                                </>
+                                                                                                                            )
+                                                                                                                        }
+                                                                                                                    </Grid>
+                                                                                                                </Grid>
+                                                                                                            </Grid>
                                                                                                         </Grid>
-                                                                                                        <Grid item md={6} sm={6} xs={12}>
-                                                                                                            {
-                                                                                                                (authUser.id == groupComment.user_id) && (
-                                                                                                                    <>
-                                                                                                                        <IconButton title="Delete Comment" onClick={() => handleCommentDelete(groupComment)}>
-                                                                                                                            <DeleteIcon />
-                                                                                                                        </IconButton>
-                                                                                                                    </>
-                                                                                                                )
-                                                                                                            }
-                                                                                                        </Grid>
-                                                                                                    </Grid>
-                                                                                                </Grid>
-                                                                                            </Grid>
-                                                                                        </CardContent>
-                                                                                    </CommentsCard>
-                                                                                </CommentsGridItem>
-                                                                            </CommentsGrid>
-                                                                        )   
-                                                                    }
-                                                                })
+                                                                                                    </CardContent>
+                                                                                                </CommentsCard>
+                                                                                            </CommentsGridItem>
+                                                                                        </CommentsGrid>
+                                                                                    )   
+                                                                                }
+                                                                            })
+                                                                        }
+                                                                    </>
+                                                                )
                                                             }
                                                             <CommentInputGrid container spacing={2}>
                                                                 <Grid item md={1} sm={1} xs={12}>
-                                                                    <ProfileLogo name={srchGrpPost.user.name} imageUrl={`images/${srchGrpPost.user.image}`} />
+                                                                    <ProfileLogo name={srchGrpPost.user.name} imageUrl={srchGrpPostsTmpDirUserImages[index]} />
                                                                 </Grid>
                                                                 <Grid item md={11} sm={11} xs={12}>
                                                                     <CommentInputModalForm post={srchGrpPost} authUser={authUser} />
@@ -307,12 +340,12 @@ const RootComp = (props: any) => {
                 ) : (
                     <>
                         {
-                            groupPosts.map((groupPost: any) => {
+                            groupPosts.map((groupPost: any, index: number) => {
                                 if (groupPost.group_id == group.id) {
                                     return (
                                         <GroupPostCard key={groupPost.id}>
                                             <CardHeader 
-                                                avatar={<Avatar src={`images/${groupPost.thumbnail}`} />} 
+                                                avatar={<Avatar src={grpPostsTmpDirThumbnails[index]} />} 
                                                 title={
                                                 <>
                                                     <Grid container spacing={2}>
@@ -351,7 +384,7 @@ const RootComp = (props: any) => {
                                             } 
                                             />
                                             <MediaButtonBase>
-                                                <CardMedia component="img" height="300" image={`images/${groupPost.figure}`} alt="" />
+                                                <CardMedia component="img" height="300" image={grpPostsTmpDirFigures[index]} alt="" />
                                             </MediaButtonBase>
                                             <CardContent>
                                                 <Typography variant="h6" color="text.secondary">
@@ -379,77 +412,83 @@ const RootComp = (props: any) => {
                                                     </Typography>
                                                 </CardContent>
                                                 {
-                                                    groupPost.comments?.map((groupComment: any) => {
-                                                        if (groupComment.is_allow == 1) {
-                                                            return (
-                                                                <CommentsGrid container spacing={2} key={groupComment.id}>
-                                                                    <CommentsGridFirstItem item md={1} sm={1} xs={12}>
-                                                                        {
-                                                                            groupComments.map((comment: any) => {
-                                                                                if (comment.id == groupComment.id) {
-                                                                                    return (
-                                                                                        <ProfileLogo name={comment.name} imageUrl={`images/${comment.user?.image}`} key={comment.id} />
-                                                                                    )
-                                                                                }
-                                                                            })
-                                                                        }
-                                                                    </CommentsGridFirstItem>
-                                                                    <CommentsGridItem item md={11} sm={11} xs={12}>
-                                                                        <CommentsCard elevation={3}>
-                                                                            <CardContent>
-                                                                                {
-                                                                                    groupComments.map((comment: any) => {
-                                                                                        if (comment.id == groupComment.id) {
-                                                                                            return (
-                                                                                                <Typography key={comment.id}>
-                                                                                                    <strong>{ comment.user?.name }</strong>
-                                                                                                </Typography>
-                                                                                            )           
-                                                                                        }
-                                                                                    })
-                                                                                }
-                                                                                <Grid container spacing={2}>
-                                                                                    <Grid item md={9} sm={9} xs={3}>
-                                                                                        <TopCommentTG paragraph>
-                                                                                            { groupComment.description }
-                                                                                        </TopCommentTG>
-                                                                                    </Grid>
-                                                                                    <Grid item md={3} sm={3} xs={3}>
-                                                                                        <Grid container spacing={2}>
-                                                                                            <Grid item md={6} sm={6} xs={12}>
-                                                                                                {
-                                                                                                    (authUser.id == groupComment.user_id) && (
-                                                                                                        <>
-                                                                                                            <CommentEditModalForm comment={groupComment} />
-                                                                                                        </>
-                                                                                                    )
-                                                                                                }
+                                                    (grpPostsCommentsTmpDirUserImages[index]?.postId == groupPost?.id) && (
+                                                        <>
+                                                            {
+                                                                grpPostsCommentsTmpDirUserImages[index]?.commentUserImages?.map((groupCommentUserImage: any, commentIndex: number) => {
+                                                                    if (groupCommentUserImage.comment.is_allow == 1) {
+                                                                        return (
+                                                                            <CommentsGrid container spacing={2} key={groupCommentUserImage.comment.id}>
+                                                                                <CommentsGridFirstItem item md={1} sm={1} xs={12}>
+                                                                                    {
+                                                                                        groupComments.map((comment: any) => {
+                                                                                            if (comment.id == groupCommentUserImage.comment.id) {
+                                                                                                return (
+                                                                                                    <ProfileLogo name={comment.name} imageUrl={groupCommentUserImage?.blobUrl} key={comment.id} />
+                                                                                                )
+                                                                                            }
+                                                                                        })
+                                                                                    }
+                                                                                </CommentsGridFirstItem>
+                                                                                <CommentsGridItem item md={11} sm={11} xs={12}>
+                                                                                    <CommentsCard elevation={3}>
+                                                                                        <CardContent>
+                                                                                            {
+                                                                                                groupComments.map((comment: any) => {
+                                                                                                    if (comment.id == groupCommentUserImage.comment.id) {
+                                                                                                        return (
+                                                                                                            <Typography key={comment.id}>
+                                                                                                                <strong>{ comment.user?.name }</strong>
+                                                                                                            </Typography>
+                                                                                                        )           
+                                                                                                    }
+                                                                                                })
+                                                                                            }
+                                                                                            <Grid container spacing={2}>
+                                                                                                <Grid item md={9} sm={9} xs={3}>
+                                                                                                    <TopCommentTG paragraph>
+                                                                                                        { groupCommentUserImage.comment.description }
+                                                                                                    </TopCommentTG>
+                                                                                                </Grid>
+                                                                                                <Grid item md={3} sm={3} xs={3}>
+                                                                                                    <Grid container spacing={2}>
+                                                                                                        <Grid item md={6} sm={6} xs={12}>
+                                                                                                            {
+                                                                                                                (authUser.id == groupCommentUserImage.comment.user_id) && (
+                                                                                                                    <>
+                                                                                                                        <CommentEditModalForm comment={groupCommentUserImage.comment} />
+                                                                                                                    </>
+                                                                                                                )
+                                                                                                            }
+                                                                                                        </Grid>
+                                                                                                        <Grid item md={6} sm={6} xs={12}>
+                                                                                                            {
+                                                                                                                (authUser.id == groupCommentUserImage.comment.user_id) && (
+                                                                                                                    <>
+                                                                                                                        <IconButton title="Delete Comment" onClick={() => handleCommentDelete(groupCommentUserImage.comment)}>
+                                                                                                                            <DeleteIcon />
+                                                                                                                        </IconButton>
+                                                                                                                    </>
+                                                                                                                )
+                                                                                                            }
+                                                                                                        </Grid>
+                                                                                                    </Grid>
+                                                                                                </Grid>
                                                                                             </Grid>
-                                                                                            <Grid item md={6} sm={6} xs={12}>
-                                                                                                {
-                                                                                                    (authUser.id == groupComment.user_id) && (
-                                                                                                        <>
-                                                                                                            <IconButton title="Delete Comment" onClick={() => handleCommentDelete(groupComment)}>
-                                                                                                                <DeleteIcon />
-                                                                                                            </IconButton>
-                                                                                                        </>
-                                                                                                    )
-                                                                                                }
-                                                                                            </Grid>
-                                                                                        </Grid>
-                                                                                    </Grid>
-                                                                                </Grid>
-                                                                            </CardContent>
-                                                                        </CommentsCard>
-                                                                    </CommentsGridItem>
-                                                                </CommentsGrid>
-                                                            )   
-                                                        }
-                                                    })
+                                                                                        </CardContent>
+                                                                                    </CommentsCard>
+                                                                                </CommentsGridItem>
+                                                                            </CommentsGrid>
+                                                                        )   
+                                                                    }
+                                                                })
+                                                            }       
+                                                        </>
+                                                    )
                                                 }
                                                 <CommentInputGrid container spacing={2}>
                                                     <Grid item md={1} sm={1} xs={12}>
-                                                        <ProfileLogo name={groupPost.user.name} imageUrl={`images/${groupPost.user.image}`} />
+                                                        <ProfileLogo name={groupPost.user.name} imageUrl={grpPostsTmpDirUserImages[index]} />
                                                     </Grid>
                                                     <Grid item md={11} sm={11} xs={12}>
                                                         <CommentInputModalForm post={groupPost} authUser={authUser} />

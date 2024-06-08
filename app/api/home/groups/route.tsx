@@ -8,7 +8,7 @@ export const POST = async (req: NextRequest) => {
     const body: any = Object.fromEntries(formData);
     const groupPhoto = JSON.parse(body.fileObj).group_photo.name;
     //Fix Group Photo Path
-    const groupPhotoPath = path.join(process.cwd(), 'public/images' , groupPhoto);
+    const groupPhotoPath = path.join('/', 'tmp' , groupPhoto);
     const bodyText = JSON.parse(body.text);
     //Create File streams & convert to buffer chunks
     const groupPhotoStream = body.groupPhoto.stream();

@@ -11,6 +11,10 @@ import SearchIcon from '@mui/icons-material/Search'
 import GroupInputModalForm from "./modal"
 import fetchAllGroups from "./fetchAllGroups"
 import searchGroup from "./searchGroup"
+import fetchTmpDirImages from "@/app/home/@navsidebar/fetchTmpDirImages"
+import path from "path"
+import { GroupUserImageContext } from "../@groupDetails/@people/root"
+import { GroupPhotoTmpDirContext } from "../@groupDetails/root"
 
 export const SidebarGroupsForUnitTesting = () => {
     return (
@@ -50,10 +54,26 @@ const RootComp = () => {
     const [checkGrpDetails,setCheckGrpDetails] = useState(false);
     const [groups,setGroups] = useState([]);
     const [group,setGroup] = useState({ user_id: 0, name: '', description: '', status: 0, group_photo: null });
+    const [groupPhotos,setGroupPhotos] = useState([]);
+    const groupPhotosArr: any = [...groupPhotos];
     const { srchGrp ,setSrchGrp, srchGrpKey , setSrchGrpKey } = useContext(SearchGroupContext);
+    const { setGrpUserImage } = useContext(GroupUserImageContext);
+    const { grpPhotoTmpDir, setGrpPhotoTmpDir } = useContext(GroupPhotoTmpDirContext);
 
     useEffect(() => {
-        fetchAllGroups().then((groups: any) => setGroups(groups));
+        fetchAllGroups().then((grps: any) => {
+            setGroups(grps);
+            grps.map((grp: any) => {
+                if (grp?.group_photo) {
+                    fetchTmpDirImages(grp?.group_photo).then(async (imageBuffer: any) => {
+                        const buffer = await imageBuffer.arrayBuffer();
+                        const blob = new Blob([buffer],{ type: `${path.extname(grp?.group_photo).substring(1)}` });
+                        groupPhotosArr.push(URL.createObjectURL(blob));
+                    })   
+                }
+            });
+            setGroupPhotos(groupPhotosArr);
+        });
     },[])
 
     const handleSidebarExploreClick = () => {
@@ -63,13 +83,23 @@ const RootComp = () => {
     const handleGroupClick = (group: any) => {
         setCheckGrpDetails(true);
         setGroup(group);
+        fetchTmpDirImages(group?.user?.image).then(async (imageBuffer: any) => {
+            const buffer = await imageBuffer.arrayBuffer();
+            const blob = new Blob([buffer],{ type: `${path.extname(group?.user?.image).substring(1)}` });
+            setGrpUserImage(URL.createObjectURL(blob));
+        });
+        fetchTmpDirImages(group?.group_photo).then(async (imageBuffer: any) => {
+            const buffer = await imageBuffer.arrayBuffer();
+            const blob = new Blob([buffer],{ type: `${path.extname(group?.group_photo).substring(1)}` });
+            setGrpPhotoTmpDir(URL.createObjectURL(blob));
+        })
     }
 
     const handleSrchGrp = async (event: any) => {
         setSrchGrpKey(event.target.value);
         if (event.target.value !== '') {
             const srchGroup = await searchGroup(event.target.value);
-            setSrchGrp(srchGroup);   
+            setSrchGrp(srchGroup);
         }
     }
 
@@ -185,12 +215,18 @@ const RootComp = () => {
                                         (groups.length < 5 && groups.length > 0) ? (
                                             <>
                                                 {
-                                                    groups.map((group: any) => {
+                                                    groups.map((group: any,index: number) => {
                                                         return (
                                                             <SidebarContentGrid container spacing={2} onClick={() => handleGroupClick(group)} key={group.id}>
                                                                 <SidebarContentGridItem item md={2} sm={2} xs={12}>
                                                                     <Box>
-                                                                        <GroupAvatar alt={group.name} src={`images/${group.group_photo}`} />
+                                                                        {
+                                                                            (groupPhotos.length > 0) ? (
+                                                                                <GroupAvatar alt={group.name} src={groupPhotos[index]} />
+                                                                            ) : (
+                                                                                <div key={index}>Click group to see</div>
+                                                                            )
+                                                                        }  
                                                                     </Box>
                                                                 </SidebarContentGridItem>
                                                                 <SidebarContentGridItem item md={8} sm={8} xs={12}>

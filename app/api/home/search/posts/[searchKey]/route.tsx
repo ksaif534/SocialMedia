@@ -6,7 +6,12 @@ export const GET = async(req: NextRequest) => {
     const prisma = new PrismaClient();
     const searchQuery = await prisma.posts.findMany({
         include: {
-            user: true
+            user: true,
+            comments: {
+                include: {
+                    user: true
+                }
+            }
         },
         where: {
             OR: [
@@ -33,6 +38,5 @@ export const GET = async(req: NextRequest) => {
             ]
         }
     });
-    console.log(searchQuery);
     return new Response(JSON.stringify(searchQuery));
 }

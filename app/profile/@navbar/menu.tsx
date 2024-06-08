@@ -1,5 +1,5 @@
 'use client'
-import { Avatar, Badge, IconButton, Menu, MenuItem } from "@mui/material";
+import { Avatar, Badge, Grid, IconButton, Menu, MenuItem, Typography } from "@mui/material";
 import { AccountCircle } from '@mui/icons-material';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -8,6 +8,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { useState, useEffect } from "react";
 import fetchUser from "../@profileCoverHeading/fetchUser";
 import Cookies from "js-cookie";
+import ProfileLogo from "@/app/home/@profileLogo/page";
 
 export const menuId = 'primary-search-account-menu';
 export const RenderMenu = (props: any) => {
@@ -192,7 +193,7 @@ export const RenderMsgMenu = (props: any) => {
 
 export const notifMenuId = 'event-notifications-menu';
 export const RenderNotifMenu = (props: any) => {
-    const { anchorNotifMenuEl, setAnchorNotifMenuEl, isNotifMenuOpen } = props;
+    const { anchorNotifMenuEl, setAnchorNotifMenuEl, isNotifMenuOpen, newNotif, profNotifUserImages } = props;
 
     const handleNotifMenuClose = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorNotifMenuEl(null);
@@ -208,8 +209,24 @@ export const RenderNotifMenu = (props: any) => {
           open={isNotifMenuOpen}
           onClose={handleNotifMenuClose}
         >
-            <MenuItem onClick={handleNotifMenuClose}>Notification 1</MenuItem>
-            <MenuItem onClick={handleNotifMenuClose}>Notification 2</MenuItem>
+            {
+                newNotif?.map((notif: any, index: number) => {
+                    return (
+                        <div key={notif?.id}>
+                            <MenuItem onClick={handleNotifMenuClose}>
+                                <Grid container spacing={2}>
+                                    <Grid item md={2} sm={2} xs={12}>
+                                        <ProfileLogo name={notif?.user?.name} imageUrl={profNotifUserImages[index]} />
+                                    </Grid>
+                                    <Grid item md={10} sm={10} xs={12}>
+                                        <Typography variant="body2">{ notif?.data }</Typography>
+                                    </Grid>
+                                </Grid>
+                            </MenuItem>
+                        </div>
+                    )
+                })
+            }
         </Menu>
     );
 

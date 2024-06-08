@@ -9,6 +9,8 @@ import fetchProfile from "../../../profile/@profileCoverHeading/fetchProfile"
 import fetchProfiles from "./fetchProfiles"
 import fetchSpecificGroupModerators from "./fetchSpecificGroupModerators"
 import searchGroupModerators from "./searchGroupModerators"
+import fetchTmpDirImages from "@/app/home/@navsidebar/fetchTmpDirImages"
+import path from "path"
 
 export const PeopleCardForUnitTesting = () => {
     return (
@@ -93,18 +95,53 @@ export const SearchGroupModeratorsContext = createContext<SearchGroupModeratorsC
     setSrchGrpModeratorKey: () => {}
 })
 
+interface GroupUserImageContextProps{
+    grpUserImage: string,
+    setGrpUserImage: (newGrpUserImage: any) => void
+}
+
+export const GroupUserImageContext = createContext<GroupUserImageContextProps>({
+    grpUserImage: '',
+    setGrpUserImage: () => {}
+})
+
+interface SearchGroupModTmpDirUserImagesContextProps{
+    srchGrpModTmpDirUserImages: Array<any>,
+    setSrchGrpModTmpDirUserImages: (newSrchGrpModUserImages: any) => void
+}
+
+export const SearchGroupModTmpDirUserImagesContext = createContext<SearchGroupModTmpDirUserImagesContextProps>({
+    srchGrpModTmpDirUserImages: [],
+    setSrchGrpModTmpDirUserImages: () => {}
+})
+
 const RootComp = (props: any) => {
     const { group } = props;
     const { srchGrpModeratorKey, setSrchGrpModeratorKey, srchGrpModerators , setSrchGrpModerators } = useContext(SearchGroupModeratorsContext);
+    const { srchGrpModTmpDirUserImages, setSrchGrpModTmpDirUserImages } = useContext(SearchGroupModTmpDirUserImagesContext);
+    const { grpUserImage } = useContext(GroupUserImageContext);
     const [profile,setProfile] = useState({ user_id: 0, firstname: '', lastname: '', martial_status: 0, gender: 0, birthdate: null, education_level: 1, occupation: 1, country: 0, city: 0, address: '', profile_photo: null });
     const [profiles,setProfiles] = useState([]);
     const [specificGroupMods,setSpecificGroupMods] = useState([]);
     const [toggleModView,setToggleModView] = useState(false);
+    const [specGrpModsTmpDirUserImages,setSpecGrpModsTmpDirUserImages] = useState([]);
+    const specGrpModsTmpDirUserImagesArr: any = [...specGrpModsTmpDirUserImages];
+    const srchGrpModTmpDirUserImagesArr: any = [...srchGrpModTmpDirUserImages];
 
     useEffect(() => {
         fetchProfile(group?.user_id).then((profile: any) => setProfile(profile));
         fetchProfiles().then((profiles: any) => setProfiles(profiles));
-        fetchSpecificGroupModerators(group?.id).then((specificGroupMods: any) => setSpecificGroupMods(specificGroupMods));
+        fetchSpecificGroupModerators(group?.id).then((specGroupMods: any) => {
+            setSpecificGroupMods(specGroupMods);
+            specGroupMods.map((specGrpMod: any) => {
+                fetchTmpDirImages(specGrpMod?.user?.image).then(async (imageBuffer: any) => {
+                    const buffer = await imageBuffer.arrayBuffer();
+                    const blob = new Blob([buffer],{ type: `${path.extname(specGrpMod?.user?.image).substring(1)}` });
+                    specGrpModsTmpDirUserImagesArr.push(URL.createObjectURL(blob));
+                });
+            });
+            setSpecGrpModsTmpDirUserImages(specGrpModsTmpDirUserImagesArr);
+        });
     },[group])
 
     const changeModView = () => {
@@ -115,7 +152,15 @@ const RootComp = (props: any) => {
         setSrchGrpModeratorKey(event.target.value);
         if (event.target.value !== '') {
             const srchGrpMods = await searchGroupModerators(group?.user_id,event.target.value);
-            setSrchGrpModerators(srchGrpMods);   
+            setSrchGrpModerators(srchGrpMods);
+            srchGrpMods.map((srchGrpMod: any) => {
+                fetchTmpDirImages(srchGrpMod?.user?.image).then(async (imageBuffer: any) => {
+                    const buffer = await imageBuffer.arrayBuffer();
+                    const blob = new Blob([buffer], { type: `${path.extname(srchGrpMod?.user?.image).substring(1)}` });
+                    srchGrpModTmpDirUserImagesArr.push(URL.createObjectURL(blob));
+                });
+            });
+            setSrchGrpModTmpDirUserImages(srchGrpModTmpDirUserImagesArr);
         }
     }
 
@@ -148,7 +193,7 @@ const RootComp = (props: any) => {
                     </CommonSpanList>
                     <AdminModGrid container spacing={2}>
                         <Grid item md={1} sm={1} xs={12}>
-                            <ProfileLogo name={group?.user?.name} imageUrl={`images/${group?.user?.image}`} />
+                            <ProfileLogo name={group?.user?.name} imageUrl={grpUserImage} />
                         </Grid>
                         <Grid item md={11} sm={11} xs={12}>
                             <Grid container>
@@ -171,11 +216,11 @@ const RootComp = (props: any) => {
                                     (srchGrpModerators.length > 0) ? (
                                         <>
                                             {
-                                                srchGrpModerators.map((groupModerator: any) => {
+                                                srchGrpModerators.map((groupModerator: any, index: number) => {
                                                     return (
                                                         <AdminModGrid container spacing={2} key={groupModerator.id}>
                                                             <Grid item md={1} sm={1} xs={12}>
-                                                                <ProfileLogo name={groupModerator.user.name} imageUrl={`images/${groupModerator.user.image}`} />
+                                                                <ProfileLogo name={groupModerator.user.name} imageUrl={srchGrpModTmpDirUserImages[index]} />
                                                             </Grid>
                                                             <Grid item md={11} sm={11} xs={12}>
                                                                 <Grid container>
@@ -221,7 +266,7 @@ const RootComp = (props: any) => {
                                                         return (
                                                             <AdminModGrid container spacing={2} key={groupModerator.id}>
                                                                 <Grid item md={1} sm={1} xs={12}>
-                                                                    <ProfileLogo name={groupModerator.user.name} imageUrl={`images/${groupModerator.user.image}`} />
+                                                                    <ProfileLogo name={groupModerator.user.name} imageUrl={specGrpModsTmpDirUserImages[index]} />
                                                                 </Grid>
                                                                 <Grid item md={11} sm={11} xs={12}>
                                                                     <Grid container>
@@ -254,11 +299,11 @@ const RootComp = (props: any) => {
                                     ) : (
                                         <>
                                             {
-                                                specificGroupMods.map((groupModerator: any) => {
+                                                specificGroupMods.map((groupModerator: any,index: number) => {
                                                     return (
                                                         <AdminModGrid container spacing={2} key={groupModerator.id}>
                                                             <Grid item md={1} sm={1} xs={12}>
-                                                                <ProfileLogo name={groupModerator.user.name} imageUrl={`images/${groupModerator.user.image}`} />
+                                                                <ProfileLogo name={groupModerator.user.name} imageUrl={specGrpModsTmpDirUserImages[index]} />
                                                             </Grid>
                                                             <Grid item md={11} sm={11} xs={12}>
                                                                 <Grid container>

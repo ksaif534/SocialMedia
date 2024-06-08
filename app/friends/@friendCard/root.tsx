@@ -11,6 +11,8 @@ import Swal from "sweetalert2";
 import postNetworkStatus from "../../profile/@profileCoverHeading/postNetworkStatus";
 import updatePendingNetwork from "../../profile/@profileCoverHeading/updatePendingNetwork";
 import Cookies from "js-cookie";
+import fetchTmpDirImages from "@/app/home/@navsidebar/fetchTmpDirImages";
+import path from "path";
 
 export const FriendCardButtonForUnitTesting = () => {
     return (
@@ -35,12 +37,24 @@ const RootComp = () => {
     const [allProfileNetworks,setAllProfileNetworks] = useState([]);
     const [profileNetworks,setProfileNetworks] = useState([]);
     const [totalNetworks,setTotalNetworks] = useState([]);
+    const [otherProfilesUserImages,setOtherProfilesUserImages] = useState([]);
+    const otherProfilesUserImagesArr: any = [...otherProfilesUserImages];
     let indexCounterArr: any;
     let indexCounterArr2: any;
     let networksCounterArr: any;
 
     useEffect(() => {
-        fetchOtherProfiles(authUserId).then((otherProfiles: any) => setOtherProfiles(otherProfiles));
+        fetchOtherProfiles(authUserId).then((otherProfiles: any) => {
+            setOtherProfiles(otherProfiles);
+            otherProfiles.forEach((otherPfl: any) => {
+                fetchTmpDirImages(otherPfl?.user?.image).then(async (imageBuffer: any) => {
+                    const buffer = await imageBuffer.arrayBuffer();
+                    const blob = new Blob([buffer], { type: `${path.extname(otherPfl?.user?.image).substring(1)}` });
+                    otherProfilesUserImagesArr.push(URL.createObjectURL(blob));
+                });
+            });
+            setOtherProfilesUserImages(otherProfilesUserImagesArr);
+        });
         fetchAllProfileNetworks(authUserId).then((allProfileNetworks: any) => setAllProfileNetworks(allProfileNetworks));
         fetchProfileNetworks(authUserId).then((profileNetworks: any) => setProfileNetworks(profileNetworks));
         fetchTotalNetworks().then((totalNetworks: any) => setTotalNetworks(totalNetworks));
@@ -122,14 +136,20 @@ const RootComp = () => {
                 <Grid item md={10} sm={10} xs={12}>
                     <FriendGrid container spacing={2}>
                         {
-                            otherProfiles?.map((otherProfile: any) => {
+                            otherProfiles?.map((otherProfile: any, index: number) => {
                                 indexCounterArr = [];
                                 indexCounterArr2 = [];
                                 networksCounterArr = [];
                                 return (
                                     <Grid item md={4} sm={4} xs={12} key={otherProfile.id}>
                                         <FriendCard>
-                                            <CardMedia component='img' height="150" image={`images/${otherProfile?.user?.image}`} />
+                                            {
+                                                (otherProfilesUserImages.length > 0) ? (
+                                                    <CardMedia component='img' height="150" image={otherProfilesUserImages[index]} />
+                                                ) : (
+                                                    <div>Loading...</div>
+                                                )
+                                            }
                                             <CardContent>
                                                 <Typography variant="h6" align="center">
                                                     <strong>{ otherProfile?.user?.name }</strong>

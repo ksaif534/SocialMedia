@@ -14,11 +14,13 @@ import HomeIcon from '@mui/icons-material/Home';
 import GroupsIcon from '@mui/icons-material/Groups';
 import { useRouter } from "next/navigation";
 import fetchProfileUserPosts from "./fetchProfileUserPosts";
-import { SearchGroupPostContext } from "../../groups/@navbar/page";
+import { SearchGroupPostContext, SearchGroupPostsCommentsTmpDirUserImagesContext, SearchGroupPostsTmpDirFiguresContext, SearchGroupPostsTmpDirThumbnailsContext, SearchGroupPostsTmpDirUserImagesContext } from "../../groups/@navbar/page";
 import fetchGroupPosts from "./fetchGroupPosts";
 import fetchNewMsgNotificationsFromDB from "../../home/@navsidebar/fetchNewMsgNotificationsFromDB";
 import fetchNewNotificationsFromDB from "../../home/@navsidebar/fetchNewNotificationsFromDB";
 import Cookies from "js-cookie";
+import fetchTmpDirImages from "@/app/home/@navsidebar/fetchTmpDirImages";
+import path from "path";
 
 export const AppBarForUnitTesting = () => {
     return (
@@ -120,6 +122,10 @@ const RootComp = () => {
     const router = useRouter();
     const { setSrchProfilePosts, setSrchProfileKey } = useContext(ProfileSearchContext);
     const {  setSrchGrpPosts, setSrchGrpPostKey } = useContext(SearchGroupPostContext);
+    const { srchGrpPostsTmpDirThumbnails, setSrchGrpPostsTmpDirThumbnails } = useContext(SearchGroupPostsTmpDirThumbnailsContext);
+    const { srchGrpPostsTmpDirFigures ,setSrchGrpPostsTmpDirFigures } = useContext(SearchGroupPostsTmpDirFiguresContext);
+    const { setSrchGrpPostsCommentsTmpDirUserImages } = useContext(SearchGroupPostsCommentsTmpDirUserImagesContext);
+    const { srchGrpPostsTmpDirUserImages, setSrchGrpPostsTmpDirUserImages } = useContext(SearchGroupPostsTmpDirUserImagesContext);
     const authUser = Cookies.get("authUser");
     const authUserId = Cookies.get("authUserId");
     const sessionToken = Cookies.get("sessionToken");
@@ -129,13 +135,28 @@ const RootComp = () => {
     const [anchorNotifMenuEl,setAnchorNotifMenuEl] = useState<null | HTMLElement>(null);
     const [newMsgNotif,setNewMsgNotif] = useState([]);
     const [newNotif,setNewNotif] = useState([]);
+    const srchGrpPostsTmpDirThumbnailsArr: any = [...srchGrpPostsTmpDirThumbnails];
+    const srchGrpPostsTmpDirFiguresArr: any = [...srchGrpPostsTmpDirFigures];
+    const srchGrpPostsTmpDirUserImagesArr: any = [...srchGrpPostsTmpDirUserImages];
+    const [profNotifUserImages,setProfNotifUserImages] = useState([]);
+    const profNotifUserImagesArr: any = [...profNotifUserImages];
 
     useEffect(() => {
         if (authUser === "" || sessionToken === "") {
             router.push(`/auth/login`);
         }
         fetchNewMsgNotificationsFromDB(authUserId).then((newMsgNotif: any) => setNewMsgNotif(newMsgNotif));
-        fetchNewNotificationsFromDB(authUserId).then((newNotif: any) => setNewNotif(newNotif));
+        fetchNewNotificationsFromDB(authUserId).then((newNotif: any) => {
+            setNewNotif(newNotif);
+            newNotif?.map((notif: any) => {
+                fetchTmpDirImages(notif?.user?.image).then(async (imageBuffer: any) => {
+                    const buffer = await imageBuffer.arrayBuffer();
+                    const blob = new Blob([buffer],{ type: `${path.extname(notif?.user?.image).substring(1)}` });
+                    profNotifUserImagesArr.push(URL.createObjectURL(blob));
+                });
+            })
+            setProfNotifUserImages(profNotifUserImagesArr);
+        });
     },[router])
 
     const isMenuOpen = Boolean(anchorEl);
@@ -180,7 +201,46 @@ const RootComp = () => {
             setSrchGrpPostKey(event.target.value);
             if (event.target.value !== '') {
                 const searchGrpPosts = await fetchGroupPosts(event.target.value);
-                setSrchGrpPosts(searchGrpPosts);   
+                searchGrpPosts.map((srchGrpPost: any) => {
+                    fetchTmpDirImages(srchGrpPost?.thumbnail).then(async (imageBuffer: any) => {
+                        const buffer = await imageBuffer.arrayBuffer();
+                        const blob = new Blob([buffer], { type: `${path.extname(srchGrpPost?.thumbnail).substring(1)}` });
+                        srchGrpPostsTmpDirThumbnailsArr.push(URL.createObjectURL(blob));
+                    });
+                    fetchTmpDirImages(srchGrpPost?.figure).then(async (imageBuffer: any) => {
+                        const buffer = await imageBuffer.arrayBuffer();
+                        const blob = new Blob([buffer], { type: `${path.extname(srchGrpPost?.figure).substring(1)}` });
+                        srchGrpPostsTmpDirFiguresArr.push(URL.createObjectURL(blob));
+                    });
+                    fetchTmpDirImages(srchGrpPost?.user?.image).then(async (imageBuffer: any) => {
+                        const buffer = await imageBuffer.arrayBuffer();
+                        const blob = new Blob([buffer], { type: `${path.extname(srchGrpPost?.user?.image).substring(1)}` });
+                        srchGrpPostsTmpDirUserImagesArr.push(URL.createObjectURL(blob));
+                    })
+                    const tempCommentUserImages: any = [];
+                    for(const srchGrpPost of searchGrpPosts){
+                        const postImageUrls: any = [];
+                        for(const srchGrpComment of srchGrpPost.comments){
+                            fetchTmpDirImages(srchGrpComment?.user?.image).then(async (imageBuffer: any) => {
+                                const buffer = await imageBuffer.arrayBuffer();
+                                const blob = new Blob([buffer], { type: `${path.extname(srchGrpComment?.user?.image).substring(1)}` });
+                                postImageUrls.push({
+                                    comment: srchGrpComment,
+                                    blobUrl: URL.createObjectURL(blob)
+                                });
+                            });
+                        }
+                        tempCommentUserImages.push({
+                            postId: srchGrpPost?.id,
+                            commentUserImages:  postImageUrls
+                        });
+                    }
+                    setSrchGrpPostsCommentsTmpDirUserImages(tempCommentUserImages);
+                })
+                setSrchGrpPosts(searchGrpPosts);
+                setSrchGrpPostsTmpDirThumbnails(srchGrpPostsTmpDirThumbnailsArr);
+                setSrchGrpPostsTmpDirFigures(srchGrpPostsTmpDirFiguresArr);
+                setSrchGrpPostsTmpDirUserImages(srchGrpPostsTmpDirUserImagesArr);
             }
         }
     }
@@ -272,7 +332,7 @@ const RootComp = () => {
                 <RenderMobileMenu setAnchorEl={setAnchorEl} mobileMoreAnchorEl={mobileMoreAnchorEl} setMobileMoreAnchorEl={setMobileMoreAnchorEl} isMobileMenuOpen={isMobileMenuOpen} />
                 <RenderMenu anchorEl={anchorEl} setAnchorEl={setAnchorEl} setMobileMoreAnchorEl={setMobileMoreAnchorEl} isMenuOpen={isMenuOpen} />
                 <RenderMsgMenu anchorMsgEl={anchorMsgEl} setAnchorMsgEl={setAnchorMsgEl} isMsgMenuOpen={isMsgMenuOpen} />
-                <RenderNotifMenu anchorNotifMenuEl={anchorNotifMenuEl} setAnchorNotifMenuEl={setAnchorNotifMenuEl} isNotifMenuOpen={isNotifMenuOpen} />
+                <RenderNotifMenu anchorNotifMenuEl={anchorNotifMenuEl} setAnchorNotifMenuEl={setAnchorNotifMenuEl} isNotifMenuOpen={isNotifMenuOpen} newNotif={newNotif} profNotifUserImages={profNotifUserImages} />
             </Box>
         </>
     )

@@ -78,7 +78,7 @@ const itemData = [
 ];
 
 const RootComp = (props: any) => {
-    const { profilePosts, profilePostsTmpDirUserImages, profilePostsTmpDirFigures, profilePostsCommentsTmpDirUserImages , profile , otherProfile , videoPosts, videoPostsTmpDirUserImages, videoPostsTmpDirFigures, videoPostsCommentsTmpDirUserImages , acceptedProfileNetworks, recipientUser } = props;
+    const { profilePosts, profilePostsTmpDirUserImages, profilePostsTmpDirFigures, profilePostsCommentsTmpDirUserImages , profile , otherProfile , videoPosts, videoPostsTmpDirUserImages, videoPostsTmpDirFigures, videoPostsCommentsTmpDirUserImages , acceptedProfileNetworks, tmpDirAcceptedProfileNetworkUserImages , recipientUser } = props;
     const authUserId = Cookies.get("authUserId");
     const router = useRouter();
     const [user,setUser] = useState({ id: 0, email: '', password: '', image: null, is_active: 0, name: '', phone: 0 });
@@ -195,15 +195,15 @@ const RootComp = (props: any) => {
                                 <CardContent>
                                     <ImageList cols={3} rowHeight={164}>
                                         {
-                                            (acceptedProfileNetworks?.length > 0) && (
+                                            (acceptedProfileNetworks?.length > 0 && tmpDirAcceptedProfileNetworkUserImages.length > 0) && (
                                                 <>
                                                     {
-                                                        acceptedProfileNetworks.map((acceptedProfileNetwork: any) => {
+                                                        acceptedProfileNetworks.map((acceptedProfileNetwork: any,index: number) => {
                                                             if (acceptedProfileNetwork.user_id_from == profile?.user_id) {
                                                                 return (
                                                                     <ImageListItem key={acceptedProfileNetwork.id}>
                                                                         <Image
-                                                                            src={`images/${acceptedProfileNetwork?.user?.image}`}
+                                                                            src={tmpDirAcceptedProfileNetworkUserImages[index]}
                                                                             alt={acceptedProfileNetwork?.user?.image}
                                                                             loading="lazy"
                                                                             width={80}
@@ -220,8 +220,8 @@ const RootComp = (props: any) => {
                                                                             return (
                                                                                 <ImageListItem key={acceptedProfileNetwork.id}>
                                                                                     <Image
-                                                                                        src={`images/${recipientUser?.image}`}
-                                                                                        alt={acceptedProfileNetwork?.user?.image}
+                                                                                        src={tmpDirAcceptedProfileNetworkUserImages[index]}
+                                                                                        alt={tmpDirAcceptedProfileNetworkUserImages[index]}
                                                                                         loading="lazy"
                                                                                         width={80}
                                                                                         height={150}

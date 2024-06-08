@@ -37,7 +37,12 @@ export const GET = async (req: NextRequest) => {
             ]
         },
         include: {
-            user: true
+            user: true,
+            comments: {
+                include: {
+                    user: true
+                }
+            }
         }
     });
     return new Response(JSON.stringify(grpPosts));

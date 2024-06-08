@@ -5,7 +5,11 @@ export const GET = async () => {
     const groupPosts = await prisma.posts.findMany({
         include: {
             user: true,
-            comments: true
+            comments: {
+                include: {
+                    user: true
+                }
+            }
         },
         where: {
             is_group: 1

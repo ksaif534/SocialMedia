@@ -24,6 +24,9 @@ export const GET = async (req: NextRequest) => {
                     read_at: null
                 }
             ]
+        },
+        include: {
+            user: true
         }
     });
     return new Response(JSON.stringify(getNewNotif));
