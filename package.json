@@ -14,15 +14,15 @@
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
-    "@mui/icons-material": "^5.15.17",
-    "@mui/material": "^5.15.17",
-    "@prisma/client": "^5.13.0",
+    "@mui/icons-material": "^5.15.19",
+    "@mui/material": "^5.15.19",
+    "@prisma/client": "^5.15.0",
     "@pusher/push-notifications-server": "^1.2.6",
     "@pusher/push-notifications-web": "^1.1.0",
     "@types/node": "20.5.0",
     "@types/react": "18.2.20",
     "@types/react-dom": "18.2.7",
-    "axios": "^1.6.8",
+    "axios": "^1.7.2",
     "bcryptjs": "^2.4.3",
     "encoding": "^0.1.13",
     "eslint": "8.47.0",
@@ -32,12 +32,12 @@
     "next": "^13.5.6",
     "node-fetch": "^3.3.2",
     "os": "^0.1.2",
-    "prisma": "^5.13.0",
+    "prisma": "^5.15.0",
     "pusher": "^5.2.0",
     "pusher-js": "8.4.0-rc2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "sweetalert2": "^11.11.0",
+    "sweetalert2": "^11.11.1",
     "typescript": "5.1.6"
   },
   "devDependencies": {
@@ -47,8 +47,8 @@
     "@types/js-cookie": "^3.0.6",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/ws": "^8.5.10",
-    "@vitejs/plugin-react": "^4.2.1",
-    "jsdom": "^24.0.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "jsdom": "^24.1.0",
     "vitest": "^1.6.0"
   }
 }
