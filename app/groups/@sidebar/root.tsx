@@ -11,10 +11,6 @@ import SearchIcon from '@mui/icons-material/Search'
 import GroupInputModalForm from "./modal"
 import fetchAllGroups from "./fetchAllGroups"
 import searchGroup from "./searchGroup"
-import fetchTmpDirImages from "@/app/home/@navsidebar/fetchTmpDirImages"
-import path from "path"
-import { GroupUserImageContext } from "../@groupDetails/@people/root"
-import { GroupPhotoTmpDirContext } from "../@groupDetails/root"
 
 export const SidebarGroupsForUnitTesting = () => {
     return (
@@ -54,25 +50,11 @@ const RootComp = () => {
     const [checkGrpDetails,setCheckGrpDetails] = useState(false);
     const [groups,setGroups] = useState([]);
     const [group,setGroup] = useState({ user_id: 0, name: '', description: '', status: 0, group_photo: null });
-    const [groupPhotos,setGroupPhotos] = useState([]);
-    const groupPhotosArr: any = [...groupPhotos];
     const { srchGrp ,setSrchGrp, srchGrpKey , setSrchGrpKey } = useContext(SearchGroupContext);
-    const { setGrpUserImage } = useContext(GroupUserImageContext);
-    const { grpPhotoTmpDir, setGrpPhotoTmpDir } = useContext(GroupPhotoTmpDirContext);
 
     useEffect(() => {
         fetchAllGroups().then((grps: any) => {
             setGroups(grps);
-            grps.map((grp: any) => {
-                if (grp?.group_photo) {
-                    fetchTmpDirImages(grp?.group_photo).then(async (imageBuffer: any) => {
-                        const buffer = await imageBuffer.arrayBuffer();
-                        const blob = new Blob([buffer],{ type: `${path.extname(grp?.group_photo).substring(1)}` });
-                        groupPhotosArr.push(URL.createObjectURL(blob));
-                    })   
-                }
-            });
-            setGroupPhotos(groupPhotosArr);
         });
     },[])
 
@@ -83,16 +65,6 @@ const RootComp = () => {
     const handleGroupClick = (group: any) => {
         setCheckGrpDetails(true);
         setGroup(group);
-        fetchTmpDirImages(group?.user?.image).then(async (imageBuffer: any) => {
-            const buffer = await imageBuffer.arrayBuffer();
-            const blob = new Blob([buffer],{ type: `${path.extname(group?.user?.image).substring(1)}` });
-            setGrpUserImage(URL.createObjectURL(blob));
-        });
-        fetchTmpDirImages(group?.group_photo).then(async (imageBuffer: any) => {
-            const buffer = await imageBuffer.arrayBuffer();
-            const blob = new Blob([buffer],{ type: `${path.extname(group?.group_photo).substring(1)}` });
-            setGrpPhotoTmpDir(URL.createObjectURL(blob));
-        })
     }
 
     const handleSrchGrp = async (event: any) => {
@@ -221,8 +193,8 @@ const RootComp = () => {
                                                                 <SidebarContentGridItem item md={2} sm={2} xs={12}>
                                                                     <Box>
                                                                         {
-                                                                            (groupPhotos.length > 0) ? (
-                                                                                <GroupAvatar alt={group.name} src={groupPhotos[index]} />
+                                                                            (group.group_photo) ? (
+                                                                                <GroupAvatar alt={group.name} src={group?.group_photo} />
                                                                             ) : (
                                                                                 <div key={index}>Click group to see</div>
                                                                             )

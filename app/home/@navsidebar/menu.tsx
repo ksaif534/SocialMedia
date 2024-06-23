@@ -15,9 +15,6 @@ import makeNotificationRead from './makeNotificationRead'
 import Swal from 'sweetalert2'
 import makeMsgNotificationAsRead from './makeMsgNotificationAsRead'
 import Cookies from 'js-cookie'
-import fetchTmpDirImages from './fetchTmpDirImages'
-import Image from 'next/image'
-import path from 'path'
 
 export const menuId = 'primary-search-account-menu';
 export const mobileMenuId = 'primary-search-account-menu-mobile';
@@ -28,17 +25,11 @@ export const RenderMenu = (props: any) => {
     const { anchorEl, setAnchorEl } = props;
     const authUserId = Cookies.get("authUserId");
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
-    const [currentUser,setCurrentUser] = useState({ id: 0, email: '', password: '', image: null, is_active: 0, name: '', phone: 0 })
-    const [tmpDirImage,setTmpDirImage] = useState('');
+    const [currentUser,setCurrentUser] = useState({ id: 0, email: '', password: '', image: '', is_active: 0, name: '', phone: 0 })
 
     useEffect(() => {
         fetchUser(authUserId).then((cUser: any) => {
             setCurrentUser(cUser);
-            fetchTmpDirImages(cUser?.image).then(async (imageBuffer: any) => {
-                const buffer = await imageBuffer.arrayBuffer();
-                const blob = new Blob([buffer], { type: `${path.extname(cUser?.image).substring(1)}` });
-                setTmpDirImage(URL.createObjectURL(blob));
-            });
         });
     },[])
 
@@ -89,7 +80,7 @@ export const RenderMenu = (props: any) => {
                 aria-haspopup="true"
                 color="inherit"
                 >
-                    <Avatar src={tmpDirImage} />
+                    <Avatar src={currentUser?.image} />
                     My Profile
                 </IconButton>
             </MenuItem>

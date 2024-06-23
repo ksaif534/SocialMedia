@@ -52,14 +52,14 @@ const PostInputModalForm = (props: any) => {
             if (figureInput instanceof HTMLInputElement && figureInput.type == 'file') {
                 if (figureInput.files) {
                     const figure = figureInput.files[0];
-                    fData.append('figure',figure);
+                    fData.append("figure",figure);
                 }
             }
             const thumbInput = document.getElementById('thumbnail');
             if (thumbInput instanceof HTMLInputElement && thumbInput.type == 'file') {
                 if (thumbInput.files) {
                     const thumbnail = thumbInput.files[0];
-                    fData.append('thumbnail',thumbnail);
+                    fData.append("thumbnail",thumbnail);
                 }
             }
             fData.append('fileObj',JSON.stringify(fileData));

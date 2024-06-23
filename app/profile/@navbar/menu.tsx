@@ -15,7 +15,7 @@ export const RenderMenu = (props: any) => {
     const router = useRouter();
     const authUserId = Cookies.get("authUserId");
     const { anchorEl, setAnchorEl, setMobileMoreAnchorEl , isMenuOpen } = props;
-    const [currentUser,setCurrentUser] = useState({ id: 0, email: '', password: '', image: null, is_active: 0, name: '', phone: 0 })
+    const [currentUser,setCurrentUser] = useState({ id: 0, email: '', password: '', image: '', is_active: 0, name: '', phone: 0 })
 
     useEffect(() => {
         fetchUser(authUserId).then((currentUser: any) => setCurrentUser(currentUser));
@@ -65,7 +65,7 @@ export const RenderMenu = (props: any) => {
                 aria-haspopup="true"
                 color="inherit"
                 >
-                    <Avatar src={`images/${currentUser?.image}`} />
+                    <Avatar src={currentUser?.image} />
                     My Profile
                 </IconButton>
             </MenuItem>

@@ -11,8 +11,6 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import removeMsg from "./removeMsg";
 import Swal from "sweetalert2";
 import Cookies from "js-cookie";
-import fetchTmpDirImages from "./fetchTmpDirImages";
-import path from "path";
 
 
 export const ModalMessageChatForUnitTesting = () => {
@@ -86,23 +84,17 @@ const ModalMessageChats = (props: any) => {
     const { user } = props;
     const authUserId = Cookies.get("authUserId");
     const [open,setOpen] = useState(false);
-    const [sender,setSender] = useState({ id: 0, name: '', email: '', password: '', image: null, phone: 0, is_active: 0 });
+    const [sender,setSender] = useState({ id: 0, name: '', email: '', password: '', image: '', phone: 0, is_active: 0 });
     const [chats,setChats] = useState([]);
     let chatsArr: any = useMemo(() => chats.map(chat => chat),[...chats]);
     const [messageToSend,setMessageToSend] = useState("");
     const [removeMsgMenuAnchorEl,setRemoveMsgMenuAnchorEl] = useState<null | HTMLElement>(null);
     const removeMsgMenuOpen = Boolean(removeMsgMenuAnchorEl);
-    const [tmpDirImage,setTmpDirImage] = useState("");
 
     useEffect(() => {
         fetchUser(authUserId).then((user: any) => {
             setSender(user);
         });
-        fetchTmpDirImages(user?.image).then(async (imageBuffer: any) => {
-            const buffer = await imageBuffer.arrayBuffer();
-            const blob = new Blob([buffer], { type: `${path.extname(user?.image).substring(1)}` })
-            setTmpDirImage(URL.createObjectURL(blob));
-        })
         // const pusher = new Pusher(`${process.env.NEXT_PUBLIC_KEY}`,{
         //     cluster: "ap2",
         //     authEndpoint: `api/home/pusher/auth`,
@@ -197,7 +189,7 @@ const ModalMessageChats = (props: any) => {
             <ModalMessageChatsButtonBase onClick={handleOpen}>
                 <Grid container spacing={2}>
                     <Grid item md={2} sm={2} xs={12}>
-                        <ProfileLogo name={user.name} imageUrl={tmpDirImage} />
+                        <ProfileLogo name={user.name} imageUrl={user?.image} />
                     </Grid>
                     <Grid item md={10} sm={10} xs={12}>
                         <Typography variant="h6"><strong>{ user.name }</strong></Typography>    
@@ -297,7 +289,7 @@ const ModalMessageChats = (props: any) => {
                                 <br />
                                 <Grid container spacing={2}>
                                     <Grid item md={1} sm={1} xs={12}>
-                                        <ProfileLogo name={sender.name} imageUrl={`images/${sender?.image}`} />
+                                        <ProfileLogo name={sender.name} imageUrl={sender?.image} />
                                     </Grid>
                                     <Grid item md={10} sm={10} xs={12}>
                                         <ModalMessageChatFormTextField title="Enter Your Message" placeholder="Type Your Message Here" name="message" value={messageToSend} onChange={handleMessageChange} />

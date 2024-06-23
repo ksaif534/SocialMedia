@@ -1,7 +1,7 @@
 'use client'
 import { Box, CardMedia, Menu, MenuItem, Tab, Typography } from "@mui/material"
 import { GroupCoverHeadingCard, GroupCoverHeadingDivider, GroupCoverHeadingEndDiv, GroupCoverHeadingStartDiv, GroupCoverHeadingTabWrapperDiv, GroupCoverHeadingTabs, GroupCoverHeadingWrapper, GroupCoverHeadingWrapperDiv, InviteButton, JoinButton } from "./style"
-import { createContext, useContext, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import Discussion from "./@discussion/page"
 import Featured from "./@featured/page"
 import People from "./@people/page"
@@ -15,7 +15,6 @@ import Swal from "sweetalert2"
 import fetchGroupMembers from "./fetchGroupMembers"
 import leaveGroup from "./leaveGroup"
 import Cookies from "js-cookie"
-import SearchGroupModTmpDirUserImagesProviderLayout from "./@people/@searchGroupModTmpDirUserImagesContextProvider/layout"
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -49,19 +48,8 @@ const a11yProps = (index: number) => {
     }
 }
 
-interface GroupPhotoTmpDirContextProps{
-    grpPhotoTmpDir: string,
-    setGrpPhotoTmpDir: (newGrpPhotosTmpDir: any) => void
-}
-
-export const GroupPhotoTmpDirContext = createContext<GroupPhotoTmpDirContextProps>({
-    grpPhotoTmpDir: '',
-    setGrpPhotoTmpDir: () => {}
-})
-
 export const RootComp = (props: any) => {
     const { group } = props;
-    const { grpPhotoTmpDir, setGrpPhotoTmpDir } = useContext(GroupPhotoTmpDirContext);
     const authUserId = Cookies.get("authUserId");
     const [groupHeadingTabValue,setGroupHeadingTabValue] = useState(0);
     const [anchorEl,setAnchorEl] = useState<null | HTMLElement>(null);
@@ -161,85 +149,83 @@ export const RootComp = (props: any) => {
 
     return (
         <>
-            <SearchGroupModTmpDirUserImagesProviderLayout>
-                <GroupCoverHeadingWrapper>
-                    <GroupCoverHeadingCard>
+            <GroupCoverHeadingWrapper>
+                <GroupCoverHeadingCard>
+                    {
+                        (group?.group_photo) ? (
+                            <CardMedia image={group?.group_photo} title={group.name} sx={{ height: 250 }} key={group?.id} />
+                        ): (
+                            <div key={group?.id}>Loading...</div>
+                        )
+                    }
+                </GroupCoverHeadingCard>
+                <GroupCoverHeadingWrapperDiv>
+                    <GroupCoverHeadingStartDiv>
+                        <Typography variant="h5"><strong>{ group.name }</strong></Typography>
+                    </GroupCoverHeadingStartDiv>
+                    <GroupCoverHeadingEndDiv>
                         {
-                            (grpPhotoTmpDir) ? (
-                                <CardMedia image={grpPhotoTmpDir} title={group.name} sx={{ height: 250 }} key={group?.id} />
-                            ): (
-                                <div key={group?.id}>Loading...</div>
+                            groupMembers.map((groupMember: any, index: number) => {
+                                if (groupMember.group_id == group.id && groupMember.user_id == authUserId) {
+                                    counter++;
+                                }
+                                if (counter > 0 && index == groupMembers.length - 1) {
+                                    return (
+                                        <div key={groupMember.id}>
+                                            <JoinButton id="joined-button-basic" aria-controls={ open ? 'basic-menu' : undefined } aria-haspopup="true" aria-expanded={ open ? 'true': undefined } onClick={handleJoinedButtonClick} variant="contained" color="success">
+                                                <DoneIcon fontSize="large" />
+                                                <Typography variant="h6">Joined</Typography>
+                                                <ArrowDropDownIcon fontSize="large" />
+                                            </JoinButton>
+                                            <Menu 
+                                            id="joined-button-basic-menu" 
+                                            anchorEl={anchorEl} 
+                                            open={open} 
+                                            onClose={handleJoinedButtonClose}
+                                            MenuListProps={{ 'aria-labelledby': 'joined-button-basic' }}
+                                            >
+                                                <MenuItem onClick={handleGroupLeave}>
+                                                    <CancelPresentationIcon fontSize="large" />
+                                                    Leave Group
+                                                </MenuItem>
+                                            </Menu>
+                                        </div>
+                                    )
+                                }
+                            })
+                        }
+                        {
+                            (counter == 0) && (
+                                <JoinButton variant="contained" color="success" onClick={handleGroupJoin}>
+                                    <AddIcon fontSize="medium" />
+                                    <Typography variant="h6">Join Group</Typography>
+                                </JoinButton>
                             )
                         }
-                    </GroupCoverHeadingCard>
-                    <GroupCoverHeadingWrapperDiv>
-                        <GroupCoverHeadingStartDiv>
-                            <Typography variant="h5"><strong>{ group.name }</strong></Typography>
-                        </GroupCoverHeadingStartDiv>
-                        <GroupCoverHeadingEndDiv>
-                            {
-                                groupMembers.map((groupMember: any, index: number) => {
-                                    if (groupMember.group_id == group.id && groupMember.user_id == authUserId) {
-                                        counter++;
-                                    }
-                                    if (counter > 0 && index == groupMembers.length - 1) {
-                                        return (
-                                            <div key={groupMember.id}>
-                                                <JoinButton id="joined-button-basic" aria-controls={ open ? 'basic-menu' : undefined } aria-haspopup="true" aria-expanded={ open ? 'true': undefined } onClick={handleJoinedButtonClick} variant="contained" color="success">
-                                                    <DoneIcon fontSize="large" />
-                                                    <Typography variant="h6">Joined</Typography>
-                                                    <ArrowDropDownIcon fontSize="large" />
-                                                </JoinButton>
-                                                <Menu 
-                                                id="joined-button-basic-menu" 
-                                                anchorEl={anchorEl} 
-                                                open={open} 
-                                                onClose={handleJoinedButtonClose}
-                                                MenuListProps={{ 'aria-labelledby': 'joined-button-basic' }}
-                                                >
-                                                    <MenuItem onClick={handleGroupLeave}>
-                                                        <CancelPresentationIcon fontSize="large" />
-                                                        Leave Group
-                                                    </MenuItem>
-                                                </Menu>
-                                            </div>
-                                        )
-                                    }
-                                })
-                            }
-                            {
-                                (counter == 0) && (
-                                    <JoinButton variant="contained" color="success" onClick={handleGroupJoin}>
-                                        <AddIcon fontSize="medium" />
-                                        <Typography variant="h6">Join Group</Typography>
-                                    </JoinButton>
-                                )
-                            }
-                        </GroupCoverHeadingEndDiv>
-                    </GroupCoverHeadingWrapperDiv>
-                    <GroupCoverHeadingTabWrapperDiv>
-                        <GroupCoverHeadingDivider />
-                        <Box sx={{ width: '100%' }}>
-                            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                                <GroupCoverHeadingTabs value={groupHeadingTabValue} onChange={handleTabChange} aria-label="group-heading-tabs">
-                                    <Tab label="Discussion" {...a11yProps(0)} />
-                                    <Tab label="Featured" {...a11yProps(1)} />
-                                    <Tab label="People" {...a11yProps(2)} />
-                                </GroupCoverHeadingTabs>
-                                <GroupHeadingTabPanel value={groupHeadingTabValue} index={0}>
-                                    <Discussion group={group} />
-                                </GroupHeadingTabPanel>
-                                <GroupHeadingTabPanel value={groupHeadingTabValue} index={1}>
-                                    <Featured group={group} />
-                                </GroupHeadingTabPanel>
-                                <GroupHeadingTabPanel value={groupHeadingTabValue} index={2}>
-                                    <People group={group} />
-                                </GroupHeadingTabPanel>
-                            </Box>
+                    </GroupCoverHeadingEndDiv>
+                </GroupCoverHeadingWrapperDiv>
+                <GroupCoverHeadingTabWrapperDiv>
+                    <GroupCoverHeadingDivider />
+                    <Box sx={{ width: '100%' }}>
+                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                            <GroupCoverHeadingTabs value={groupHeadingTabValue} onChange={handleTabChange} aria-label="group-heading-tabs">
+                                <Tab label="Discussion" {...a11yProps(0)} />
+                                <Tab label="Featured" {...a11yProps(1)} />
+                                <Tab label="People" {...a11yProps(2)} />
+                            </GroupCoverHeadingTabs>
+                            <GroupHeadingTabPanel value={groupHeadingTabValue} index={0}>
+                                <Discussion group={group} />
+                            </GroupHeadingTabPanel>
+                            <GroupHeadingTabPanel value={groupHeadingTabValue} index={1}>
+                                <Featured group={group} />
+                            </GroupHeadingTabPanel>
+                            <GroupHeadingTabPanel value={groupHeadingTabValue} index={2}>
+                                <People group={group} />
+                            </GroupHeadingTabPanel>
                         </Box>
-                    </GroupCoverHeadingTabWrapperDiv>
-                </GroupCoverHeadingWrapper>
-            </SearchGroupModTmpDirUserImagesProviderLayout>
+                    </Box>
+                </GroupCoverHeadingTabWrapperDiv>
+            </GroupCoverHeadingWrapper>
         </>
     )
 }

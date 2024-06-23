@@ -14,48 +14,11 @@ import fetchNewMsgNotificationsFromDB from './fetchNewMsgNotificationsFromDB'
 import searchPosts from './searchPosts'
 import { SearchContext } from './root'
 import Cookies from 'js-cookie'
-import fetchTmpDirImages from './fetchTmpDirImages'
-import path from 'path'
-
-interface srchPostsTmpDirUserImagesContextProps{
-    srchPostsTmpDirUserImages: any,
-    setSrchPostsTmpDirUserImages: (newSrchPostTmpDirUserImages: any) => void
-}
-
-export const srchPostsTmpDirUserImagesContext = createContext<srchPostsTmpDirUserImagesContextProps>({
-    srchPostsTmpDirUserImages: [],
-    setSrchPostsTmpDirUserImages: () => {}
-})
-
-interface srchPostsTmpDirFiguresContextProps{
-    srchPostsTmpDirFigures: any,
-    setSrchPostsTmpDirFigures: (newSrchPostTmpDirFigures: any) => void
-}
-
-export const srchPostsTmpDirFiguresContext = createContext<srchPostsTmpDirFiguresContextProps>({
-    srchPostsTmpDirFigures: [],
-    setSrchPostsTmpDirFigures: () => {}
-})
-
-interface srchPostsCommentsTmpDirUserImagesContextProps{
-    srchPostsCommentsTmpDirUserImages: any,
-    setSrchPostsCommentsTmpDirUserImages: (newSrchPostsCommentsTmpDirUserImages: any) => void
-}
-
-export const srchPostsCommentsTmpDirUserImagesContext = createContext<srchPostsCommentsTmpDirUserImagesContextProps>({
-    srchPostsCommentsTmpDirUserImages: [],
-    setSrchPostsCommentsTmpDirUserImages: () => {}
-})
 
 export const AppBarComp = (props: any) => {
     const { setAnchorEl, setMsgAnchorEl, setNotifAnchorEl, open, setOpen, auth } = props;
     const { srchPosts,setSrchPosts, srchKey, setSrchKey } = useContext(SearchContext);
-    const { srchPostsTmpDirUserImages, setSrchPostsTmpDirUserImages } = useContext(srchPostsTmpDirUserImagesContext);
-    const { srchPostsCommentsTmpDirUserImages, setSrchPostsCommentsTmpDirUserImages } = useContext(srchPostsCommentsTmpDirUserImagesContext);
-    const { srchPostsTmpDirFigures, setSrchPostsTmpDirFigures } = useContext(srchPostsTmpDirFiguresContext);
     const authUserId = Cookies.get("authUserId");
-    const srchPostsTmpDirUserImagesArr: any = [...srchPostsTmpDirUserImages];
-    const srchPostsTmpDirFiguresArr: any = [...srchPostsTmpDirFigures];
     const [newNotif,setNewNotif] = useState([]);
     const [newMsgNotif,setNewMsgNotif] = useState([]);
 
@@ -85,39 +48,6 @@ export const AppBarComp = (props: any) => {
         if (event.target.value !== '') {
             const searchedPosts = await searchPosts(event.target.value);
             setSrchPosts(searchedPosts);
-            searchedPosts.map((srchPost: any) => {
-                fetchTmpDirImages(srchPost?.user?.image).then(async (imageBuffer: any) => {
-                    const buffer = await imageBuffer.arrayBuffer();
-                    const blob1 = new Blob([buffer], { type: `${path.extname(srchPost?.user?.image).substring(1)}` });
-                    srchPostsTmpDirUserImagesArr.push(URL.createObjectURL(blob1));
-                });
-                fetchTmpDirImages(srchPost?.figure).then(async (imageBuffer: any) => {
-                    const buffer = await imageBuffer.arrayBuffer();
-                    const blob1 = new Blob([buffer], { type: `${path.extname(srchPost?.figure).substring(1)}` });
-                    srchPostsTmpDirFiguresArr.push(URL.createObjectURL(blob1));
-                })
-            });
-            const tempCommentUserImages: any = [];
-            for(const searchPost of searchedPosts){
-                const postImageUrls: any = [];
-                for(const searchComment of searchPost.comments){
-                    fetchTmpDirImages(searchComment?.user?.image).then(async (imageBuffer: any) => {
-                        const buffer = await imageBuffer.arrayBuffer();
-                        const blob = new Blob([buffer], { type: `${path.extname(searchComment?.user?.image).substring(1)}` });
-                        postImageUrls.push({
-                            comment: searchComment,
-                            blobUrl: URL.createObjectURL(blob)
-                        });
-                    });
-                }
-                tempCommentUserImages.push({
-                    postId: searchPost?.id,
-                    commentUserImages: postImageUrls
-                });
-            }
-            setSrchPostsTmpDirUserImages(srchPostsTmpDirUserImagesArr);   
-            setSrchPostsTmpDirFigures(srchPostsTmpDirFiguresArr);
-            setSrchPostsCommentsTmpDirUserImages(tempCommentUserImages);
         }
     }
     

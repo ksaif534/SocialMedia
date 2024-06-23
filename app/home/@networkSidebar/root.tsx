@@ -1,5 +1,5 @@
 'use client'
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import React from 'react'
 import ProfileLogo from "../@profileLogo/page";
 import SearchIcon from '@mui/icons-material/Search';
@@ -11,8 +11,6 @@ import fetchUsers from "../../auth/login/fetchUsers";
 import MessageModalChats, { ModalMessageChatForUnitTesting } from '../@navsidebar/msgModal';
 import fetchPendingRecipientUserNetworks from "./fetchPendingRecipientUserNetworks";
 import Cookies from "js-cookie";
-import fetchTmpDirImages from "../@navsidebar/fetchTmpDirImages";
-import path from "path";
 
 export const ContactCardForUnitTesting = () => {
     return (
@@ -75,20 +73,10 @@ const RootComp = () => {
     const [anchorChatEl,setAnchorChatEl] = useState<null | HTMLElement>(null);
     const [users,setUsers] = useState([]);
     const [pendingRecipientUserNetworks,setPendingRecipientUserNetworks] = useState([]);
-    const [tmpDirImages,setTmpDirImages] = useState([]);
-    const tmpDirImagesArr: any = [...tmpDirImages];
 
     useEffect(() => {
         fetchUsers().then((users: any) => {
             setUsers(users);
-            users.map((user: any) => {
-                fetchTmpDirImages(user?.image).then(async (imageBuffer: any) => {
-                    const buffer = await imageBuffer.arrayBuffer();
-                    const blob = new Blob([buffer], { type: `${path.extname(user?.image).substring(1)}` })
-                    tmpDirImagesArr.push(URL.createObjectURL(blob));
-                })
-            })
-            setTmpDirImages(tmpDirImagesArr);
         });
         fetchPendingRecipientUserNetworks(authUserId).then((pendingRecipientUserNetworks: any) => setPendingRecipientUserNetworks(pendingRecipientUserNetworks));
     },[])
@@ -138,7 +126,7 @@ const RootComp = () => {
                                                 return (
                                                     <Grid container spacing={2} key={user.id}>
                                                         <Grid item md={2} sm={2} xs={2}>
-                                                            <ProfileLogo name={user.name} imageUrl={tmpDirImages[index]} />
+                                                            <ProfileLogo name={user.name} imageUrl={user?.image} />
                                                         </Grid>
                                                         <Grid item md={8} sm={8} xs={8}>
                                                             <Typography variant="h6"><strong>{ user.name }</strong></Typography> 

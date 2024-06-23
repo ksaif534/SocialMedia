@@ -78,7 +78,7 @@ const itemData = [
 ];
 
 const RootComp = (props: any) => {
-    const { profilePosts, profilePostsTmpDirUserImages, profilePostsTmpDirFigures, profilePostsCommentsTmpDirUserImages , profile , otherProfile , videoPosts, videoPostsTmpDirUserImages, videoPostsTmpDirFigures, videoPostsCommentsTmpDirUserImages , acceptedProfileNetworks, tmpDirAcceptedProfileNetworkUserImages , recipientUser } = props;
+    const { profilePosts , profile , otherProfile , videoPosts , acceptedProfileNetworks , recipientUser } = props;
     const authUserId = Cookies.get("authUserId");
     const router = useRouter();
     const [user,setUser] = useState({ id: 0, email: '', password: '', image: null, is_active: 0, name: '', phone: 0 });
@@ -195,7 +195,7 @@ const RootComp = (props: any) => {
                                 <CardContent>
                                     <ImageList cols={3} rowHeight={164}>
                                         {
-                                            (acceptedProfileNetworks?.length > 0 && tmpDirAcceptedProfileNetworkUserImages.length > 0) && (
+                                            (acceptedProfileNetworks?.length > 0) && (
                                                 <>
                                                     {
                                                         acceptedProfileNetworks.map((acceptedProfileNetwork: any,index: number) => {
@@ -203,7 +203,7 @@ const RootComp = (props: any) => {
                                                                 return (
                                                                     <ImageListItem key={acceptedProfileNetwork.id}>
                                                                         <Image
-                                                                            src={tmpDirAcceptedProfileNetworkUserImages[index]}
+                                                                            src={acceptedProfileNetwork?.user?.image}
                                                                             alt={acceptedProfileNetwork?.user?.image}
                                                                             loading="lazy"
                                                                             width={80}
@@ -220,8 +220,8 @@ const RootComp = (props: any) => {
                                                                             return (
                                                                                 <ImageListItem key={acceptedProfileNetwork.id}>
                                                                                     <Image
-                                                                                        src={tmpDirAcceptedProfileNetworkUserImages[index]}
-                                                                                        alt={tmpDirAcceptedProfileNetworkUserImages[index]}
+                                                                                        src={acceptedProfileNetwork?.user?.image}
+                                                                                        alt={acceptedProfileNetwork?.user?.image}
                                                                                         loading="lazy"
                                                                                         width={80}
                                                                                         height={150}
@@ -246,7 +246,7 @@ const RootComp = (props: any) => {
                         </Grid>
                         <Grid item md={8} sm={12} xs={12}>
                             <PostInput />
-                            <Posts posts={profilePosts} profilePostsTmpDirUserImages={profilePostsTmpDirUserImages} profilePostsTmpDirFigures={profilePostsTmpDirFigures} profilePostsCommentsTmpDirUserImages={profilePostsCommentsTmpDirUserImages} videoPosts={videoPosts} videoPostsTmpDirUserImages={videoPostsTmpDirUserImages} videoPostsTmpDirFigures={videoPostsTmpDirFigures} videoPostsCommentsTmpDirUserImages={videoPostsCommentsTmpDirUserImages} />
+                            <Posts posts={profilePosts} videoPosts={videoPosts} />
                         </Grid>
                     </Grid>
                 </Grid>

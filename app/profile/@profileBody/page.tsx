@@ -2,11 +2,11 @@ import React from "react";
 import RootComp from './root'
 
 const ProfileBody = (props: any) => {
-    const { profilePosts, profile , otherProfile, videoPosts , profileNetworks, acceptedProfileNetworks, tmpDirAcceptedProfileNetworkUserImages , recipientUser, profilePostsTmpDirUserImages, profilePostsTmpDirFigures, profilePostsCommentsTmpDirUserImages, videoPostsTmpDirUserImages, videoPostsTmpDirFigures, videoPostsCommentsTmpDirUserImages } = props;
+    const { profilePosts, profile , otherProfile, videoPosts , profileNetworks, acceptedProfileNetworks , recipientUser } = props;
 
     return (
         <>
-            <RootComp profilePosts={profilePosts} profilePostsTmpDirUserImages={profilePostsTmpDirUserImages} profilePostsTmpDirFigures={profilePostsTmpDirFigures} profilePostsCommentsTmpDirUserImages={profilePostsCommentsTmpDirUserImages} videoPostsTmpDirUserImages={videoPostsTmpDirUserImages} videoPostsTmpDirFigures={videoPostsTmpDirFigures} videoPostsCommentsTmpDirUserImages={videoPostsCommentsTmpDirUserImages} profile={profile} profileNetworks={profileNetworks} otherProfile={otherProfile} videoPosts={videoPosts} acceptedProfileNetworks={acceptedProfileNetworks} tmpDirAcceptedProfileNetworkUserImages={tmpDirAcceptedProfileNetworkUserImages} recipientUser={recipientUser} />
+            <RootComp profilePosts={profilePosts} profile={profile} profileNetworks={profileNetworks} otherProfile={otherProfile} videoPosts={videoPosts} acceptedProfileNetworks={acceptedProfileNetworks} recipientUser={recipientUser} />
         </>
     )
 }

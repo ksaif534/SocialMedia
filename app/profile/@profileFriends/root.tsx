@@ -10,8 +10,6 @@ import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import searchAcceptedProfileNetworks from "./searchAcceptedProfileNetworks";
 import unfriendProfile from "./unfriendProfile";
-import fetchTmpDirImages from "@/app/home/@navsidebar/fetchTmpDirImages";
-import path from "path";
 
 interface ProfileFriendsSearchContextProps{
     srchProfFriends: Array<any>,
@@ -27,22 +25,10 @@ export const ProfileFriendsSearchContext = createContext<ProfileFriendsSearchCon
     setSrchProfFriendsKey: () => {}
 })
 
-interface SearchProfFriendsTmpDirUserImagesContextProps{
-    srchProfFriendsTmpDirUserImages: Array<any>,
-    setSrchProfFriendsTmpDirUserImages: (newSrchProfFriendsTmpDirUserImages: any) => void
-}
-
-export const SearchProfFriendsTmpDirUserImagesContext = createContext<SearchProfFriendsTmpDirUserImagesContextProps>({
-    srchProfFriendsTmpDirUserImages: [],
-    setSrchProfFriendsTmpDirUserImages: () => {}
-})
-
 const RootComp = (props: any) => {
     const router = useRouter();
-    const { updateProfile, acceptedProfileNetworks, tmpDirAcceptedProfileNetworkUserImages , profile, recipientUser } = props;
+    const { updateProfile, acceptedProfileNetworks , profile, recipientUser } = props;
     const { srchProfFriends, setSrchProfFriends, srchProfFriendsKey, setSrchProfFriendsKey } = useContext(ProfileFriendsSearchContext);
-    const { srchProfFriendsTmpDirUserImages, setSrchProfFriendsTmpDirUserImages } = useContext(SearchProfFriendsTmpDirUserImagesContext);
-    const srchProfFriendsTmpDirUserImagesArr: any = [...srchProfFriendsTmpDirUserImages]
 
     const [anchorEl,setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -141,15 +127,7 @@ const RootComp = (props: any) => {
         setSrchProfFriendsKey(event.target.value);
         if (event.target.value !== '') {
             const searchProfileFriends = await searchAcceptedProfileNetworks(profile?.user_id,event.target.value);
-            setSrchProfFriends(searchProfileFriends);  
-            searchProfileFriends.map((srchProfFriend: any) => {
-                fetchTmpDirImages(srchProfFriend?.user?.image).then(async (imageBuffer: any) => {
-                    const buffer = await imageBuffer.arrayBuffer();
-                    const blob = new Blob([buffer],{ type: `${path.extname(srchProfFriend?.user?.image).substring(1)}` });
-                    srchProfFriendsTmpDirUserImagesArr.push(URL.createObjectURL(blob));
-                });
-            });
-            setSrchProfFriendsTmpDirUserImages(srchProfFriendsTmpDirUserImagesArr);
+            setSrchProfFriends(searchProfileFriends);
         }
     }
 
@@ -207,7 +185,7 @@ const RootComp = (props: any) => {
                                                                             <FriendListItemPaper elevation={3}>
                                                                                 <Grid container spacing={2}>
                                                                                     <Grid item md={4} sm={4} xs={12}>
-                                                                                        <FriendsAvatar src={srchProfFriendsTmpDirUserImages[index]} onClick={() => handleProfileClick(profileNetwork)} />
+                                                                                        <FriendsAvatar src={profile?.user?.image} onClick={() => handleProfileClick(profileNetwork)} />
                                                                                     </Grid>
                                                                                     <Grid item md={4} sm={4} xs={12}>
                                                                                         <FriendsNamesTG>
@@ -264,7 +242,7 @@ const RootComp = (props: any) => {
                                                                 <FriendListItemPaper elevation={3}>
                                                                     <Grid container spacing={2}>
                                                                         <Grid item md={4} sm={4} xs={12}>
-                                                                            <FriendsAvatar src={tmpDirAcceptedProfileNetworkUserImages[index]} onClick={() => handleProfileClick(profileNetwork)} />
+                                                                            <FriendsAvatar src={profileNetwork?.user?.image} onClick={() => handleProfileClick(profileNetwork)} />
                                                                         </Grid>
                                                                         <Grid item md={4} sm={4} xs={12}>
                                                                             <FriendsNamesTG>
@@ -311,7 +289,7 @@ const RootComp = (props: any) => {
                                                                             <FriendListItemPaper elevation={3}>
                                                                                 <Grid container spacing={2}>
                                                                                     <Grid item md={4} sm={4} xs={12}>
-                                                                                        <FriendsAvatar src={tmpDirAcceptedProfileNetworkUserImages[index]} onClick={() => handleProfileClick(profileNetwork,recipientUser)} />
+                                                                                        <FriendsAvatar src={profileNetwork?.user?.image} onClick={() => handleProfileClick(profileNetwork,recipientUser)} />
                                                                                     </Grid>
                                                                                     <Grid item md={4} sm={4} xs={12}>
                                                                                         <FriendsNamesTG>

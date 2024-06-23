@@ -1,9 +1,6 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import SessionDataContextLayout from './auth/login/@SessionContextProvider/layout'
-import SrchPostsTmpDirUserImagesContextProviderLayout from './home/@srchPostsTmpDirUserImagesContextProvider/layout'
-import SrchPostsTmpDirFiguresContextProviderLayout from './home/@srchPostsTmpDirFiguresContextProvider/layout'
-import SrchPostsCommentsTmpDirUserImagesContextProviderLayout from './home/@srchPostsCommentsTmpDirUserImagesContextProvider/layout'
 // import { Inter } from 'next/font/google'
 
 // const inter = Inter({ subsets: ['latin'] })
@@ -22,13 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="font-inter">
         <SessionDataContextLayout>
-          <SrchPostsTmpDirUserImagesContextProviderLayout>
-            <SrchPostsTmpDirFiguresContextProviderLayout>
-              <SrchPostsCommentsTmpDirUserImagesContextProviderLayout>
-                {children}
-              </SrchPostsCommentsTmpDirUserImagesContextProviderLayout>
-            </SrchPostsTmpDirFiguresContextProviderLayout>
-          </SrchPostsTmpDirUserImagesContextProviderLayout>
+          {children}
         </SessionDataContextLayout>
       </body>
     </html>
