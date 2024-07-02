@@ -131,8 +131,6 @@ const RootComp = () => {
     const [anchorNotifMenuEl,setAnchorNotifMenuEl] = useState<null | HTMLElement>(null);
     const [newMsgNotif,setNewMsgNotif] = useState([]);
     const [newNotif,setNewNotif] = useState([]);
-    const [profNotifUserImages,setProfNotifUserImages] = useState([]);
-    const profNotifUserImagesArr: any = [...profNotifUserImages];
 
     useEffect(() => {
         if (authUser === "" || sessionToken === "") {
@@ -141,14 +139,6 @@ const RootComp = () => {
         fetchNewMsgNotificationsFromDB(authUserId).then((newMsgNotif: any) => setNewMsgNotif(newMsgNotif));
         fetchNewNotificationsFromDB(authUserId).then((newNotif: any) => {
             setNewNotif(newNotif);
-            newNotif?.map((notif: any) => {
-                fetchTmpDirImages(notif?.user?.image).then(async (imageBuffer: any) => {
-                    const buffer = await imageBuffer.arrayBuffer();
-                    const blob = new Blob([buffer],{ type: `${path.extname(notif?.user?.image).substring(1)}` });
-                    profNotifUserImagesArr.push(URL.createObjectURL(blob));
-                });
-            })
-            setProfNotifUserImages(profNotifUserImagesArr);
         });
     },[router])
 
@@ -242,7 +232,7 @@ const RootComp = () => {
                         <Box sx={{ flexGrow: 1 }} />
                         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                             <IconButton size="large" aria-label="show 4 new mails" aria-controls={msgMenuId} color="inherit" onClick={handleMsgMenuOpen}>
-                                <Badge badgeContent={Number(newMsgNotif.length)} color="error">
+                                <Badge badgeContent={Number(newMsgNotif?.length)} color="error">
                                     <MailIcon />
                                 </Badge>
                             </IconButton>
@@ -253,7 +243,7 @@ const RootComp = () => {
                             color="inherit"
                             onClick={handleNotifMenuOpen}
                             >
-                                <Badge badgeContent={Number(newNotif.length)} color="error">
+                                <Badge badgeContent={Number(newNotif?.length)} color="error">
                                     <NotificationsIcon />
                                 </Badge>
                             </IconButton>
@@ -286,7 +276,7 @@ const RootComp = () => {
                 <RenderMobileMenu setAnchorEl={setAnchorEl} mobileMoreAnchorEl={mobileMoreAnchorEl} setMobileMoreAnchorEl={setMobileMoreAnchorEl} isMobileMenuOpen={isMobileMenuOpen} />
                 <RenderMenu anchorEl={anchorEl} setAnchorEl={setAnchorEl} setMobileMoreAnchorEl={setMobileMoreAnchorEl} isMenuOpen={isMenuOpen} />
                 <RenderMsgMenu anchorMsgEl={anchorMsgEl} setAnchorMsgEl={setAnchorMsgEl} isMsgMenuOpen={isMsgMenuOpen} />
-                <RenderNotifMenu anchorNotifMenuEl={anchorNotifMenuEl} setAnchorNotifMenuEl={setAnchorNotifMenuEl} isNotifMenuOpen={isNotifMenuOpen} newNotif={newNotif} profNotifUserImages={profNotifUserImages} />
+                <RenderNotifMenu anchorNotifMenuEl={anchorNotifMenuEl} setAnchorNotifMenuEl={setAnchorNotifMenuEl} isNotifMenuOpen={isNotifMenuOpen} newNotif={newNotif} />
             </Box>
         </>
     )

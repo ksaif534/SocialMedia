@@ -77,13 +77,13 @@ const RootComp = (props: any) => {
                 (srchGrpPostKey !== '') ? (
                     <>
                         {
-                            (srchGrpPosts.length > 0) ? (
+                            (srchGrpPosts?.length > 0) ? (
                                 <>
                                     {
-                                        srchGrpPosts.map((srchGrpPost: any, index: number) => {
-                                            if (srchGrpPost.group_id == group.id) {
+                                        srchGrpPosts?.map((srchGrpPost: any, index: number) => {
+                                            if (srchGrpPost?.group_id == group?.id) {
                                                 return (
-                                                    <GroupPostCard key={srchGrpPost.id}>
+                                                    <GroupPostCard key={srchGrpPost?.id}>
                                                         <CardHeader 
                                                             avatar={<Avatar src={srchGrpPost?.thumbnail} />} 
                                                             title={
@@ -92,7 +92,7 @@ const RootComp = (props: any) => {
                                                                     <Grid item md={9} sm={9} xs={12}>
                                                                         <Grid container>
                                                                             <Grid item md={12} sm={12} xs={12}>
-                                                                                <Typography variant="h6"><strong>{ srchGrpPost.title }</strong></Typography>
+                                                                                <Typography variant="h6"><strong>{ srchGrpPost?.title }</strong></Typography>
                                                                             </Grid>
                                                                             <Grid item md={12} sm={12} xs={12}>
                                                                                 <ChipStack direction={{ md: 'row', sm: 'column', xs: 'column' }} spacing={1}>
@@ -103,7 +103,7 @@ const RootComp = (props: any) => {
                                                                         </Grid>
                                                                     </Grid>
                                                                     {
-                                                                        (srchGrpPost.user_id == authUser.id) && (
+                                                                        (srchGrpPost?.user_id == authUser?.id) && (
                                                                             <GPCGridRightItem item md={3} sm={3} xs={12}>
                                                                                 <IconButton onClick={handleGPCIconClick}>
                                                                                     <MoreHorizIcon fontSize="large" />
@@ -124,11 +124,11 @@ const RootComp = (props: any) => {
                                                         } 
                                                         />
                                                         <MediaButtonBase>
-                                                            <CardMedia component="img" height="300" image={srchGrpPost.figure} alt="" />
+                                                            <CardMedia component="img" height="300" image={srchGrpPost?.figure} alt="" />
                                                         </MediaButtonBase>
                                                         <CardContent>
                                                             <Typography variant="h6" color="text.secondary">
-                                                                { srchGrpPost.description }
+                                                                { srchGrpPost?.description }
                                                             </Typography>
                                                         </CardContent>
                                                         <CardActions disableSpacing>
@@ -153,15 +153,15 @@ const RootComp = (props: any) => {
                                                             </CardContent>
                                                             {
                                                                 srchGrpPost?.comments?.map((comment: any,commentIndex: number) => {
-                                                                    if (comment.is_allow == 1) {
+                                                                    if (comment?.is_allow == 1) {
                                                                         return (
-                                                                            <CommentsGrid container spacing={2} key={comment.id}>
+                                                                            <CommentsGrid container spacing={2} key={comment?.id}>
                                                                                 <CommentsGridFirstItem item md={1} sm={1} xs={12}>
                                                                                     {
-                                                                                        groupComments.map((comment: any) => {
-                                                                                            if (comment.id == comment.id) {
+                                                                                        groupComments?.map((comment: any) => {
+                                                                                            if (comment?.id == comment?.id) {
                                                                                                 return (
-                                                                                                    <ProfileLogo name={comment.name} imageUrl={comment?.user?.image} key={comment.id} />
+                                                                                                    <ProfileLogo name={comment?.name} imageUrl={comment?.user?.image} key={comment?.id} />
                                                                                                 )
                                                                                             }
                                                                                         })
@@ -171,11 +171,11 @@ const RootComp = (props: any) => {
                                                                                     <CommentsCard elevation={3}>
                                                                                         <CardContent>
                                                                                             {
-                                                                                                groupComments.map((comment: any) => {
-                                                                                                    if (comment.id == comment.id) {
+                                                                                                groupComments?.map((comment: any) => {
+                                                                                                    if (comment?.id == comment?.id) {
                                                                                                         return (
-                                                                                                            <Typography key={comment.id}>
-                                                                                                                <strong>{ comment.user?.name }</strong>
+                                                                                                            <Typography key={comment?.id}>
+                                                                                                                <strong>{ comment?.user?.name }</strong>
                                                                                                             </Typography>
                                                                                                         )           
                                                                                                     }
@@ -184,14 +184,14 @@ const RootComp = (props: any) => {
                                                                                             <Grid container spacing={2}>
                                                                                                 <Grid item md={9} sm={9} xs={3}>
                                                                                                     <TopCommentTG paragraph>
-                                                                                                        { comment.description }
+                                                                                                        { comment?.description }
                                                                                                     </TopCommentTG>
                                                                                                 </Grid>
                                                                                                 <Grid item md={3} sm={3} xs={3}>
                                                                                                     <Grid container spacing={2}>
                                                                                                         <Grid item md={6} sm={6} xs={12}>
                                                                                                             {
-                                                                                                                (authUser.id == comment.user_id) && (
+                                                                                                                (authUser?.id == comment?.user_id) && (
                                                                                                                     <>
                                                                                                                         <CommentEditModalForm comment={comment} />
                                                                                                                     </>
@@ -200,7 +200,7 @@ const RootComp = (props: any) => {
                                                                                                         </Grid>
                                                                                                         <Grid item md={6} sm={6} xs={12}>
                                                                                                             {
-                                                                                                                (authUser.id == comment.user_id) && (
+                                                                                                                (authUser?.id == comment?.user_id) && (
                                                                                                                     <>
                                                                                                                         <IconButton title="Delete Comment" onClick={() => handleCommentDelete(comment)}>
                                                                                                                             <DeleteIcon />
@@ -222,7 +222,7 @@ const RootComp = (props: any) => {
                                                             }
                                                             <CommentInputGrid container spacing={2}>
                                                                 <Grid item md={1} sm={1} xs={12}>
-                                                                    <ProfileLogo name={srchGrpPost.user.name} imageUrl={srchGrpPost?.user?.image} />
+                                                                    <ProfileLogo name={srchGrpPost?.user?.name} imageUrl={srchGrpPost?.user?.image} />
                                                                 </Grid>
                                                                 <Grid item md={11} sm={11} xs={12}>
                                                                     <CommentInputModalForm post={srchGrpPost} authUser={authUser} />
@@ -252,10 +252,10 @@ const RootComp = (props: any) => {
                 ) : (
                     <>
                         {
-                            groupPosts.map((groupPost: any, index: number) => {
-                                if (groupPost.group_id == group.id) {
+                            groupPosts?.map((groupPost: any, index: number) => {
+                                if (groupPost?.group_id == group?.id) {
                                     return (
-                                        <GroupPostCard key={groupPost.id}>
+                                        <GroupPostCard key={groupPost?.id}>
                                             <CardHeader 
                                                 avatar={<Avatar src={groupPost?.thumbnail} />} 
                                                 title={
@@ -264,7 +264,7 @@ const RootComp = (props: any) => {
                                                         <Grid item md={9} sm={9} xs={12}>
                                                             <Grid container>
                                                                 <Grid item md={12} sm={12} xs={12}>
-                                                                    <Typography variant="h6"><strong>{ groupPost.title }</strong></Typography>
+                                                                    <Typography variant="h6"><strong>{ groupPost?.title }</strong></Typography>
                                                                 </Grid>
                                                                 <Grid item md={12} sm={12} xs={12}>
                                                                     <ChipStack direction={{ md: 'row', sm: 'column', xs: 'column' }} spacing={1}>
@@ -275,7 +275,7 @@ const RootComp = (props: any) => {
                                                             </Grid>
                                                         </Grid>
                                                         {
-                                                            (groupPost.user_id == authUser.id) && (
+                                                            (groupPost?.user_id == authUser?.id) && (
                                                                 <GPCGridRightItem item md={3} sm={3} xs={12}>
                                                                     <IconButton onClick={handleGPCIconClick}>
                                                                         <MoreHorizIcon fontSize="large" />
@@ -300,7 +300,7 @@ const RootComp = (props: any) => {
                                             </MediaButtonBase>
                                             <CardContent>
                                                 <Typography variant="h6" color="text.secondary">
-                                                    { groupPost.description }
+                                                    { groupPost?.description }
                                                 </Typography>
                                             </CardContent>
                                             <CardActions disableSpacing>
@@ -325,15 +325,15 @@ const RootComp = (props: any) => {
                                                 </CardContent>
                                                 {
                                                     groupPost?.comments?.map((comment: any, commentIndex: number) => {
-                                                        if (comment.is_allow == 1) {
+                                                        if (comment?.is_allow == 1) {
                                                             return (
-                                                                <CommentsGrid container spacing={2} key={comment.id}>
+                                                                <CommentsGrid container spacing={2} key={comment?.id}>
                                                                     <CommentsGridFirstItem item md={1} sm={1} xs={12}>
                                                                         {
-                                                                            groupComments.map((comment: any) => {
-                                                                                if (comment.id == comment.id) {
+                                                                            groupComments?.map((comment: any) => {
+                                                                                if (comment?.id == comment?.id) {
                                                                                     return (
-                                                                                        <ProfileLogo name={comment.name} imageUrl={comment?.user?.image} key={comment.id} />
+                                                                                        <ProfileLogo name={comment?.name} imageUrl={comment?.user?.image} key={comment?.id} />
                                                                                     )
                                                                                 }
                                                                             })
@@ -343,11 +343,11 @@ const RootComp = (props: any) => {
                                                                         <CommentsCard elevation={3}>
                                                                             <CardContent>
                                                                                 {
-                                                                                    groupComments.map((comment: any) => {
-                                                                                        if (comment.id == comment.id) {
+                                                                                    groupComments?.map((comment: any) => {
+                                                                                        if (comment?.id == comment?.id) {
                                                                                             return (
-                                                                                                <Typography key={comment.id}>
-                                                                                                    <strong>{ comment.user?.name }</strong>
+                                                                                                <Typography key={comment?.id}>
+                                                                                                    <strong>{ comment?.user?.name }</strong>
                                                                                                 </Typography>
                                                                                             )           
                                                                                         }
@@ -356,14 +356,14 @@ const RootComp = (props: any) => {
                                                                                 <Grid container spacing={2}>
                                                                                     <Grid item md={9} sm={9} xs={3}>
                                                                                         <TopCommentTG paragraph>
-                                                                                            { comment.description }
+                                                                                            { comment?.description }
                                                                                         </TopCommentTG>
                                                                                     </Grid>
                                                                                     <Grid item md={3} sm={3} xs={3}>
                                                                                         <Grid container spacing={2}>
                                                                                             <Grid item md={6} sm={6} xs={12}>
                                                                                                 {
-                                                                                                    (authUser.id == comment.user_id) && (
+                                                                                                    (authUser?.id == comment?.user_id) && (
                                                                                                         <>
                                                                                                             <CommentEditModalForm comment={comment} />
                                                                                                         </>
@@ -372,7 +372,7 @@ const RootComp = (props: any) => {
                                                                                             </Grid>
                                                                                             <Grid item md={6} sm={6} xs={12}>
                                                                                                 {
-                                                                                                    (authUser.id == comment.user_id) && (
+                                                                                                    (authUser?.id == comment?.user_id) && (
                                                                                                         <>
                                                                                                             <IconButton title="Delete Comment" onClick={() => handleCommentDelete(comment)}>
                                                                                                                 <DeleteIcon />
@@ -394,7 +394,7 @@ const RootComp = (props: any) => {
                                                 }
                                                 <CommentInputGrid container spacing={2}>
                                                     <Grid item md={1} sm={1} xs={12}>
-                                                        <ProfileLogo name={groupPost.user.name} imageUrl={groupPost?.user?.image} />
+                                                        <ProfileLogo name={groupPost?.user?.name} imageUrl={groupPost?.user?.image} />
                                                     </Grid>
                                                     <Grid item md={11} sm={11} xs={12}>
                                                         <CommentInputModalForm post={groupPost} authUser={authUser} />

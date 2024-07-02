@@ -193,7 +193,7 @@ export const RenderMsgMenu = (props: any) => {
 
 export const notifMenuId = 'event-notifications-menu';
 export const RenderNotifMenu = (props: any) => {
-    const { anchorNotifMenuEl, setAnchorNotifMenuEl, isNotifMenuOpen, newNotif, profNotifUserImages } = props;
+    const { anchorNotifMenuEl, setAnchorNotifMenuEl, isNotifMenuOpen, newNotif } = props;
 
     const handleNotifMenuClose = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorNotifMenuEl(null);
@@ -216,7 +216,7 @@ export const RenderNotifMenu = (props: any) => {
                             <MenuItem onClick={handleNotifMenuClose}>
                                 <Grid container spacing={2}>
                                     <Grid item md={2} sm={2} xs={12}>
-                                        <ProfileLogo name={notif?.user?.name} imageUrl={profNotifUserImages[index]} />
+                                        <ProfileLogo name={notif?.user?.name} imageUrl={notif?.user?.image} />
                                     </Grid>
                                     <Grid item md={10} sm={10} xs={12}>
                                         <Typography variant="body2">{ notif?.data }</Typography>

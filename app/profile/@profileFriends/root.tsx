@@ -175,13 +175,13 @@ const RootComp = (props: any) => {
                                     (srchProfFriendsKey !== '') ? (
                                         <>
                                             {
-                                                (srchProfFriends.length > 0) ? (
+                                                (srchProfFriends?.length > 0) ? (
                                                     <>
                                                         {
-                                                            srchProfFriends.map((profile: any, index: number) => {
-                                                                return profile.networks.map((profileNetwork: any) => {
+                                                            srchProfFriends?.map((profile: any, index: number) => {
+                                                                return profile?.networks?.map((profileNetwork: any) => {
                                                                     return (
-                                                                        <Grid item md={6} sm={6} xs={12} key={profileNetwork.id}>
+                                                                        <Grid item md={6} sm={6} xs={12} key={profileNetwork?.id}>
                                                                             <FriendListItemPaper elevation={3}>
                                                                                 <Grid container spacing={2}>
                                                                                     <Grid item md={4} sm={4} xs={12}>
@@ -189,7 +189,7 @@ const RootComp = (props: any) => {
                                                                                     </Grid>
                                                                                     <Grid item md={4} sm={4} xs={12}>
                                                                                         <FriendsNamesTG>
-                                                                                            { profile.user.name }
+                                                                                            { profile?.user?.name }
                                                                                         </FriendsNamesTG>
                                                                                     </Grid>
                                                                                     <Grid item md={4} sm={4} xs={12}>
@@ -236,9 +236,9 @@ const RootComp = (props: any) => {
                                         <>
                                             {
                                                 acceptedProfileNetworks?.map((profileNetwork: any, index: number) => {
-                                                    if (profileNetwork.user_id_from == profile.user_id) {
+                                                    if (profileNetwork?.user_id_from == profile?.user_id) {
                                                         return (
-                                                            <Grid item md={6} sm={6} xs={12} key={profileNetwork.id}>
+                                                            <Grid item md={6} sm={6} xs={12} key={profileNetwork?.id}>
                                                                 <FriendListItemPaper elevation={3}>
                                                                     <Grid container spacing={2}>
                                                                         <Grid item md={4} sm={4} xs={12}>
@@ -246,7 +246,7 @@ const RootComp = (props: any) => {
                                                                         </Grid>
                                                                         <Grid item md={4} sm={4} xs={12}>
                                                                             <FriendsNamesTG>
-                                                                                { profileNetwork.user.name }
+                                                                                { profileNetwork?.user?.name }
                                                                             </FriendsNamesTG>
                                                                         </Grid>
                                                                         <Grid item md={4} sm={4} xs={12}>
@@ -279,13 +279,13 @@ const RootComp = (props: any) => {
                                                             </Grid>
                                                         )   
                                                     }else{
-                                                        if (profileNetwork.user_id_to == profile.user_id) {
+                                                        if (profileNetwork?.user_id_to == profile?.user_id) {
                                                             if (JSON.stringify(recipientUser) == '{}') {
                                                                 
                                                             }else{
-                                                                if (recipientUser.id == profileNetwork.user_id_from) {
+                                                                if (recipientUser?.id == profileNetwork?.user_id_from) {
                                                                     return (
-                                                                        <Grid item md={6} sm={6} xs={12} key={profileNetwork.id}>
+                                                                        <Grid item md={6} sm={6} xs={12} key={profileNetwork?.id}>
                                                                             <FriendListItemPaper elevation={3}>
                                                                                 <Grid container spacing={2}>
                                                                                     <Grid item md={4} sm={4} xs={12}>

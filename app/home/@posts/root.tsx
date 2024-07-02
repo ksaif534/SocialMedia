@@ -287,12 +287,12 @@ const RootComp = (props: any) => {
                 (srchKey !== '') ? (
                     <>
                         {
-                            (srchPosts.length > 0) ? (
+                            (srchPosts?.length > 0) ? (
                                 <>
                                     {
-                                        srchPosts.map((srchPost: any,index: number) => {
+                                        srchPosts?.map((srchPost: any,index: number) => {
                                             return (
-                                                <PostCard key={`${srchPost.user_id}-${index}`}>
+                                                <PostCard key={`${srchPost?.user_id}-${index}`}>
                                                     <CardHeader
                                                         avatar={
                                                         <Avatar src={srchPost?.user?.image} aria-label="recipe" />
@@ -300,7 +300,7 @@ const RootComp = (props: any) => {
                                                         action={
                                                         <div>
                                                             {
-                                                                (srchPost.user_id == authUserId) && (
+                                                                (srchPost?.user_id == authUserId) && (
                                                                     <>
                                                                         <IconButton aria-label="settings" onClick={handleVertIconClick}>
                                                                             <MoreVertIcon />
@@ -318,8 +318,8 @@ const RootComp = (props: any) => {
                                                             }
                                                         </div>
                                                         }
-                                                        title={<Typography variant="h6">{srchPost.title}</Typography>}
-                                                        subheader={srchPost.sub_title}
+                                                        title={<Typography variant="h6">{srchPost?.title}</Typography>}
+                                                        subheader={srchPost?.sub_title}
                                                     />
                                                     {
                                                         (srchPost.type == 2) ? (
@@ -350,27 +350,27 @@ const RootComp = (props: any) => {
                                                     }
                                                     <CardContent>
                                                         <Typography variant="body2" color="text.secondary">
-                                                            { srchPost.description }
+                                                            { srchPost?.description }
                                                         </Typography>
                                                     </CardContent>
                                                     <CardActions disableSpacing>
                                                         <IconButton aria-label="add to favorites" onClick={() => addLike(srchPost)}>
                                                             <FavoriteIcon />
                                                             {
-                                                                (likesByPost.length == 0) ? (
-                                                                    <Typography variant="body2">{ likes.filter((like: any) => like.post_id == srchPost.id).length }</Typography>
+                                                                (likesByPost?.length == 0) ? (
+                                                                    <Typography variant="body2">{ likes.filter((like: any) => like?.post_id == srchPost?.id).length }</Typography>
                                                                 ) : (
-                                                                    <Typography variant="body2">{ likesByPost.length }</Typography>
+                                                                    <Typography variant="body2">{ likesByPost?.length }</Typography>
                                                                 )
                                                             }
                                                         </IconButton>
                                                         <IconButton aria-label="share" onClick={() => addShare(srchPost)}>
                                                             <ShareIcon />
                                                             {
-                                                                (sharesByPost.length == 0) ? (
-                                                                    <Typography variant="body2">{ shares.filter((share: any) => share.post_id == srchPost.id).length }</Typography>
+                                                                (sharesByPost?.length == 0) ? (
+                                                                    <Typography variant="body2">{ shares.filter((share: any) => share?.post_id == srchPost?.id)?.length }</Typography>
                                                                 ) : (
-                                                                    <Typography variant="body2">{ sharesByPost.length }</Typography>
+                                                                    <Typography variant="body2">{ sharesByPost?.length }</Typography>
                                                                 )
                                                             }
                                                         </IconButton>
@@ -389,16 +389,16 @@ const RootComp = (props: any) => {
                                                                 <strong>Relevant Comments:</strong>
                                                             </Typography>
                                                             {
-                                                                srchPost?.comments.map((comment: any,commentIndex: number) => {
-                                                                    if(comment.is_allow == 1){
+                                                                srchPost?.comments?.map((comment: any,commentIndex: number) => {
+                                                                    if(comment?.is_allow == 1){
                                                                         return (
-                                                                            <RelevantAnswersGrid container spacing={2} key={`${comment.user_id}-${commentIndex}`}>
+                                                                            <RelevantAnswersGrid container spacing={2} key={`${comment?.user_id}-${commentIndex}`}>
                                                                                 <RelevantAnswersGridItem item md={2} sm={2} xs={12}>
                                                                                     {
                                                                                         comments.map((commnt: any) => {
-                                                                                            if (commnt.id == comment.id) {
+                                                                                            if (commnt?.id == comment?.id) {
                                                                                                 return (
-                                                                                                    <ProfileLogo name={commnt?.user?.name} imageUrl={comment?.user?.image} key={commnt.id} />
+                                                                                                    <ProfileLogo name={commnt?.user?.name} imageUrl={comment?.user?.image} key={commnt?.id} />
                                                                                                 )           
                                                                                             }
                                                                                         })
@@ -409,9 +409,9 @@ const RootComp = (props: any) => {
                                                                                         <CardContent>
                                                                                             {
                                                                                                 comments.map((commnt: any) => {
-                                                                                                    if (commnt.id == comment.id) {
+                                                                                                    if (commnt?.id == comment?.id) {
                                                                                                         return (
-                                                                                                            <Typography key={commnt.id}>
+                                                                                                            <Typography key={commnt?.id}>
                                                                                                                 <strong>{ commnt?.user?.name }</strong>
                                                                                                             </Typography>
                                                                                                         )
@@ -421,14 +421,14 @@ const RootComp = (props: any) => {
                                                                                             <Grid container spacing={2}>
                                                                                                 <Grid item md={9} sm={9} xs={12}>
                                                                                                     <RelevantAnswersTG paragraph>
-                                                                                                        { comment.description }
+                                                                                                        { comment?.description }
                                                                                                     </RelevantAnswersTG>
                                                                                                 </Grid>
                                                                                                 <Grid item md={3} sm={3} xs={12}>
                                                                                                     <Grid container spacing={2}>
                                                                                                         <Grid item md={6} sm={6} xs={12}>
                                                                                                             {
-                                                                                                                (authenticatedUser.id == comment.user_id) && (
+                                                                                                                (authenticatedUser?.id == comment?.user_id) && (
                                                                                                                     <>
                                                                                                                         <CommentEditModalForm comment={comment} />
                                                                                                                     </>
@@ -437,7 +437,7 @@ const RootComp = (props: any) => {
                                                                                                         </Grid>
                                                                                                         <Grid item md={6} sm={6} xs={12}>
                                                                                                             {
-                                                                                                                (authenticatedUser.id == comment.user_id) && (
+                                                                                                                (authenticatedUser?.id == comment?.user_id) && (
                                                                                                                     <>
                                                                                                                         <IconButton title="Delete Comment" onClick={() => handleCommentDelete(comment)}>
                                                                                                                             <DeleteIcon />
@@ -459,7 +459,7 @@ const RootComp = (props: any) => {
                                                             }
                                                             <Grid container spacing={2}>
                                                                 <ProfileGrid item md={1}>
-                                                                    <ProfileLogo name={authenticatedUser.name} imageUrl={authenticatedUser.image} />
+                                                                    <ProfileLogo name={authenticatedUser?.name} imageUrl={authenticatedUser?.image} />
                                                                 </ProfileGrid>
                                                                 <Grid item md={11}>
                                                                     <CommentInputModalForm post={srchPost} authUser={authenticatedUser} />
@@ -495,8 +495,8 @@ const RootComp = (props: any) => {
                             (profilePosts === undefined && videoPosts === undefined) ? (
                                 <>
                                     {
-                                        posts.map((post: any,index) => (
-                                            <PostCard key={`${post.user_id}-${index}`}>
+                                        posts?.map((post: any,index) => (
+                                            <PostCard key={`${post?.user_id}-${index}`}>
                                                 <CardHeader
                                                     avatar={
                                                     <Avatar src={post?.user?.image} aria-label="recipe" />
@@ -504,7 +504,7 @@ const RootComp = (props: any) => {
                                                     action={
                                                     <div>
                                                         {
-                                                            (post.user_id == authUserId) && (
+                                                            (post?.user_id == authUserId) && (
                                                                 <>
                                                                     <IconButton aria-label="settings" onClick={handleVertIconClick}>
                                                                         <MoreVertIcon />
@@ -522,11 +522,11 @@ const RootComp = (props: any) => {
                                                         }
                                                     </div>
                                                     }
-                                                    title={<Typography variant="h6">{post.title}</Typography>}
-                                                    subheader={post.sub_title}
+                                                    title={<Typography variant="h6">{post?.title}</Typography>}
+                                                    subheader={post?.sub_title}
                                                 />
                                                 {
-                                                    (post.type == 2) ? (
+                                                    (post?.type == 2) ? (
                                                         <div style={{ position: 'relative', paddingBottom: '56.25%' }}>
                                                             <video 
                                                             src={post?.figure} 
@@ -554,33 +554,33 @@ const RootComp = (props: any) => {
                                                 }
                                                 <CardContent>
                                                     <Typography variant="body2" color="text.secondary">
-                                                        { post.description }
+                                                        { post?.description }
                                                     </Typography>
                                                 </CardContent>
                                                 <CardActions disableSpacing>
                                                     <IconButton aria-label="add to favorites" onClick={() => addLike(post)}>
                                                         <FavoriteIcon />
                                                         {
-                                                            (likesByPost.length == 0) ? (
-                                                                <Typography variant="body2">{ likes.filter((like: any) => like.post_id == post.id).length }</Typography>
+                                                            (likesByPost?.length == 0) ? (
+                                                                <Typography variant="body2">{ likes.filter((like: any) => like?.post_id == post?.id)?.length }</Typography>
                                                             ) : (
-                                                                <Typography variant="body2">{ likesByPost.length }</Typography>
+                                                                <Typography variant="body2">{ likesByPost?.length }</Typography>
                                                             )
                                                         }
                                                     </IconButton>
                                                     <IconButton aria-label="share" onClick={() => addShare(post)}>
                                                         <ShareIcon />
                                                         {
-                                                            (sharesByPost.length == 0) ? (
-                                                                <Typography variant="body2">{ shares.filter((share: any) => share.post_id == post.id).length }</Typography>
+                                                            (sharesByPost?.length == 0) ? (
+                                                                <Typography variant="body2">{ shares.filter((share: any) => share?.post_id == post?.id).length }</Typography>
                                                             ) : (
-                                                                <Typography variant="body2">{ sharesByPost.length }</Typography>
+                                                                <Typography variant="body2">{ sharesByPost?.length }</Typography>
                                                             )
                                                         }
                                                     </IconButton>
                                                     <ExpandMore
                                                     expand={expandedPosts[index]}
-                                                    onClick={() => handleExpandClick(post.id)}
+                                                    onClick={() => handleExpandClick(post?.id)}
                                                     aria-expanded={expandedPosts[index]}
                                                     aria-label="show more"
                                                     >
@@ -594,15 +594,15 @@ const RootComp = (props: any) => {
                                                         </Typography>
                                                         {
                                                             post?.comments?.map((comment: any,index: number) => {
-                                                                if(comment.is_allow == 1){
+                                                                if(comment?.is_allow == 1){
                                                                     return (
-                                                                        <RelevantAnswersGrid container spacing={2} key={`${comment.user_id}-${index}`}>
+                                                                        <RelevantAnswersGrid container spacing={2} key={`${comment?.user_id}-${index}`}>
                                                                             <RelevantAnswersGridItem item md={2} sm={2} xs={12}>
                                                                                 {
-                                                                                    comments.map((commnt: any) => {
-                                                                                        if (commnt.id == comment.id) {
+                                                                                    comments?.map((commnt: any) => {
+                                                                                        if (commnt?.id == comment?.id) {
                                                                                             return (
-                                                                                                <ProfileLogo name={commnt?.user?.name} imageUrl={comment?.user?.image} key={commnt.id} />
+                                                                                                <ProfileLogo name={commnt?.user?.name} imageUrl={comment?.user?.image} key={commnt?.id} />
                                                                                             )           
                                                                                         }
                                                                                     })
@@ -612,10 +612,10 @@ const RootComp = (props: any) => {
                                                                                 <RelevantAnswersCard elevation={3}>
                                                                                     <CardContent>
                                                                                         {
-                                                                                            comments.map((commnt: any) => {
-                                                                                                if (commnt.id == comment.id) {
+                                                                                            comments?.map((commnt: any) => {
+                                                                                                if (commnt?.id == comment?.id) {
                                                                                                     return (
-                                                                                                        <Typography key={commnt.id}>
+                                                                                                        <Typography key={commnt?.id}>
                                                                                                             <strong>{ commnt?.user?.name }</strong>
                                                                                                         </Typography>
                                                                                                     )
@@ -625,14 +625,14 @@ const RootComp = (props: any) => {
                                                                                         <Grid container spacing={2}>
                                                                                             <Grid item md={9} sm={9} xs={12}>
                                                                                                 <RelevantAnswersTG paragraph>
-                                                                                                    { comment.description }
+                                                                                                    { comment?.description }
                                                                                                 </RelevantAnswersTG>
                                                                                             </Grid>
                                                                                             <Grid item md={3} sm={3} xs={12}>
                                                                                                 <Grid container spacing={2}>
                                                                                                     <Grid item md={6} sm={6} xs={12}>
                                                                                                         {
-                                                                                                            (authenticatedUser.id == comment.user_id) && (
+                                                                                                            (authenticatedUser?.id == comment?.user_id) && (
                                                                                                                 <>
                                                                                                                     <CommentEditModalForm comment={comment} />
                                                                                                                 </>
@@ -641,7 +641,7 @@ const RootComp = (props: any) => {
                                                                                                     </Grid>
                                                                                                     <Grid item md={6} sm={6} xs={12}>
                                                                                                         {
-                                                                                                            (authenticatedUser.id == comment.user_id) && (
+                                                                                                            (authenticatedUser?.id == comment?.user_id) && (
                                                                                                                 <>
                                                                                                                     <IconButton title="Delete Comment" onClick={() => handleCommentDelete(comment)}>
                                                                                                                         <DeleteIcon />
@@ -663,7 +663,7 @@ const RootComp = (props: any) => {
                                                         }
                                                         <Grid container spacing={2}>
                                                             <ProfileGrid item md={1}>
-                                                                <ProfileLogo name={authenticatedUser.name} imageUrl={authenticatedUser.image} />
+                                                                <ProfileLogo name={authenticatedUser?.name} imageUrl={authenticatedUser?.image} />
                                                             </ProfileGrid>
                                                             <Grid item md={11}>
                                                                 <CommentInputModalForm post={post} authUser={authenticatedUser} />
@@ -681,11 +681,11 @@ const RootComp = (props: any) => {
                                         (srchProfileKey !== '') ? (
                                             <>
                                                 {
-                                                    (srchProfilePosts.length > 0) ? (
+                                                    (srchProfilePosts?.length > 0) ? (
                                                         <>
                                                             {
-                                                                srchProfilePosts.map((srchProfilePost: any,index) => (
-                                                                    <PostCard key={`${srchProfilePost.user_id}-${index}`}>
+                                                                srchProfilePosts?.map((srchProfilePost: any,index) => (
+                                                                    <PostCard key={`${srchProfilePost?.user_id}-${index}`}>
                                                                         <CardHeader
                                                                             avatar={
                                                                             <Avatar src={srchProfilePost?.user?.image} aria-label="recipe" />
@@ -693,7 +693,7 @@ const RootComp = (props: any) => {
                                                                             action={
                                                                             <div>
                                                                                 {
-                                                                                    (srchProfilePost.user_id == authUserId) && (
+                                                                                    (srchProfilePost?.user_id == authUserId) && (
                                                                                         <>
                                                                                             <IconButton aria-label="settings" onClick={handleVertIconClick}>
                                                                                                 <MoreVertIcon />
@@ -711,14 +711,14 @@ const RootComp = (props: any) => {
                                                                                 }
                                                                             </div>
                                                                             }
-                                                                            title={<Typography variant="h6">{srchProfilePost.title}</Typography>}
-                                                                            subheader={srchProfilePost.sub_title}
+                                                                            title={<Typography variant="h6">{srchProfilePost?.title}</Typography>}
+                                                                            subheader={srchProfilePost?.sub_title}
                                                                         />
                                                                         {
-                                                                            (srchProfilePost.type == 2) ? (
+                                                                            (srchProfilePost?.type == 2) ? (
                                                                                 <div style={{ position: 'relative', paddingBottom: '56.25%' }}>
                                                                                     <video 
-                                                                                    src={srchProfilePost.figure} 
+                                                                                    src={srchProfilePost?.figure} 
                                                                                     controls 
                                                                                     height="200"
                                                                                     style={{
@@ -736,40 +736,40 @@ const RootComp = (props: any) => {
                                                                                 <CardMedia
                                                                                     component="img"
                                                                                     height="194"
-                                                                                    image={srchProfilePost.figure}
+                                                                                    image={srchProfilePost?.figure}
                                                                                     alt=""
                                                                                 />
                                                                             )
                                                                         }
                                                                         <CardContent>
                                                                             <Typography variant="body2" color="text.secondary">
-                                                                                { srchProfilePost.description }
+                                                                                { srchProfilePost?.description }
                                                                             </Typography>
                                                                         </CardContent>
                                                                         <CardActions disableSpacing>
                                                                             <IconButton aria-label="add to favorites" onClick={() => addLike(srchProfilePost)}>
                                                                                 <FavoriteIcon />
                                                                                 {
-                                                                                    (likesByPost.length == 0) ? (
-                                                                                        <Typography variant="body2">{ likes.filter((like: any) => like.post_id == srchProfilePost.id).length }</Typography>
+                                                                                    (likesByPost?.length == 0) ? (
+                                                                                        <Typography variant="body2">{ likes.filter((like: any) => like?.post_id == srchProfilePost?.id)?.length }</Typography>
                                                                                     ) : (
-                                                                                        <Typography variant="body2">{ likesByPost.length }</Typography>
+                                                                                        <Typography variant="body2">{ likesByPost?.length }</Typography>
                                                                                     )
                                                                                 }
                                                                             </IconButton>
                                                                             <IconButton aria-label="share" onClick={() => addShare(srchProfilePost)}>
                                                                                 <ShareIcon />
                                                                                 {
-                                                                                    (sharesByPost.length == 0) ? (
-                                                                                        <Typography variant="body2">{ shares.filter((share: any) => share.post_id == srchProfilePost.id).length }</Typography>
+                                                                                    (sharesByPost?.length == 0) ? (
+                                                                                        <Typography variant="body2">{ shares.filter((share: any) => share?.post_id == srchProfilePost?.id)?.length }</Typography>
                                                                                     ) : (
-                                                                                        <Typography variant="body2">{ sharesByPost.length }</Typography>
+                                                                                        <Typography variant="body2">{ sharesByPost?.length }</Typography>
                                                                                     )
                                                                                 }
                                                                             </IconButton>
                                                                             <ExpandMore
                                                                             expand={expandedPosts[index]}
-                                                                            onClick={() => handleExpandClick(srchProfilePost.id)}
+                                                                            onClick={() => handleExpandClick(srchProfilePost?.id)}
                                                                             aria-expanded={expandedPosts[index]}
                                                                             aria-label="show more"
                                                                             >
@@ -784,15 +784,15 @@ const RootComp = (props: any) => {
                                                                                 {
                                                                                     srchProfilePost?.comments?.map((comment: any,index: number) => 
                                                                                     {
-                                                                                        if(comment.is_allow == 1){
+                                                                                        if(comment?.is_allow == 1){
                                                                                             return (
-                                                                                                <RelevantAnswersGrid container spacing={2} key={`${comment.user_id}-${index}`}>
+                                                                                                <RelevantAnswersGrid container spacing={2} key={`${comment?.user_id}-${index}`}>
                                                                                                     <RelevantAnswersGridItem item md={2} sm={2} xs={12}>
                                                                                                         {
-                                                                                                            comments.map((commnt: any) => {
-                                                                                                                if (commnt.id == comment.id) {
+                                                                                                            comments?.map((commnt: any) => {
+                                                                                                                if (commnt?.id == comment?.id) {
                                                                                                                     return (
-                                                                                                                        <ProfileLogo name={commnt?.user?.name} imageUrl={`/images/` + commnt?.user?.image} key={commnt.id} />
+                                                                                                                        <ProfileLogo name={commnt?.user?.name} imageUrl={commnt?.user?.image} key={commnt.id} />
                                                                                                                     )           
                                                                                                                 }
                                                                                                             })
@@ -802,10 +802,10 @@ const RootComp = (props: any) => {
                                                                                                         <RelevantAnswersCard elevation={3}>
                                                                                                             <CardContent>
                                                                                                                 {
-                                                                                                                    comments.map((commnt: any) => {
-                                                                                                                        if (commnt.id == comment.id) {
+                                                                                                                    comments?.map((commnt: any) => {
+                                                                                                                        if (commnt?.id == comment?.id) {
                                                                                                                             return (
-                                                                                                                                <Typography key={commnt.id}>
+                                                                                                                                <Typography key={commnt?.id}>
                                                                                                                                     <strong>{ commnt?.user?.name }</strong>
                                                                                                                                 </Typography>
                                                                                                                             )
@@ -815,14 +815,14 @@ const RootComp = (props: any) => {
                                                                                                                 <Grid container spacing={2}>
                                                                                                                     <Grid item md={9} sm={9} xs={12}>
                                                                                                                         <RelevantAnswersTG paragraph>
-                                                                                                                            { comment.description }
+                                                                                                                            { comment?.description }
                                                                                                                         </RelevantAnswersTG>
                                                                                                                     </Grid>
                                                                                                                     <Grid item md={3} sm={3} xs={12}>
                                                                                                                         <Grid container spacing={2}>
                                                                                                                             <Grid item md={6} sm={6} xs={12}>
                                                                                                                                 {
-                                                                                                                                    (authenticatedUser.id == comment.user_id) && (
+                                                                                                                                    (authenticatedUser?.id == comment?.user_id) && (
                                                                                                                                         <>
                                                                                                                                             <CommentEditModalForm comment={comment} />
                                                                                                                                         </>
@@ -831,7 +831,7 @@ const RootComp = (props: any) => {
                                                                                                                             </Grid>
                                                                                                                             <Grid item md={6} sm={6} xs={12}>
                                                                                                                                 {
-                                                                                                                                    (authenticatedUser.id == comment.user_id) && (
+                                                                                                                                    (authenticatedUser?.id == comment?.user_id) && (
                                                                                                                                         <>
                                                                                                                                             <IconButton title="Delete Comment" onClick={() => handleCommentDelete(comment)}>
                                                                                                                                                 <DeleteIcon />
@@ -853,7 +853,7 @@ const RootComp = (props: any) => {
                                                                                 }
                                                                                 <Grid container spacing={2}>
                                                                                     <ProfileGrid item md={1}>
-                                                                                        <ProfileLogo name={authenticatedUser.name} imageUrl={authenticatedUser.image} />
+                                                                                        <ProfileLogo name={authenticatedUser?.name} imageUrl={authenticatedUser?.image} />
                                                                                     </ProfileGrid>
                                                                                     <Grid item md={11}>
                                                                                         <CommentInputModalForm post={srchProfilePost} authUser={authenticatedUser} />
@@ -888,11 +888,11 @@ const RootComp = (props: any) => {
                                                     (videoPosts !== undefined) ? (
                                                         <>
                                                             {
-                                                                (videoPosts.length > 0) && (
+                                                                (videoPosts?.length > 0) && (
                                                                     <>
                                                                         {
-                                                                            videoPosts.map((videoPost: any, index: number) => (
-                                                                                <PostCard key={`${videoPost.user_id}-${index}`}>
+                                                                            videoPosts?.map((videoPost: any, index: number) => (
+                                                                                <PostCard key={`${videoPost?.user_id}-${index}`}>
                                                                                     <CardHeader
                                                                                         avatar={
                                                                                         <Avatar src={videoPost?.user?.image} aria-label="recipe" />
@@ -913,7 +913,7 @@ const RootComp = (props: any) => {
                                                                                         </div>
                                                                                         }
                                                                                         title={<Typography variant="h6">{videoPost.title}</Typography>}
-                                                                                        subheader={videoPost.sub_title}
+                                                                                        subheader={videoPost?.sub_title}
                                                                                     />
                                                                                     <div style={{ position: 'relative', paddingBottom: '56.25%' }}>
                                                                                         <video 
@@ -933,33 +933,33 @@ const RootComp = (props: any) => {
                                                                                     </div>
                                                                                     <CardContent>
                                                                                         <Typography variant="body2" color="text.secondary">
-                                                                                            { videoPost.description }
+                                                                                            { videoPost?.description }
                                                                                         </Typography>
                                                                                     </CardContent>
                                                                                     <CardActions disableSpacing>
                                                                                         <IconButton aria-label="add to favorites">
                                                                                             <FavoriteIcon />
                                                                                             {
-                                                                                                (likesByPost.length == 0) ? (
-                                                                                                    <Typography variant="body2">{ likes.filter((like: any) => like.post_id == videoPost.id).length }</Typography>
+                                                                                                (likesByPost?.length == 0) ? (
+                                                                                                    <Typography variant="body2">{ likes.filter((like: any) => like?.post_id == videoPost?.id)?.length }</Typography>
                                                                                                 ) : (
-                                                                                                    <Typography variant="body2">{ likesByPost.length }</Typography>
+                                                                                                    <Typography variant="body2">{ likesByPost?.length }</Typography>
                                                                                                 )
                                                                                             }
                                                                                         </IconButton>
                                                                                         <IconButton aria-label="share">
                                                                                             <ShareIcon />
                                                                                             {
-                                                                                                (sharesByPost.length == 0) ? (
-                                                                                                    <Typography variant="body2">{ shares.filter((share: any) => share.post_id == videoPost.id).length }</Typography>
+                                                                                                (sharesByPost?.length == 0) ? (
+                                                                                                    <Typography variant="body2">{ shares.filter((share: any) => share?.post_id == videoPost?.id)?.length }</Typography>
                                                                                                 ) : (
-                                                                                                    <Typography variant="body2">{ sharesByPost.length }</Typography>
+                                                                                                    <Typography variant="body2">{ sharesByPost?.length }</Typography>
                                                                                                 )
                                                                                             }
                                                                                         </IconButton>
                                                                                         <ExpandMore
                                                                                         expand={expandedPosts[index]}
-                                                                                        onClick={() => handleExpandClick(videoPost.id)}
+                                                                                        onClick={() => handleExpandClick(videoPost?.id)}
                                                                                         aria-expanded={expandedPosts[index]}
                                                                                         aria-label="show more"
                                                                                         >
@@ -973,9 +973,9 @@ const RootComp = (props: any) => {
                                                                                             </Typography>
                                                                                             {
                                                                                                 videoPost?.comments?.map((comment: any,commentIndex: number) => {
-                                                                                                    if(comment.is_allow == 1){
+                                                                                                    if(comment?.is_allow == 1){
                                                                                                         return (
-                                                                                                            <RelevantAnswersGrid container spacing={2} key={`${comment.user_id}-${commentIndex}`}>
+                                                                                                            <RelevantAnswersGrid container spacing={2} key={`${comment?.user_id}-${commentIndex}`}>
                                                                                                                 <RelevantAnswersGridItem item md={2} sm={2} xs={12}>
                                                                                                                     <ProfileLogo name={comment?.user?.name} imageUrl={comment?.user?.image} />
                                                                                                                 </RelevantAnswersGridItem>
@@ -983,19 +983,19 @@ const RootComp = (props: any) => {
                                                                                                                     <RelevantAnswersCard elevation={3}>
                                                                                                                         <CardContent>
                                                                                                                             <Typography>
-                                                                                                                                <strong>{ comment.user.name }</strong>
+                                                                                                                                <strong>{ comment?.user?.name }</strong>
                                                                                                                             </Typography>
                                                                                                                             <Grid container spacing={2}>
                                                                                                                                 <Grid item md={9} sm={9} xs={12}>
                                                                                                                                     <RelevantAnswersTG paragraph>
-                                                                                                                                        { comment.description }
+                                                                                                                                        { comment?.description }
                                                                                                                                     </RelevantAnswersTG>
                                                                                                                                 </Grid>
                                                                                                                                 <Grid item md={3} sm={3} xs={12}>
                                                                                                                                     <Grid container spacing={2}>
                                                                                                                                         <Grid item md={6} sm={6} xs={12}>
                                                                                                                                             {
-                                                                                                                                                (authenticatedUser.id == comment.user_id) && (
+                                                                                                                                                (authenticatedUser?.id == comment?.user_id) && (
                                                                                                                                                     <>
                                                                                                                                                         <CommentEditModalForm comment={comment} />
                                                                                                                                                     </>
@@ -1004,7 +1004,7 @@ const RootComp = (props: any) => {
                                                                                                                                         </Grid>
                                                                                                                                         <Grid item md={6} sm={6} xs={12}>
                                                                                                                                             {
-                                                                                                                                                (authenticatedUser.id == comment.user_id) && (
+                                                                                                                                                (authenticatedUser?.id == comment?.user_id) && (
                                                                                                                                                     <>
                                                                                                                                                         <IconButton title="Delete Comment" onClick={() => handleCommentDelete(comment)}>
                                                                                                                                                             <DeleteIcon />
@@ -1026,7 +1026,7 @@ const RootComp = (props: any) => {
                                                                                             }
                                                                                             <Grid container spacing={2}>
                                                                                                 <ProfileGrid item md={1}>
-                                                                                                    <ProfileLogo name={authenticatedUser.name} imageUrl={authenticatedUser.image} />
+                                                                                                    <ProfileLogo name={authenticatedUser?.name} imageUrl={authenticatedUser?.image} />
                                                                                                 </ProfileGrid>
                                                                                                 <Grid item md={11}>
                                                                                                     <CommentInputModalForm post={videoPost} authUser={authenticatedUser} />
@@ -1044,8 +1044,8 @@ const RootComp = (props: any) => {
                                                     ) : (
                                                         <>
                                                             {
-                                                                profilePosts.map((profilePost: any, index: number) => (
-                                                                    <PostCard key={`${profilePost.user_id}-${index}`}>
+                                                                profilePosts?.map((profilePost: any, index: number) => (
+                                                                    <PostCard key={`${profilePost?.user_id}-${index}`}>
                                                                         <CardHeader
                                                                             avatar={
                                                                                 <Avatar src={profilePost?.user?.image} aria-label="recipe" />
@@ -1065,11 +1065,11 @@ const RootComp = (props: any) => {
                                                                                 </Menu>
                                                                             </div>
                                                                             }
-                                                                            title={<Typography variant="h6">{profilePost.title}</Typography>}
-                                                                            subheader={profilePost.sub_title}
+                                                                            title={<Typography variant="h6">{profilePost?.title}</Typography>}
+                                                                            subheader={profilePost?.sub_title}
                                                                         />
                                                                         {
-                                                                            (profilePost.type == 2) ? (
+                                                                            (profilePost?.type == 2) ? (
                                                                                 <div style={{ position: 'relative', paddingBottom: '56.25%' }}>
                                                                                     <video 
                                                                                     src={profilePost?.figure} 
@@ -1097,33 +1097,33 @@ const RootComp = (props: any) => {
                                                                         }
                                                                         <CardContent>
                                                                             <Typography variant="body2" color="text.secondary">
-                                                                                { profilePost.description }
+                                                                                { profilePost?.description }
                                                                             </Typography>
                                                                         </CardContent>
                                                                         <CardActions disableSpacing>
                                                                             <IconButton aria-label="add to favorites">
                                                                                 <FavoriteIcon />
                                                                                 {
-                                                                                    (likesByPost.length == 0) ? (
-                                                                                        <Typography variant="body2">{ likes.filter((like: any) => like.post_id == profilePost.id).length }</Typography>
+                                                                                    (likesByPost?.length == 0) ? (
+                                                                                        <Typography variant="body2">{ likes.filter((like: any) => like?.post_id == profilePost?.id)?.length }</Typography>
                                                                                     ) : (
-                                                                                        <Typography variant="body2">{ likesByPost.length }</Typography>
+                                                                                        <Typography variant="body2">{ likesByPost?.length }</Typography>
                                                                                     )
                                                                                 }
                                                                             </IconButton>
                                                                             <IconButton aria-label="share">
                                                                                 <ShareIcon />
                                                                                 {
-                                                                                    (sharesByPost.length == 0) ? (
-                                                                                        <Typography variant="body2">{ shares.filter((share: any) => share.post_id == profilePost.id).length }</Typography>
+                                                                                    (sharesByPost?.length == 0) ? (
+                                                                                        <Typography variant="body2">{ shares.filter((share: any) => share?.post_id == profilePost?.id)?.length }</Typography>
                                                                                     ) : (
-                                                                                        <Typography variant="body2">{ sharesByPost.length }</Typography>
+                                                                                        <Typography variant="body2">{ sharesByPost?.length }</Typography>
                                                                                     )
                                                                                 }
                                                                             </IconButton>
                                                                             <ExpandMore
                                                                             expand={expandedPosts[index]}
-                                                                            onClick={() => handleExpandClick(profilePost.id)}
+                                                                            onClick={() => handleExpandClick(profilePost?.id)}
                                                                             aria-expanded={expandedPosts[index]}
                                                                             aria-label="show more"
                                                                             >
@@ -1136,16 +1136,16 @@ const RootComp = (props: any) => {
                                                                                     <strong>Relevant Comments:</strong>
                                                                                 </Typography>
                                                                                 {
-                                                                                    profilePost?.comments.map((comment: any,commentIndex: number) => {
-                                                                                        if(comment.is_allow == 1){
+                                                                                    profilePost?.comments?.map((comment: any,commentIndex: number) => {
+                                                                                        if(comment?.is_allow == 1){
                                                                                             return (
-                                                                                                <RelevantAnswersGrid container spacing={2} key={`${comment.user_id}-${commentIndex}`}>
+                                                                                                <RelevantAnswersGrid container spacing={2} key={`${comment?.user_id}-${commentIndex}`}>
                                                                                                     <RelevantAnswersGridItem item md={2} sm={2} xs={12}>
                                                                                                         {
                                                                                                             comments?.map((commnt: any) => {
-                                                                                                                if (commnt.id == comment.id) {
+                                                                                                                if (commnt?.id == comment?.id) {
                                                                                                                     return (
-                                                                                                                        <ProfileLogo name={commnt.user?.name} imageUrl={comment?.user?.image} key={commnt.id} />
+                                                                                                                        <ProfileLogo name={commnt?.user?.name} imageUrl={comment?.user?.image} key={commnt?.id} />
                                                                                                                     )
                                                                                                                 }
                                                                                                             })
@@ -1155,11 +1155,11 @@ const RootComp = (props: any) => {
                                                                                                         <RelevantAnswersCard elevation={3}>
                                                                                                             <CardContent>
                                                                                                                 {
-                                                                                                                    comments.map((commnt: any) => {
-                                                                                                                        if (commnt.id == comment.id) {
+                                                                                                                    comments?.map((commnt: any) => {
+                                                                                                                        if (commnt?.id == comment?.id) {
                                                                                                                             return (
-                                                                                                                                <Typography key={commnt.id}>
-                                                                                                                                    <strong>{ commnt.user?.name }</strong>
+                                                                                                                                <Typography key={commnt?.id}>
+                                                                                                                                    <strong>{ commnt?.user?.name }</strong>
                                                                                                                                 </Typography>
                                                                                                                             )
                                                                                                                         }
@@ -1168,14 +1168,14 @@ const RootComp = (props: any) => {
                                                                                                                 <Grid container spacing={2}>
                                                                                                                     <Grid item md={9} sm={9} xs={12}>
                                                                                                                         <RelevantAnswersTG paragraph>
-                                                                                                                            { comment.description }
+                                                                                                                            { comment?.description }
                                                                                                                         </RelevantAnswersTG>
                                                                                                                     </Grid>
                                                                                                                     <Grid item md={3} sm={3} xs={12}>
                                                                                                                         <Grid container spacing={2}>
                                                                                                                             <Grid item md={6} sm={6} xs={12}>
                                                                                                                                 {
-                                                                                                                                    (authenticatedUser.id == comment.user_id) && (
+                                                                                                                                    (authenticatedUser?.id == comment?.user_id) && (
                                                                                                                                         <>
                                                                                                                                             <CommentEditModalForm comment={comment} />
                                                                                                                                         </>
@@ -1184,7 +1184,7 @@ const RootComp = (props: any) => {
                                                                                                                             </Grid>
                                                                                                                             <Grid item md={6} sm={6} xs={12}>
                                                                                                                                 {
-                                                                                                                                    (authenticatedUser.id == comment.user_id) && (
+                                                                                                                                    (authenticatedUser?.id == comment?.user_id) && (
                                                                                                                                         <>
                                                                                                                                             <IconButton title="Delete Comment" onClick={() => handleCommentDelete(comment)}>
                                                                                                                                                 <DeleteIcon />
@@ -1206,7 +1206,7 @@ const RootComp = (props: any) => {
                                                                                 }
                                                                                 <Grid container spacing={2}>
                                                                                     <ProfileGrid item md={1}>
-                                                                                        <ProfileLogo name={authenticatedUser.name} imageUrl={authenticatedUser.image} />
+                                                                                        <ProfileLogo name={authenticatedUser?.name} imageUrl={authenticatedUser?.image} />
                                                                                     </ProfileGrid>
                                                                                     <Grid item md={11}>
                                                                                         <CommentInputModalForm post={profilePost} authUser={authenticatedUser} />

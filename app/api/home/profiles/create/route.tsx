@@ -1,24 +1,13 @@
 import { NextRequest } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import path from "path";
-import fs from "fs";
 import axios from "axios";
 
 export const POST = async (req: NextRequest | any) => {
     const formData = await req.formData();
     const body = Object.fromEntries(formData);
     const profilePhoto = JSON.parse(body.fileObj).profile_photo.name;
-    // const profilePhotoPath = path.join(process.cwd(),'public/images',profilePhoto);
     const fData = JSON.parse(body.formData);
     const userId = JSON.parse(body.sessionData);
-    //Create File Stream
-    // const profilePhotoStream = body.profile_photo.stream();
-    // const profilePhotoChunks = [];
-    // for await (const chunk of profilePhotoStream){
-    //     profilePhotoChunks.push(chunk);
-    // }
-    // const proPhotoBuffer = Buffer.concat(profilePhotoChunks);
-    // fs.writeFileSync(profilePhotoPath,proPhotoBuffer);
     try {
         //Call Imgur API to Store Image File
         const imgurFormData = new FormData();

@@ -150,19 +150,19 @@ const RootComp = () => {
                             (srchGrpKey !== '') ? (
                                 <>
                                     {
-                                        (srchGrp.length > 0) ? (
+                                        (srchGrp?.length > 0) ? (
                                             <>
                                                 {
-                                                    srchGrp.map((srchGroup: any) => {
+                                                    srchGrp?.map((srchGroup: any) => {
                                                         return (
-                                                            <SidebarContentGrid container spacing={2} onClick={() => handleGroupClick(srchGroup)} key={srchGroup.id}>
+                                                            <SidebarContentGrid container spacing={2} onClick={() => handleGroupClick(srchGroup)} key={srchGroup?.id}>
                                                                 <SidebarContentGridItem item md={2} sm={2} xs={12}>
                                                                     <Box>
-                                                                        <GroupAvatar alt={srchGroup.name} src={`images/${srchGroup.group_photo}`} />
+                                                                        <GroupAvatar alt={srchGroup?.name} src={`images/${srchGroup?.group_photo}`} />
                                                                     </Box>
                                                                 </SidebarContentGridItem>
                                                                 <SidebarContentGridItem item md={8} sm={8} xs={12}>
-                                                                    <Typography><strong>{ srchGroup.name }</strong></Typography>
+                                                                    <Typography><strong>{ srchGroup?.name }</strong></Typography>
                                                                 </SidebarContentGridItem>
                                                                 <SidebarContentGridItem item md={2} sm={2} xs={12}>
                                                                     <GroupIconButton>
@@ -184,17 +184,17 @@ const RootComp = () => {
                             ) : (
                                 <>
                                     {
-                                        (groups.length < 5 && groups.length > 0) ? (
+                                        (groups?.length < 5 && groups?.length > 0) ? (
                                             <>
                                                 {
-                                                    groups.map((group: any,index: number) => {
+                                                    groups?.map((group: any,index: number) => {
                                                         return (
-                                                            <SidebarContentGrid container spacing={2} onClick={() => handleGroupClick(group)} key={group.id}>
+                                                            <SidebarContentGrid container spacing={2} onClick={() => handleGroupClick(group)} key={group?.id}>
                                                                 <SidebarContentGridItem item md={2} sm={2} xs={12}>
                                                                     <Box>
                                                                         {
-                                                                            (group.group_photo) ? (
-                                                                                <GroupAvatar alt={group.name} src={group?.group_photo} />
+                                                                            (group?.group_photo) ? (
+                                                                                <GroupAvatar alt={group?.name} src={group?.group_photo} />
                                                                             ) : (
                                                                                 <div key={index}>Click group to see</div>
                                                                             )
@@ -202,7 +202,7 @@ const RootComp = () => {
                                                                     </Box>
                                                                 </SidebarContentGridItem>
                                                                 <SidebarContentGridItem item md={8} sm={8} xs={12}>
-                                                                    <Typography><strong>{ group.name }</strong></Typography>
+                                                                    <Typography><strong>{ group?.name }</strong></Typography>
                                                                 </SidebarContentGridItem>
                                                                 <SidebarContentGridItem item md={2} sm={2} xs={12}>
                                                                     <GroupIconButton>

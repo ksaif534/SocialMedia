@@ -1,7 +1,7 @@
 'use client'
 import { CardContent, CardMedia, Grid, Typography } from "@mui/material"
 import { FriendCard, FriendCardButton, FriendGrid } from "./style";
-import { useState,useEffect, useContext } from "react";
+import { useState,useEffect } from "react";
 import React from "react";
 import fetchOtherProfiles from "../../profile/@profileCoverHeading/fetchOtherProfiles";
 import fetchAllProfileNetworks from "../../profile/@profileCoverHeading/fetchAllProfileNetworks";
@@ -37,8 +37,6 @@ const RootComp = () => {
     const [allProfileNetworks,setAllProfileNetworks] = useState([]);
     const [profileNetworks,setProfileNetworks] = useState([]);
     const [totalNetworks,setTotalNetworks] = useState([]);
-    const [otherProfilesUserImages,setOtherProfilesUserImages] = useState([]);
-    const otherProfilesUserImagesArr: any = [...otherProfilesUserImages];
     let indexCounterArr: any;
     let indexCounterArr2: any;
     let networksCounterArr: any;
@@ -46,14 +44,6 @@ const RootComp = () => {
     useEffect(() => {
         fetchOtherProfiles(authUserId).then((otherProfiles: any) => {
             setOtherProfiles(otherProfiles);
-            otherProfiles.forEach((otherPfl: any) => {
-                fetchTmpDirImages(otherPfl?.user?.image).then(async (imageBuffer: any) => {
-                    const buffer = await imageBuffer.arrayBuffer();
-                    const blob = new Blob([buffer], { type: `${path.extname(otherPfl?.user?.image).substring(1)}` });
-                    otherProfilesUserImagesArr.push(URL.createObjectURL(blob));
-                });
-            });
-            setOtherProfilesUserImages(otherProfilesUserImagesArr);
         });
         fetchAllProfileNetworks(authUserId).then((allProfileNetworks: any) => setAllProfileNetworks(allProfileNetworks));
         fetchProfileNetworks(authUserId).then((profileNetworks: any) => setProfileNetworks(profileNetworks));
@@ -141,11 +131,11 @@ const RootComp = () => {
                                 indexCounterArr2 = [];
                                 networksCounterArr = [];
                                 return (
-                                    <Grid item md={4} sm={4} xs={12} key={otherProfile.id}>
+                                    <Grid item md={4} sm={4} xs={12} key={otherProfile?.id}>
                                         <FriendCard>
                                             {
-                                                (otherProfilesUserImages.length > 0) ? (
-                                                    <CardMedia component='img' height="150" image={otherProfilesUserImages[index]} />
+                                                (otherProfile?.user?.image) ? (
+                                                    <CardMedia component='img' height="150" image={otherProfile?.user?.image} />
                                                 ) : (
                                                     <div>Loading...</div>
                                                 )
@@ -155,15 +145,15 @@ const RootComp = () => {
                                                     <strong>{ otherProfile?.user?.name }</strong>
                                                 </Typography>
                                                 {
-                                                    totalNetworks.map((totalNetwork: any,totalNetworkIndex: number) => {
-                                                        if (totalNetwork.status == 1) {
-                                                            if (totalNetwork.user_id_from == otherProfile.user_id || totalNetwork.user_id_to == otherProfile.user_id) {
+                                                    totalNetworks?.map((totalNetwork: any,totalNetworkIndex: number) => {
+                                                        if (totalNetwork?.status == 1) {
+                                                            if (totalNetwork?.user_id_from == otherProfile?.user_id || totalNetwork?.user_id_to == otherProfile?.user_id) {
                                                                 networksCounterArr.push(totalNetwork);
                                                             }
-                                                            if (totalNetworkIndex == totalNetworks.length - 1) {
+                                                            if (totalNetworkIndex == totalNetworks?.length - 1) {
                                                                 return (
-                                                                    <Typography variant="body2" align="center" key={totalNetwork.id}>
-                                                                        { networksCounterArr.length } Friend(s)
+                                                                    <Typography variant="body2" align="center" key={totalNetwork?.id}>
+                                                                        { networksCounterArr?.length } Friend(s)
                                                                     </Typography>
                                                                 )
                                                             }   
@@ -174,16 +164,16 @@ const RootComp = () => {
                                                     (profileNetworks?.length == 0) ? (
                                                         <>
                                                             {
-                                                                (allProfileNetworks.length > 0) ? (
+                                                                (allProfileNetworks?.length > 0) ? (
                                                                     <>
                                                                         {
                                                                             allProfileNetworks?.map((allProfileNetwork: any,index: number) => {
-                                                                                if ((allProfileNetwork.user_id_from == authUserId || allProfileNetwork.user_id_from == otherProfile.user_id) && (allProfileNetwork.user_id_to == authUserId || allProfileNetwork.user_id_to == otherProfile.user_id)) {
-                                                                                    indexCounterArr.push(index);
-                                                                                    if (allProfileNetwork.status == 2) {
-                                                                                        if (allProfileNetwork.user_id_from == authUserId) {
+                                                                                if ((allProfileNetwork?.user_id_from == authUserId || allProfileNetwork?.user_id_from == otherProfile?.user_id) && (allProfileNetwork?.user_id_to == authUserId || allProfileNetwork?.user_id_to == otherProfile?.user_id)) {
+                                                                                    indexCounterArr?.push(index);
+                                                                                    if (allProfileNetwork?.status == 2) {
+                                                                                        if (allProfileNetwork?.user_id_from == authUserId) {
                                                                                             return (
-                                                                                                <div key={allProfileNetwork.id}>
+                                                                                                <div key={allProfileNetwork?.id}>
                                                                                                     <FriendCardButton variant="contained" color="success">
                                                                                                         <Typography variant="body2" align="center">
                                                                                                             Friend Request Sent
@@ -197,9 +187,9 @@ const RootComp = () => {
                                                                                                 </div>
                                                                                             )
                                                                                         }else{
-                                                                                            if (allProfileNetwork.user_id_to == authUserId) {
+                                                                                            if (allProfileNetwork?.user_id_to == authUserId) {
                                                                                                 return (
-                                                                                                    <div key={allProfileNetwork.id}>
+                                                                                                    <div key={allProfileNetwork?.id}>
                                                                                                         <FriendCardButton variant="contained" color="success" onClick={() => handleFriendRequestAcceptance(allProfileNetwork)}>
                                                                                                             <Typography variant="body2" align="center">
                                                                                                                 Accept Friend Request
@@ -214,8 +204,8 @@ const RootComp = () => {
                                                                                                 )
                                                                                             }else{
                                                                                                 return (
-                                                                                                    <div key={allProfileNetwork.id}>
-                                                                                                        <FriendCardButton variant="contained" color="success" onClick={() => handleAddFriendClick(otherProfile.user)}>
+                                                                                                    <div key={allProfileNetwork?.id}>
+                                                                                                        <FriendCardButton variant="contained" color="success" onClick={() => handleAddFriendClick(otherProfile?.user)}>
                                                                                                             <Typography variant="body2" align="center">
                                                                                                                 Add Friend
                                                                                                             </Typography>
@@ -230,10 +220,10 @@ const RootComp = () => {
                                                                                             }
                                                                                         }
                                                                                     }else{
-                                                                                        if (allProfileNetwork.status == 1) {
-                                                                                            if (allProfileNetwork.user_id_from == authUserId || allProfileNetwork.user_id_to == authUserId) {
+                                                                                        if (allProfileNetwork?.status == 1) {
+                                                                                            if (allProfileNetwork?.user_id_from == authUserId || allProfileNetwork?.user_id_to == authUserId) {
                                                                                                 return (
-                                                                                                    <div key={allProfileNetwork.id}>
+                                                                                                    <div key={allProfileNetwork?.id}>
                                                                                                         <FriendCardButton variant="contained" color="success">
                                                                                                             <Typography variant="body2" align="center">
                                                                                                                 Friends
@@ -246,7 +236,7 @@ const RootComp = () => {
                                                                                             }
                                                                                         }else{
                                                                                             return (
-                                                                                                <div key={allProfileNetwork.id}>
+                                                                                                <div key={allProfileNetwork?.id}>
                                                                                                     <FriendCardButton variant="contained" color="success">
                                                                                                         <Typography variant="body2" align="center">
                                                                                                             Add Friend
@@ -262,12 +252,12 @@ const RootComp = () => {
                                                                                         }
                                                                                     }
                                                                                 }else{
-                                                                                    indexCounterArr2.push(index);
-                                                                                    if (index == allProfileNetworks.length - 1) {
-                                                                                        if (indexCounterArr.length == 0) {
+                                                                                    indexCounterArr2?.push(index);
+                                                                                    if (index == allProfileNetworks?.length - 1) {
+                                                                                        if (indexCounterArr?.length == 0) {
                                                                                             return (
-                                                                                                <div key={allProfileNetwork.id}>
-                                                                                                    <FriendCardButton variant="contained" color="success" onClick={() => handleAddFriendClick(otherProfile.user)}>
+                                                                                                <div key={allProfileNetwork?.id}>
+                                                                                                    <FriendCardButton variant="contained" color="success" onClick={() => handleAddFriendClick(otherProfile?.user)}>
                                                                                                         <Typography variant="body2" align="center">
                                                                                                             Add Friend
                                                                                                         </Typography>
@@ -288,8 +278,8 @@ const RootComp = () => {
                                                                         }
                                                                     </>
                                                                 ) : (
-                                                                    <div key={otherProfile.id}>
-                                                                        <FriendCardButton variant="contained" color="success" onClick={() => handleAddFriendClick(otherProfile.user)}>
+                                                                    <div key={otherProfile?.id}>
+                                                                        <FriendCardButton variant="contained" color="success" onClick={() => handleAddFriendClick(otherProfile?.user)}>
                                                                             <Typography variant="body2" align="center">
                                                                                 Add Friend
                                                                             </Typography>
@@ -306,14 +296,14 @@ const RootComp = () => {
                                                     ) : (
                                                         <>
                                                             {
-                                                                profileNetworks.map((profileNetwork: any,index: number) => {
-                                                                    const acceptedNetworks = allProfileNetworks.filter((allProfileNetwork: any) => (allProfileNetwork.user_id_from == authUserId || allProfileNetwork.user_id_from == otherProfile.user_id) && (allProfileNetwork.user_id_to == authUserId || allProfileNetwork.user_id_to == otherProfile.user_id));
-                                                                    if (acceptedNetworks.length > 0) {
+                                                                profileNetworks?.map((profileNetwork: any,index: number) => {
+                                                                    const acceptedNetworks = allProfileNetworks.filter((allProfileNetwork: any) => (allProfileNetwork?.user_id_from == authUserId || allProfileNetwork?.user_id_from == otherProfile?.user_id) && (allProfileNetwork?.user_id_to == authUserId || allProfileNetwork?.user_id_to == otherProfile?.user_id));
+                                                                    if (acceptedNetworks?.length > 0) {
                                                                         return acceptedNetworks?.map((acceptedNetwork: any) => {
-                                                                            if (acceptedNetwork.status == 2) {
-                                                                                if (acceptedNetwork.user_id_from == authUserId) {
+                                                                            if (acceptedNetwork?.status == 2) {
+                                                                                if (acceptedNetwork?.user_id_from == authUserId) {
                                                                                     return (
-                                                                                        <div key={acceptedNetwork.id}>
+                                                                                        <div key={acceptedNetwork?.id}>
                                                                                             <FriendCardButton variant="contained" color="success">
                                                                                                 <Typography variant="body2" align="center">
                                                                                                     Friend Request Sent
@@ -327,9 +317,9 @@ const RootComp = () => {
                                                                                         </div>
                                                                                     )
                                                                                 }else{
-                                                                                    if (acceptedNetwork.user_id_to == authUserId) {
+                                                                                    if (acceptedNetwork?.user_id_to == authUserId) {
                                                                                         return (
-                                                                                            <div key={acceptedNetwork.id}>
+                                                                                            <div key={acceptedNetwork?.id}>
                                                                                                 <FriendCardButton variant="contained" color="success" onClick={() => handleFriendRequestAcceptance(acceptedNetwork)}>
                                                                                                     <Typography variant="body2" align="center">
                                                                                                         Accept Friend Request
@@ -344,8 +334,8 @@ const RootComp = () => {
                                                                                         )
                                                                                     }else{
                                                                                         return (
-                                                                                            <div key={acceptedNetwork.id}>
-                                                                                                <FriendCardButton variant="contained" color="success" onClick={() => handleAddFriendClick(otherProfile.user)}>
+                                                                                            <div key={acceptedNetwork?.id}>
+                                                                                                <FriendCardButton variant="contained" color="success" onClick={() => handleAddFriendClick(otherProfile?.user)}>
                                                                                                     <Typography variant="body2" align="center">
                                                                                                         Add Friend
                                                                                                     </Typography>
@@ -360,10 +350,10 @@ const RootComp = () => {
                                                                                     }
                                                                                 }
                                                                             }else{
-                                                                                if (acceptedNetwork.status == 1) {
-                                                                                    if (acceptedNetwork.user_id_from == authUserId || acceptedNetwork.user_id_to == authUserId) {
+                                                                                if (acceptedNetwork?.status == 1) {
+                                                                                    if (acceptedNetwork?.user_id_from == authUserId || acceptedNetwork?.user_id_to == authUserId) {
                                                                                         return (
-                                                                                            <div key={acceptedNetwork.id}>
+                                                                                            <div key={acceptedNetwork?.id}>
                                                                                                 <FriendCardButton variant="contained" color="success">
                                                                                                     <Typography variant="body2" align="center">
                                                                                                         Friends
@@ -373,8 +363,8 @@ const RootComp = () => {
                                                                                         )
                                                                                     }else{
                                                                                         return (
-                                                                                            <div key={acceptedNetwork.id}>
-                                                                                                <FriendCardButton variant="contained" color="success" onClick={() => handleAddFriendClick(otherProfile.user)}>
+                                                                                            <div key={acceptedNetwork?.id}>
+                                                                                                <FriendCardButton variant="contained" color="success" onClick={() => handleAddFriendClick(otherProfile?.user)}>
                                                                                                     <Typography variant="body2" align="center">
                                                                                                         Add Friend
                                                                                                     </Typography>
@@ -393,11 +383,11 @@ const RootComp = () => {
                                                                             }
                                                                         });
                                                                     }else{
-                                                                        indexCounterArr.push(index);
-                                                                        if (indexCounterArr.length < 2) {
+                                                                        indexCounterArr?.push(index);
+                                                                        if (indexCounterArr?.length < 2) {
                                                                             return (
-                                                                                <div key={profileNetwork.id}>
-                                                                                    <FriendCardButton variant="contained" color="success" onClick={() => handleAddFriendClick(otherProfile.user)}>
+                                                                                <div key={profileNetwork?.id}>
+                                                                                    <FriendCardButton variant="contained" color="success" onClick={() => handleAddFriendClick(otherProfile?.user)}>
                                                                                         <Typography variant="body2" align="center">
                                                                                             Add Friend
                                                                                         </Typography>

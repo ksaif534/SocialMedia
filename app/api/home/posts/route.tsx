@@ -3,18 +3,23 @@ import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 
 export const GET = async () => {
-    const prisma = new PrismaClient();
-    const posts = await prisma.posts.findMany({
-        include: {
-            user: true,
-            comments: {
-                include: {
-                    user: true
+    try {
+        const prisma = new PrismaClient();
+        const posts = await prisma.posts.findMany({
+            include: {
+                user: true,
+                comments: {
+                    include: {
+                        user: true
+                    }
                 }
             }
-        }
-    });
-    return new Response(JSON.stringify(posts));
+        });
+        return new Response(JSON.stringify(posts));    
+    } catch (error) {
+        console.log(`Failed to Fetch Posts: ${error}`);
+    }
+    return new Response(`Failed to Fetch Posts`);
 }
 
 export const POST = async (req: NextRequest | any, res: NextResponse | any) => {

@@ -1,5 +1,5 @@
 'use client'
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Badge, Box, IconButton, Toolbar, Typography } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import MailIcon from '@mui/icons-material/Mail'
@@ -17,7 +17,7 @@ import Cookies from 'js-cookie'
 
 export const AppBarComp = (props: any) => {
     const { setAnchorEl, setMsgAnchorEl, setNotifAnchorEl, open, setOpen, auth } = props;
-    const { srchPosts,setSrchPosts, srchKey, setSrchKey } = useContext(SearchContext);
+    const { setSrchPosts, setSrchKey } = useContext(SearchContext);
     const authUserId = Cookies.get("authUserId");
     const [newNotif,setNewNotif] = useState([]);
     const [newMsgNotif,setNewMsgNotif] = useState([]);

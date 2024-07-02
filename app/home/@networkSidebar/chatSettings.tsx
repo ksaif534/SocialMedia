@@ -128,9 +128,9 @@ const ChatSettings = (props: any) => {
                 </ChatMenuGridHeader>
                 <ChatMenuDivider />
                 {
-                    chatSettings.map((chatSetting: any) => {
+                    chatSettings?.map((chatSetting: any) => {
                         return (
-                            <div key={chatSetting.id}>
+                            <div key={chatSetting?.id}>
                                 <ChatMenuItem onClick={handleShowStatus}>
                                     <ChatMenuItemGrid container spacing={2}>
                                         <Grid item md={2} sm={2} xs={12}>
@@ -141,7 +141,7 @@ const ChatSettings = (props: any) => {
                                         </Grid>
                                         <Grid item md={2} sm={2} xs={12}>
                                             {
-                                                (chatSetting.is_shown == 1) ? (
+                                                (chatSetting?.is_shown == 1) ? (
                                                     <ToggleOnIcon fontSize="large" />
                                                 ) : (
                                                     <ToggleOffIcon fontSize="large" />
@@ -161,7 +161,7 @@ const ChatSettings = (props: any) => {
                                         </Grid>
                                         <Grid item md={2} sm={2} xs={12}>
                                             {
-                                                (chatSetting.is_active == 1) ? (
+                                                (chatSetting?.is_active == 1) ? (
                                                     <Typography variant="h6"><strong>ON</strong></Typography>
                                                 ) : (
                                                     <Typography variant="h6"><strong>OFF</strong></Typography>

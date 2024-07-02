@@ -117,19 +117,19 @@ const RootComp = () => {
                         </Grid>
                         <Grid item md={10} sm={10} xs={10}>
                             {
-                                users.map((user: any,index: number) => {
+                                users?.map((user: any,index: number) => {
                                     let counter = 0;
                                     if (pendingRecipientUserNetworks.length > 0) {
                                         counter++;
-                                        return pendingRecipientUserNetworks.map((pendingRecipientUserNetwork: any) => {
-                                            if (user.id == pendingRecipientUserNetwork.user_id_from) {
+                                        return pendingRecipientUserNetworks?.map((pendingRecipientUserNetwork: any) => {
+                                            if (user?.id == pendingRecipientUserNetwork?.user_id_from) {
                                                 return (
                                                     <Grid container spacing={2} key={user.id}>
                                                         <Grid item md={2} sm={2} xs={2}>
-                                                            <ProfileLogo name={user.name} imageUrl={user?.image} />
+                                                            <ProfileLogo name={user?.name} imageUrl={user?.image} />
                                                         </Grid>
                                                         <Grid item md={8} sm={8} xs={8}>
-                                                            <Typography variant="h6"><strong>{ user.name }</strong></Typography> 
+                                                            <Typography variant="h6"><strong>{ user?.name }</strong></Typography> 
                                                         </Grid>
                                                         <Grid item md={2} sm={2} xs={2}>
 
@@ -154,9 +154,9 @@ const RootComp = () => {
                                             }
                                         })   
                                     }else{
-                                        if (index == users.length - 1 && counter == 0) {
+                                        if (index == users?.length - 1 && counter == 0) {
                                             return (
-                                                <Grid container spacing={2} key={user.id}>
+                                                <Grid container spacing={2} key={user?.id}>
                                                     <Grid item md={12} sm={12} xs={12}>
                                                         <Typography variant="h6" color="secondary">
                                                             <strong>No friend requests available</strong>
@@ -193,9 +193,9 @@ const RootComp = () => {
                         </Grid>
                     </ContactGridHeader>
                     {
-                        users.map((user: any) => {
+                        users?.map((user: any) => {
                             return (
-                                <ContactStyling key={user.id}>
+                                <ContactStyling key={user?.id}>
                                     <MessageModalChats user={user} />
                                     <br />
                                 </ContactStyling>
@@ -218,9 +218,9 @@ const RootComp = () => {
                             }}
                             />
                             {
-                                users.map((user: any) => {
+                                users?.map((user: any) => {
                                     return (
-                                        <ContactModalStyling key={user.id} style={{ marginTop: '10px' }}>
+                                        <ContactModalStyling key={user?.id} style={{ marginTop: '10px' }}>
                                             <br />
                                             <MessageModalChats user={user} />
                                         </ContactModalStyling>

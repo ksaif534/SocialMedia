@@ -9,17 +9,22 @@ export const POST = async (req: NextRequest) => {
     let isUserLoggedIn: boolean = false;
     let sessionToken: string = '';
     let passwordMatch: boolean = false;
-    for(const user of users) {
-        passwordMatch = await bcrypt.compare(loginFormData.password,user.password);
-        if(passwordMatch){
-            if(user.name == loginFormData.login || user.email == loginFormData.login){
-                isUserLoggedIn = true;
-                sessionToken = sign({ userId: user.id }, process.env.JWT_SECRET ?? '10491', {
-                    expiresIn: '24h'
-                });
-                return new Response(JSON.stringify({ isUserLoggedIn: isUserLoggedIn, sessionToken: sessionToken, authenticatedUser: user.email, authUserId: user.id }));
+    try {
+        for(const user of users) {
+            passwordMatch = await bcrypt.compare(loginFormData.password,user.password);
+            if(passwordMatch){
+                if(user.name == loginFormData.login || user.email == loginFormData.login){
+                    isUserLoggedIn = true;
+                    sessionToken = sign({ userId: user.id }, process.env.JWT_SECRET ?? '10491', {
+                        expiresIn: '24h'
+                    });
+                    return new Response(JSON.stringify({ isUserLoggedIn: isUserLoggedIn, sessionToken: sessionToken, authenticatedUser: user.email, authUserId: user.id }));
+                }
             }
         }
+        return new Response(JSON.stringify({ isUserLoggedIn: isUserLoggedIn, sessionToken: sessionToken, authenticatedUser: "" }));   
+    } catch (error) {
+        console.log(`Login Error: ${error}`)
     }
-    return new Response(JSON.stringify({ isUserLoggedIn: isUserLoggedIn, sessionToken: sessionToken, authenticatedUser: "" }));
+    return new Response(`Login Failure`);
 }

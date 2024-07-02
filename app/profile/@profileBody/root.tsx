@@ -150,11 +150,11 @@ const RootComp = (props: any) => {
                                 <CardHeader title={<Typography variant="h4" sx={{ justifyContent: 'center', alignItems: 'center', display: 'flex'}}><strong>Photos</strong></Typography>} />
                                 <CardContent>
                                     <ImageList cols={3} rowHeight={164}>
-                                        {itemData.map((item) => (
+                                        {itemData?.map((item) => (
                                         <ImageListItem key={item.img}>
                                         <Image
-                                            src={`${item.img}?w=164&h=164&fit=crop&auto=format`}
-                                            alt={item.title}
+                                            src={`${item?.img}?w=164&h=164&fit=crop&auto=format`}
+                                            alt={item?.title}
                                             loading="lazy"
                                             width={80}
                                             height={150}
@@ -173,15 +173,15 @@ const RootComp = (props: any) => {
                                         <>
                                             {
                                                 acceptedProfileNetworks?.map((acceptedProfileNetwork: any,index: number) => {
-                                                    if (acceptedProfileNetwork.user_id_from == profile?.user_id) {
-                                                        lengthMeasureArr.push(index);
+                                                    if (acceptedProfileNetwork?.user_id_from == profile?.user_id) {
+                                                        lengthMeasureArr?.push(index);
                                                     }else{
-                                                        if (acceptedProfileNetwork.user_id_to == profile?.user_id) {
+                                                        if (acceptedProfileNetwork?.user_id_to == profile?.user_id) {
                                                             if (JSON.stringify(recipientUser) == '{}') {
                                                                 
                                                             }else{
-                                                                if (recipientUser?.id == acceptedProfileNetwork.user_id_from) {
-                                                                    lengthMeasureArr.push(index);
+                                                                if (recipientUser?.id == acceptedProfileNetwork?.user_id_from) {
+                                                                    lengthMeasureArr?.push(index);
                                                                 }
                                                             }
                                                         }
@@ -199,9 +199,9 @@ const RootComp = (props: any) => {
                                                 <>
                                                     {
                                                         acceptedProfileNetworks.map((acceptedProfileNetwork: any,index: number) => {
-                                                            if (acceptedProfileNetwork.user_id_from == profile?.user_id) {
+                                                            if (acceptedProfileNetwork?.user_id_from == profile?.user_id) {
                                                                 return (
-                                                                    <ImageListItem key={acceptedProfileNetwork.id}>
+                                                                    <ImageListItem key={acceptedProfileNetwork?.id}>
                                                                         <Image
                                                                             src={acceptedProfileNetwork?.user?.image}
                                                                             alt={acceptedProfileNetwork?.user?.image}
@@ -212,13 +212,13 @@ const RootComp = (props: any) => {
                                                                     </ImageListItem>
                                                                 )    
                                                             }else{
-                                                                if (acceptedProfileNetwork.user_id_to == profile?.user_id) {
+                                                                if (acceptedProfileNetwork?.user_id_to == profile?.user_id) {
                                                                     if (JSON.stringify(recipientUser) == '{}') {
                                                                         
                                                                     }else{
-                                                                        if (recipientUser?.id == acceptedProfileNetwork.user_id_from) {
+                                                                        if (recipientUser?.id == acceptedProfileNetwork?.user_id_from) {
                                                                             return (
-                                                                                <ImageListItem key={acceptedProfileNetwork.id}>
+                                                                                <ImageListItem key={acceptedProfileNetwork?.id}>
                                                                                     <Image
                                                                                         src={acceptedProfileNetwork?.user?.image}
                                                                                         alt={acceptedProfileNetwork?.user?.image}

@@ -245,50 +245,50 @@ const RootComp = () => {
                                             </ProfileSubTitleTG>
                                             <span style={{ display:'flex', justifyContent: 'center'}}>
                                                 {
-                                                    acceptedProfileNetworks.map((acceptedProfileNetwork: any,acceptedProfileNetworkIndex: number) => {
-                                                        if (acceptedProfileNetwork.user_id_from == profile?.user_id) {
+                                                    acceptedProfileNetworks?.map((acceptedProfileNetwork: any,acceptedProfileNetworkIndex: number) => {
+                                                        if (acceptedProfileNetwork?.user_id_from == profile?.user_id) {
                                                             profileCounterArr.push(acceptedProfileNetworkIndex);
-                                                            if (profileCounterArr.length < 4) {
+                                                            if (profileCounterArr?.length < 4) {
                                                                 if (acceptedProfileNetwork?.user?.image) {
                                                                     return (
-                                                                        <RoundedFirstSmallAvatar alt="Profile Image" src={acceptedProfileNetwork?.user?.image} onClick={() => handleOtherProfiles(acceptedProfileNetwork.profile)} key={acceptedProfileNetwork.id}>
+                                                                        <RoundedFirstSmallAvatar alt="Profile Image" src={acceptedProfileNetwork?.user?.image} onClick={() => handleOtherProfiles(acceptedProfileNetwork?.profile)} key={acceptedProfileNetwork?.id}>
             
                                                                         </RoundedFirstSmallAvatar>
                                                                     )   
                                                                 }else{
                                                                     return (
-                                                                        <div key={acceptedProfileNetwork.id}>Loading ...</div>
+                                                                        <div key={acceptedProfileNetwork?.id}>Loading ...</div>
                                                                     )
                                                                 }   
                                                             }
-                                                            if (profileCounterArr.length == 4) {
+                                                            if (profileCounterArr?.length == 4) {
                                                                 return (
-                                                                    <ArrowRightIcon fontSize="large" key={acceptedProfileNetwork.id} onClick={handleAllFriendsGeneration} />
+                                                                    <ArrowRightIcon fontSize="large" key={acceptedProfileNetwork?.id} onClick={handleAllFriendsGeneration} />
                                                                 )
                                                             }
                                                         }else{
-                                                            if (acceptedProfileNetwork.user_id_to == profile?.user_id) {
+                                                            if (acceptedProfileNetwork?.user_id_to == profile?.user_id) {
                                                                 if (JSON.stringify(recipientUser) == '{}') {
                                                                     
                                                                 }else{
-                                                                    if (recipientUser?.id == acceptedProfileNetwork.user_id_from) {
-                                                                        profileCounterArr.push(acceptedProfileNetworkIndex);
+                                                                    if (recipientUser?.id == acceptedProfileNetwork?.user_id_from) {
+                                                                        profileCounterArr?.push(acceptedProfileNetworkIndex);
                                                                         if (profileCounterArr.length < 4) {
                                                                             if (acceptedProfileNetwork?.user?.image) {
                                                                                 return (
-                                                                                    <RoundedFirstSmallAvatar alt="Profile Image" src={acceptedProfileNetwork?.user?.image} onClick={() => handleOtherProfiles(recipientUser?.profile)} key={acceptedProfileNetwork.id}>
+                                                                                    <RoundedFirstSmallAvatar alt="Profile Image" src={acceptedProfileNetwork?.user?.image} onClick={() => handleOtherProfiles(recipientUser?.profile)} key={acceptedProfileNetwork?.id}>
                         
                                                                                     </RoundedFirstSmallAvatar>
                                                                                 )   
                                                                             }else{
                                                                                 return (
-                                                                                    <div key={acceptedProfileNetwork.id}>Loading ...</div>
+                                                                                    <div key={acceptedProfileNetwork?.id}>Loading ...</div>
                                                                                 )
                                                                             }   
                                                                         }
-                                                                        if (profileCounterArr.length == 4) {
+                                                                        if (profileCounterArr?.length == 4) {
                                                                             return (
-                                                                                <ArrowRightIcon fontSize="large" key={acceptedProfileNetwork.id} onClick={handleAllFriendsGeneration} />
+                                                                                <ArrowRightIcon fontSize="large" key={acceptedProfileNetwork?.id} onClick={handleAllFriendsGeneration} />
                                                                             )
                                                                         }
                                                                     }
@@ -332,12 +332,12 @@ const RootComp = () => {
                                         </Grid>
                                         <Grid item md={2} sm={2} xs={12}>
                                             {
-                                                (pendingNetworks.length == 1) && (
+                                                (pendingNetworks?.length == 1) && (
                                                     <>
                                                         {
                                                             pendingNetworks?.map((pendingNetwork: any) => {
                                                                 return (
-                                                                    <ProfileEditIconButton aria-label="Accept Friend Request" title="Accept Friend Request" key={pendingNetwork.id} onClick={() => handleFriendRequestAcceptance(pendingNetwork)}>
+                                                                    <ProfileEditIconButton aria-label="Accept Friend Request" title="Accept Friend Request" key={pendingNetwork?.id} onClick={() => handleFriendRequestAcceptance(pendingNetwork)}>
                                                                         <Typography variant="h6">
                                                                             Accept Friend Request
                                                                         </Typography>
@@ -446,50 +446,50 @@ const RootComp = () => {
                                             </ProfileSubTitleTG>
                                             <span style={{ display:'flex', justifyContent: 'center'}}>
                                                 {
-                                                    acceptedProfileNetworks.map((acceptedProfileNetwork: any,acceptedProfileNetworkIndex: number) => {
-                                                        if (acceptedProfileNetwork.user_id_from == profile?.user_id) {
-                                                            profileCounterArr.push(acceptedProfileNetworkIndex);
-                                                            if (profileCounterArr.length < 4) {
+                                                    acceptedProfileNetworks?.map((acceptedProfileNetwork: any,acceptedProfileNetworkIndex: number) => {
+                                                        if (acceptedProfileNetwork?.user_id_from == profile?.user_id) {
+                                                            profileCounterArr?.push(acceptedProfileNetworkIndex);
+                                                            if (profileCounterArr?.length < 4) {
                                                                 if (acceptedProfileNetwork?.user?.image) {
                                                                     return (
-                                                                        <RoundedFirstSmallAvatar alt="Profile Image" src={acceptedProfileNetwork?.user?.image} onClick={() => handleOtherProfiles(acceptedProfileNetwork.profile)} key={acceptedProfileNetwork.id}>
+                                                                        <RoundedFirstSmallAvatar alt="Profile Image" src={acceptedProfileNetwork?.user?.image} onClick={() => handleOtherProfiles(acceptedProfileNetwork?.profile)} key={acceptedProfileNetwork?.id}>
             
                                                                         </RoundedFirstSmallAvatar>
                                                                     )    
                                                                 }else{
                                                                     return (
-                                                                        <div key={acceptedProfileNetwork.id}>Loading ...</div>
+                                                                        <div key={acceptedProfileNetwork?.id}>Loading ...</div>
                                                                     )
                                                                 }   
                                                             }
-                                                            if (profileCounterArr.length == 4) {
+                                                            if (profileCounterArr?.length == 4) {
                                                                 return (
-                                                                    <ArrowRightIcon fontSize="large" key={acceptedProfileNetwork.id} onClick={handleAllFriendsGeneration} />
+                                                                    <ArrowRightIcon fontSize="large" key={acceptedProfileNetwork?.id} onClick={handleAllFriendsGeneration} />
                                                                 )
                                                             }
                                                         }else{
-                                                            if (acceptedProfileNetwork.user_id_to == profile?.user_id) {
+                                                            if (acceptedProfileNetwork?.user_id_to == profile?.user_id) {
                                                                 if (JSON.stringify(recipientUser) == '{}') {
                                                                     
                                                                 }else{
-                                                                    if (recipientUser?.id == acceptedProfileNetwork.user_id_from) {
+                                                                    if (recipientUser?.id == acceptedProfileNetwork?.user_id_from) {
                                                                         profileCounterArr.push(acceptedProfileNetworkIndex);
-                                                                        if (profileCounterArr.length < 4) {
+                                                                        if (profileCounterArr?.length < 4) {
                                                                             if (acceptedProfileNetwork?.user?.image) {
                                                                                 return (
-                                                                                    <RoundedFirstSmallAvatar alt="Profile Image" src={acceptedProfileNetwork?.user?.image} onClick={() => handleOtherProfiles(recipientUser?.profile)} key={acceptedProfileNetwork.id}>
+                                                                                    <RoundedFirstSmallAvatar alt="Profile Image" src={acceptedProfileNetwork?.user?.image} onClick={() => handleOtherProfiles(recipientUser?.profile)} key={acceptedProfileNetwork?.id}>
                         
                                                                                     </RoundedFirstSmallAvatar>
                                                                                 )    
                                                                             }else{
                                                                                 return (
-                                                                                    <div key={acceptedProfileNetwork.id}>Loading ...</div>
+                                                                                    <div key={acceptedProfileNetwork?.id}>Loading ...</div>
                                                                                 )
                                                                             }   
                                                                         }
-                                                                        if (profileCounterArr.length == 4) {
+                                                                        if (profileCounterArr?.length == 4) {
                                                                             return (
-                                                                                <ArrowRightIcon fontSize="large" key={acceptedProfileNetwork.id} onClick={handleAllFriendsGeneration} />
+                                                                                <ArrowRightIcon fontSize="large" key={acceptedProfileNetwork?.id} onClick={handleAllFriendsGeneration} />
                                                                             )
                                                                         }
                                                                     }
@@ -503,16 +503,16 @@ const RootComp = () => {
                                         <Grid item md={1} sm={12} xs={12}></Grid>
                                         <Grid item md={4} sm={12} xs={12}>
                                             {
-                                                (profileNetworks.length == 0) ? (
+                                                (profileNetworks?.length == 0) ? (
                                                     <>
                                                         {
                                                             allProfileNetworks?.map((allProfileNetwork: any,index: number) => {
-                                                                if ((allProfileNetwork.user_id_from == authUserIdValue || allProfileNetwork.user_id_from == profile.user_id) && (allProfileNetwork.user_id_to == authUserIdValue || allProfileNetwork.user_id_to == profile.user_id)) {
-                                                                    indexCounterArr.push(index);
-                                                                    if (allProfileNetwork.status == 2) {
-                                                                        if (allProfileNetwork.user_id_from == authUserIdValue) {
+                                                                if ((allProfileNetwork?.user_id_from == authUserIdValue || allProfileNetwork?.user_id_from == profile?.user_id) && (allProfileNetwork?.user_id_to == authUserIdValue || allProfileNetwork?.user_id_to == profile?.user_id)) {
+                                                                    indexCounterArr?.push(index);
+                                                                    if (allProfileNetwork?.status == 2) {
+                                                                        if (allProfileNetwork?.user_id_from == authUserIdValue) {
                                                                             return (
-                                                                                <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" key={allProfileNetwork.id}>
+                                                                                <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" key={allProfileNetwork?.id}>
                                                                                     <Typography variant="h6">
                                                                                         Friend Request Sent
                                                                                     </Typography>
@@ -520,9 +520,9 @@ const RootComp = () => {
                                                                                 </ProfileEditIconButton>
                                                                             )
                                                                         }else{
-                                                                            if (allProfileNetwork.user_id_to == authUserIdValue) {
+                                                                            if (allProfileNetwork?.user_id_to == authUserIdValue) {
                                                                                 return (
-                                                                                    <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" key={allProfileNetwork.id} onClick={() => handleFriendRequestAcceptance(allProfileNetwork)}>
+                                                                                    <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" key={allProfileNetwork?.id} onClick={() => handleFriendRequestAcceptance(allProfileNetwork)}>
                                                                                         <Typography variant="h6">
                                                                                             Accept Friend Request
                                                                                         </Typography>
@@ -531,7 +531,7 @@ const RootComp = () => {
                                                                                 )
                                                                             }else{
                                                                                 return (
-                                                                                    <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" onClick={() => handleAddFriendClick(profile?.user_id)} key={allProfileNetwork.id}>
+                                                                                    <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" onClick={() => handleAddFriendClick(profile?.user_id)} key={allProfileNetwork?.id}>
                                                                                         <Typography variant="h6">
                                                                                             Add Friend
                                                                                         </Typography>
@@ -541,10 +541,10 @@ const RootComp = () => {
                                                                             }
                                                                         }
                                                                     }else{
-                                                                        if (allProfileNetwork.status == 1) {
-                                                                            if (allProfileNetwork.user_id_from == authUserIdValue || allProfileNetwork.user_id_to == authUserIdValue) {
+                                                                        if (allProfileNetwork?.status == 1) {
+                                                                            if (allProfileNetwork?.user_id_from == authUserIdValue || allProfileNetwork?.user_id_to == authUserIdValue) {
                                                                                 return (
-                                                                                    <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" key={allProfileNetwork.id}>
+                                                                                    <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" key={allProfileNetwork?.id}>
                                                                                         <Typography variant="h6">
                                                                                             Friends
                                                                                         </Typography>
@@ -556,7 +556,7 @@ const RootComp = () => {
                                                                             }
                                                                         }else{
                                                                             return (
-                                                                                <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" onClick={() => handleAddFriendClick(profile?.user_id)} key={allProfileNetwork.id}>
+                                                                                <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" onClick={() => handleAddFriendClick(profile?.user_id)} key={allProfileNetwork?.id}>
                                                                                     <Typography variant="h6">
                                                                                         Add Friend
                                                                                     </Typography>
@@ -566,10 +566,10 @@ const RootComp = () => {
                                                                         }
                                                                     }
                                                                 }else{
-                                                                    indexCounterArr2.push(index);
-                                                                    if (indexCounterArr2.length < 2 && indexCounterArr.length == 0 && index == allProfileNetworks.length - 1) {
+                                                                    indexCounterArr2?.push(index);
+                                                                    if (indexCounterArr2?.length < 2 && indexCounterArr?.length == 0 && index == allProfileNetworks?.length - 1) {
                                                                         return (
-                                                                            <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" onClick={() => handleAddFriendClick(profile?.user_id)} key={allProfileNetwork.id}>
+                                                                            <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" onClick={() => handleAddFriendClick(profile?.user_id)} key={allProfileNetwork?.id}>
                                                                                 <Typography variant="h6">
                                                                                     Add Friend
                                                                                 </Typography>
@@ -585,13 +585,13 @@ const RootComp = () => {
                                                     <>
                                                         {
                                                             profileNetworks?.map((profileNetwork: any,index: number) => {
-                                                                const acceptedNetworks = allProfileNetworks.filter((allProfileNetwork: any) => ((allProfileNetwork.user_id_from == authUserIdValue || allProfileNetwork.user_id_from == profile.user_id) && (allProfileNetwork.user_id_to == authUserIdValue || allProfileNetwork.user_id_to == profile.user_id)));
-                                                                if (acceptedNetworks.length > 0) {
+                                                                const acceptedNetworks = allProfileNetworks.filter((allProfileNetwork: any) => ((allProfileNetwork?.user_id_from == authUserIdValue || allProfileNetwork?.user_id_from == profile?.user_id) && (allProfileNetwork?.user_id_to == authUserIdValue || allProfileNetwork?.user_id_to == profile?.user_id)));
+                                                                if (acceptedNetworks?.length > 0) {
                                                                     return acceptedNetworks?.map((allProfileNetwork: any) => {
-                                                                        if (allProfileNetwork.status == 2) {
-                                                                            if (allProfileNetwork.user_id_from == authUserIdValue) {
+                                                                        if (allProfileNetwork?.status == 2) {
+                                                                            if (allProfileNetwork?.user_id_from == authUserIdValue) {
                                                                                 return (
-                                                                                    <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" key={allProfileNetwork.id}>
+                                                                                    <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" key={allProfileNetwork?.id}>
                                                                                         <Typography variant="h6">
                                                                                             Friend Request Sent
                                                                                         </Typography>
@@ -599,9 +599,9 @@ const RootComp = () => {
                                                                                     </ProfileEditIconButton>
                                                                                 )
                                                                             }
-                                                                            if (allProfileNetwork.user_id_to == authUserIdValue) {
+                                                                            if (allProfileNetwork?.user_id_to == authUserIdValue) {
                                                                                 return (
-                                                                                    <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" key={allProfileNetwork.id} onClick={() => handleFriendRequestAcceptance(allProfileNetwork)}>
+                                                                                    <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" key={allProfileNetwork?.id} onClick={() => handleFriendRequestAcceptance(allProfileNetwork)}>
                                                                                         <Typography variant="h6">
                                                                                             Accept Friend Request
                                                                                         </Typography>
@@ -610,7 +610,7 @@ const RootComp = () => {
                                                                                 )
                                                                             }else{
                                                                                 return (
-                                                                                    <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" onClick={() => handleAddFriendClick(profile?.user_id)} key={allProfileNetwork.id}>
+                                                                                    <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" onClick={() => handleAddFriendClick(profile?.user_id)} key={allProfileNetwork?.id}>
                                                                                         <Typography variant="h6">
                                                                                             Add Friend
                                                                                         </Typography>
@@ -619,10 +619,10 @@ const RootComp = () => {
                                                                                 )
                                                                             }
                                                                         }else{
-                                                                            if (allProfileNetwork.status == 1) {
-                                                                                if (allProfileNetwork.user_id_from == authUserIdValue || allProfileNetwork.user_id_to == authUserIdValue) {
+                                                                            if (allProfileNetwork?.status == 1) {
+                                                                                if (allProfileNetwork?.user_id_from == authUserIdValue || allProfileNetwork?.user_id_to == authUserIdValue) {
                                                                                     return (
-                                                                                        <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" key={allProfileNetwork.id}>
+                                                                                        <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" key={allProfileNetwork?.id}>
                                                                                             <Typography variant="h6">
                                                                                                 Friends
                                                                                             </Typography>
@@ -631,7 +631,7 @@ const RootComp = () => {
                                                                                     )   
                                                                                 }else{
                                                                                     return (
-                                                                                        <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" onClick={() => handleAddFriendClick(profile?.user_id)} key={allProfileNetwork.id}>
+                                                                                        <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" onClick={() => handleAddFriendClick(profile?.user_id)} key={allProfileNetwork?.id}>
                                                                                             <Typography variant="h6">
                                                                                                 Add Friend
                                                                                             </Typography>
@@ -643,10 +643,10 @@ const RootComp = () => {
                                                                         }
                                                                     })    
                                                                 }else{
-                                                                    indexCounterArr.push(index);
-                                                                    if (indexCounterArr.length < 2) {
+                                                                    indexCounterArr?.push(index);
+                                                                    if (indexCounterArr?.length < 2) {
                                                                         return (
-                                                                            <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" onClick={() => handleAddFriendClick(profile?.user_id)} key={profileNetwork.id}>
+                                                                            <ProfileEditIconButton aria-label="Add Friend" title="Add Friend" onClick={() => handleAddFriendClick(profile?.user_id)} key={profileNetwork?.id}>
                                                                                 <Typography variant="h6">
                                                                                     Add Friend
                                                                                 </Typography>

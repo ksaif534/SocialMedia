@@ -1,24 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 import { NextRequest } from "next/server";
-import path from "path";
-import fs from "fs";
 import axios from "axios";
 
 export const POST = async (req: NextRequest) => {
     const formData = await req.formData();
     const body: any = Object.fromEntries(formData);
-    const groupPhoto = JSON.parse(body.fileObj).group_photo.name;
-    //Fix Group Photo Path
-    // const groupPhotoPath = path.join('/', 'tmp' , groupPhoto);
     const bodyText = JSON.parse(body.text);
-    //Create File streams & convert to buffer chunks
-    // const groupPhotoStream = body.groupPhoto.stream();
-    // const gpChunks = [];
-    // for await (const chunk of groupPhotoStream){
-    //     gpChunks.push(chunk);
-    // }
-    // const gpBuffer = Buffer.concat(gpChunks);
-    // fs.writeFileSync(groupPhotoPath,gpBuffer);
     try {
         //Store Group Photo in Imgur with Imgur API
         const imgurFormData = new FormData();
@@ -70,17 +57,22 @@ export const POST = async (req: NextRequest) => {
         });
         return new Response(`${true}`);
     } catch (error) {
-        console.log(error);
+        console.log(`Failed to Create Group, Moderators and Members: ${error}`);
     }
     return new Response(`${false}`);
 }
 
 export const GET = async () => {
-    const prisma = new PrismaClient();
-    const allGroups = await prisma.groups.findMany({
-        include: {
-            user: true
-        }
-    });
-    return new Response(JSON.stringify(allGroups));
+    try {
+        const prisma = new PrismaClient();
+        const allGroups = await prisma.groups.findMany({
+            include: {
+                user: true
+            }
+        });
+        return new Response(JSON.stringify(allGroups));   
+    } catch (error) {
+        console.log(`Failed to fetch Groups: ${error}`);
+    }
+    return new Response(`Failed to fetch Groups`);
 }

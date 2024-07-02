@@ -161,17 +161,17 @@ export const RootComp = (props: any) => {
                 </GroupCoverHeadingCard>
                 <GroupCoverHeadingWrapperDiv>
                     <GroupCoverHeadingStartDiv>
-                        <Typography variant="h5"><strong>{ group.name }</strong></Typography>
+                        <Typography variant="h5"><strong>{ group?.name }</strong></Typography>
                     </GroupCoverHeadingStartDiv>
                     <GroupCoverHeadingEndDiv>
                         {
-                            groupMembers.map((groupMember: any, index: number) => {
-                                if (groupMember.group_id == group.id && groupMember.user_id == authUserId) {
+                            groupMembers?.map((groupMember: any, index: number) => {
+                                if (groupMember?.group_id == group?.id && groupMember?.user_id == authUserId) {
                                     counter++;
                                 }
-                                if (counter > 0 && index == groupMembers.length - 1) {
+                                if (counter > 0 && index == groupMembers?.length - 1) {
                                     return (
-                                        <div key={groupMember.id}>
+                                        <div key={groupMember?.id}>
                                             <JoinButton id="joined-button-basic" aria-controls={ open ? 'basic-menu' : undefined } aria-haspopup="true" aria-expanded={ open ? 'true': undefined } onClick={handleJoinedButtonClick} variant="contained" color="success">
                                                 <DoneIcon fontSize="large" />
                                                 <Typography variant="h6">Joined</Typography>

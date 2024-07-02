@@ -146,7 +146,7 @@ const RootComp = (props: any) => {
                     <CustomDivider />
                     <CommonSpanList>
                         <CommonSpanTG variant="body1"><strong>Admins & Moderators:</strong></CommonSpanTG>
-                        <CommonSpanTG variant="body1"><strong>{ specificGroupMods.length + 1 }</strong></CommonSpanTG>
+                        <CommonSpanTG variant="body1"><strong>{ specificGroupMods?.length + 1 }</strong></CommonSpanTG>
                     </CommonSpanList>
                     <AdminModGrid container spacing={2}>
                         <Grid item md={1} sm={1} xs={12}>
@@ -160,7 +160,7 @@ const RootComp = (props: any) => {
                                 <Grid item md={12} sm={12} xs={12}>
                                     <ChipStack direction="row" spacing={1}>
                                         <Chip label="Admin" />
-                                        <DelegationFont variant="body2">{ (profile.occupation == 1) ? 'Service Holder' : ((profile.occupation == 2) ? 'Businessman/Entrepreneur' : 'No Occupation') }</DelegationFont>
+                                        <DelegationFont variant="body2">{ (profile?.occupation == 1) ? 'Service Holder' : ((profile?.occupation == 2) ? 'Businessman/Entrepreneur' : 'No Occupation') }</DelegationFont>
                                     </ChipStack>
                                 </Grid>
                             </Grid>
@@ -170,28 +170,28 @@ const RootComp = (props: any) => {
                         (srchGrpModeratorKey !== '') ? (
                             <>
                                 {
-                                    (srchGrpModerators.length > 0) ? (
+                                    (srchGrpModerators?.length > 0) ? (
                                         <>
                                             {
-                                                srchGrpModerators.map((groupModerator: any, index: number) => {
+                                                srchGrpModerators?.map((groupModerator: any, index: number) => {
                                                     return (
-                                                        <AdminModGrid container spacing={2} key={groupModerator.id}>
+                                                        <AdminModGrid container spacing={2} key={groupModerator?.id}>
                                                             <Grid item md={1} sm={1} xs={12}>
-                                                                <ProfileLogo name={groupModerator.user.name} imageUrl={groupModerator?.user?.image} />
+                                                                <ProfileLogo name={groupModerator?.user?.name} imageUrl={groupModerator?.user?.image} />
                                                             </Grid>
                                                             <Grid item md={11} sm={11} xs={12}>
                                                                 <Grid container>
                                                                     <Grid item md={12} sm={12} xs={12}>
-                                                                        <ProfileTG variant="h6"><strong>{ groupModerator.user.name }</strong></ProfileTG>
+                                                                        <ProfileTG variant="h6"><strong>{ groupModerator?.user?.name }</strong></ProfileTG>
                                                                     </Grid>
                                                                     <Grid item md={12} sm={12} xs={12}>
                                                                         {
-                                                                            profiles.map((profile: any) => {
-                                                                                if (profile.user_id == groupModerator.user_id) {
+                                                                            profiles?.map((profile: any) => {
+                                                                                if (profile?.user_id == groupModerator?.user_id) {
                                                                                     return (
-                                                                                        <ChipStack direction="row" spacing={1} key={profile.id}>
+                                                                                        <ChipStack direction="row" spacing={1} key={profile?.id}>
                                                                                             <Chip label="Moderator" />
-                                                                                            <DelegationFont variant="body2">{ (profile.occupation == 1) ? 'Service Holder' : ((profile.occupation == 2) ? 'Businessman/Entrepreneur' : 'No Occupation') }</DelegationFont>
+                                                                                            <DelegationFont variant="body2">{ (profile?.occupation == 1) ? 'Service Holder' : ((profile?.occupation == 2) ? 'Businessman/Entrepreneur' : 'No Occupation') }</DelegationFont>
                                                                                         </ChipStack>
                                                                                     )
                                                                                 }
@@ -218,26 +218,26 @@ const RootComp = (props: any) => {
                                     (toggleModView == false) ? (
                                         <>
                                             {
-                                                specificGroupMods.map((groupModerator: any, index: number) => {
+                                                specificGroupMods?.map((groupModerator: any, index: number) => {
                                                     if (index < 3) {
                                                         return (
-                                                            <AdminModGrid container spacing={2} key={groupModerator.id}>
+                                                            <AdminModGrid container spacing={2} key={groupModerator?.id}>
                                                                 <Grid item md={1} sm={1} xs={12}>
-                                                                    <ProfileLogo name={groupModerator.user.name} imageUrl={groupModerator?.user?.image} />
+                                                                    <ProfileLogo name={groupModerator?.user?.name} imageUrl={groupModerator?.user?.image} />
                                                                 </Grid>
                                                                 <Grid item md={11} sm={11} xs={12}>
                                                                     <Grid container>
                                                                         <Grid item md={12} sm={12} xs={12}>
-                                                                            <ProfileTG variant="h6"><strong>{ groupModerator.user.name }</strong></ProfileTG>
+                                                                            <ProfileTG variant="h6"><strong>{ groupModerator?.user?.name }</strong></ProfileTG>
                                                                         </Grid>
                                                                         <Grid item md={12} sm={12} xs={12}>
                                                                             {
-                                                                                profiles.map((profile: any) => {
-                                                                                    if (profile.user_id == groupModerator.user_id) {
+                                                                                profiles?.map((profile: any) => {
+                                                                                    if (profile?.user_id == groupModerator?.user_id) {
                                                                                         return (
-                                                                                            <ChipStack direction="row" spacing={1} key={profile.id}>
+                                                                                            <ChipStack direction="row" spacing={1} key={profile?.id}>
                                                                                                 <Chip label="Moderator" />
-                                                                                                <DelegationFont variant="body2">{ (profile.occupation == 1) ? 'Service Holder' : ((profile.occupation == 2) ? 'Businessman/Entrepreneur' : 'No Occupation') }</DelegationFont>
+                                                                                                <DelegationFont variant="body2">{ (profile?.occupation == 1) ? 'Service Holder' : ((profile?.occupation == 2) ? 'Businessman/Entrepreneur' : 'No Occupation') }</DelegationFont>
                                                                                             </ChipStack>
                                                                                         )
                                                                                     }
@@ -256,25 +256,25 @@ const RootComp = (props: any) => {
                                     ) : (
                                         <>
                                             {
-                                                specificGroupMods.map((groupModerator: any,index: number) => {
+                                                specificGroupMods?.map((groupModerator: any,index: number) => {
                                                     return (
-                                                        <AdminModGrid container spacing={2} key={groupModerator.id}>
+                                                        <AdminModGrid container spacing={2} key={groupModerator?.id}>
                                                             <Grid item md={1} sm={1} xs={12}>
-                                                                <ProfileLogo name={groupModerator.user.name} imageUrl={groupModerator?.user?.image} />
+                                                                <ProfileLogo name={groupModerator?.user?.name} imageUrl={groupModerator?.user?.image} />
                                                             </Grid>
                                                             <Grid item md={11} sm={11} xs={12}>
                                                                 <Grid container>
                                                                     <Grid item md={12} sm={12} xs={12}>
-                                                                        <ProfileTG variant="h6"><strong>{ groupModerator.user.name }</strong></ProfileTG>
+                                                                        <ProfileTG variant="h6"><strong>{ groupModerator?.user?.name }</strong></ProfileTG>
                                                                     </Grid>
                                                                     <Grid item md={12} sm={12} xs={12}>
                                                                         {
-                                                                            profiles.map((profile: any) => {
-                                                                                if (profile.user_id == groupModerator.user_id) {
+                                                                            profiles?.map((profile: any) => {
+                                                                                if (profile?.user_id == groupModerator?.user_id) {
                                                                                     return (
-                                                                                        <ChipStack direction="row" spacing={1} key={profile.id}>
+                                                                                        <ChipStack direction="row" spacing={1} key={profile?.id}>
                                                                                             <Chip label="Moderator" />
-                                                                                            <DelegationFont variant="body2">{ (profile.occupation == 1) ? 'Service Holder' : ((profile.occupation == 2) ? 'Businessman/Entrepreneur' : 'No Occupation') }</DelegationFont>
+                                                                                            <DelegationFont variant="body2">{ (profile?.occupation == 1) ? 'Service Holder' : ((profile?.occupation == 2) ? 'Businessman/Entrepreneur' : 'No Occupation') }</DelegationFont>
                                                                                         </ChipStack>
                                                                                     )
                                                                                 }

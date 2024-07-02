@@ -189,10 +189,10 @@ const ModalMessageChats = (props: any) => {
             <ModalMessageChatsButtonBase onClick={handleOpen}>
                 <Grid container spacing={2}>
                     <Grid item md={2} sm={2} xs={12}>
-                        <ProfileLogo name={user.name} imageUrl={user?.image} />
+                        <ProfileLogo name={user?.name} imageUrl={user?.image} />
                     </Grid>
                     <Grid item md={10} sm={10} xs={12}>
-                        <Typography variant="h6"><strong>{ user.name }</strong></Typography>    
+                        <Typography variant="h6"><strong>{ user?.name }</strong></Typography>    
                     </Grid>
                 </Grid>
             </ModalMessageChatsButtonBase>

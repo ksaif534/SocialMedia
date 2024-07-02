@@ -1,5 +1,5 @@
 'use client'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { IconButton, Menu, MenuItem, Badge, Avatar, Typography } from '@mui/material'
 import { AccountCircle } from '@mui/icons-material'
 import MailIcon from '@mui/icons-material/Mail'
@@ -200,15 +200,15 @@ export const RenderMsgMenu = (props: any) => {
     return (
         <Menu anchorEl={msgAnchorEl} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} id={msgMenuId} keepMounted transformOrigin={{ vertical: 'top', horizontal: 'right' }} open={isMsgMenuOpen} onClose={handleMsgMenuClose}>
             {
-                users.map((user: any) => {
-                    if (user.id != authUserId) {
+                users?.map((user: any) => {
+                    if (user?.id != authUserId) {
                         let counter = 0;
-                        if (newMsgNotif.length > 0) {
+                        if (newMsgNotif?.length > 0) {
                             return newMsgNotif.map((msgNotif: any) => {
-                                if (user.id == msgNotif.message.user_id) {
+                                if (user?.id == msgNotif?.message?.user_id) {
                                     counter++;
                                     return (
-                                        <div key={user.id}>
+                                        <div key={user?.id}>
                                             <MenuItem sx={{ backgroundColor: 'rgba(123,123,123,0.5)' }} onClick={() => makeMsgNotifRead(msgNotif)}>
                                                 <ModalMessageChats user={user} />
                                             </MenuItem>
@@ -217,7 +217,7 @@ export const RenderMsgMenu = (props: any) => {
                                 }
                                 if (counter == 0) {
                                     return (
-                                        <div key={user.id}>
+                                        <div key={user?.id}>
                                             <MenuItem>
                                                 <ModalMessageChats user={user} />
                                             </MenuItem>
@@ -227,7 +227,7 @@ export const RenderMsgMenu = (props: any) => {
                             })   
                         }else{
                             return (
-                                <div key={user.id}>
+                                <div key={user?.id}>
                                     <MenuItem>
                                         <ModalMessageChats user={user} />
                                     </MenuItem>
@@ -278,10 +278,10 @@ export const RenderNotifMenu = (props : any) => {
             {
                 newNotif?.map((notif: any) => {
                     return (
-                        <div key={notif.id}>
+                        <div key={notif?.id}>
                             <MenuItem onClick={() => handleNotificationMenuItemClick(notif)}>
                                 <Typography variant="body2">
-                                    {notif.data}
+                                    {notif?.data}
                                 </Typography>
                             </MenuItem>
                         </div>
